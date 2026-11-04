@@ -1,0 +1,14 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "cat-lawyer",
+  "main": "src/index.js",
+  "compatibility_date": "2026-11-04",
+  "assets": { "directory": "./public", "binding": "ASSETS", "run_worker_first": ["/api/*"] },
+  "ai": { "binding": "ai" },
+  "d1_databases": [{
+    "binding": "DB",
+    "database_name": "cat-lawyer-db",
+    "database_id": "26b4cf43-715b-4706-8ff3-f154f490ecdf",
+    "migrations_dir": "migrations"
+  }]
+}
