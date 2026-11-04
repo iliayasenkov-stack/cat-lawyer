@@ -1,0 +1,10 @@
+const enc=new TextEncoder();
+const hex=b=>[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("");
+const to64=b=>btoa(String.fromCharCode(...new Uint8Array(b))).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/g,"");
+const from64=s=>Uint8Array.from(atob(s.replace(/-/g,"+").replace(/_/g,"/")),c=>c.charCodeAt(0));
+export const json=(v,status=200,headers={})=>Response.json(v,{status,headers:{"Cache-Control":"no-store",...headers}});
+export async function hashPassword(p,s){const k=await crypto.subtle.importKey("raw",enc.encode(p),"PBKDF2",false,["deriveBits"]);return hex(await crypto.subtle.deriveBits({name:"PBKDF2",salt:from64(s),iterations:210000,hash:"SHA-256"},k,256));}
+export async function makeSession(db,id){const t=to64(crypto.getRandomValues(new Uint8Array(32)));const h=hex(await crypto.subtle.digest("SHA-256",enc.encode(t)));await db.prepare("INSERT INTO sessions(token_hash,user_id,expires_at) VALUES(?,?,?)").bind(h,id,Math.floor(Date.now()/1000)+1209600).run();return "cl_session="+encodeURIComponent(t)+"; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=1209600";}
+export async function whoami(request,db){const part=(request.headers.get("Cookie")||"").split(";").map(x=>x.trim()).find(x=>x.startsWith("cl_session="));if(!part)return null;const t=decodeURIComponent(part.slice(11));const h=hex(await crypto.subtle.digest("SHA-256",enc.encode(t)));return await db.prepare("SELECT u.id,u.name,u.email FROM sessions s JOIN users u ON u.id=s.user_id WHERE s.token_hash=? AND s.expires_at>?").bind(h,Math.floor(Date.now()/1000)).first();}
+export async function endSession(request,db){const part=(request.headers.get("Cookie")||"").split(";").map(x=>x.trim()).find(x=>x.startsWith("cl_session="));if(part){const t=decodeURIComponent(part.slice(11));const h=hex(await crypto.subtle.digest("SHA-256",enc.encode(t)));await db.prepare("DELETE FROM sessions WHERE token_hash=?").bind(h).run();}return "cl_session=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0";}
+export {to64};
