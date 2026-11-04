@@ -22,4 +22,16 @@ async function api(r,e){
   return json({error:"Не найдено."},404);
  }catch{return json({error:"Ошибка обработки запроса."},500);}
 }
-export default {async fetch(request,env){const url=new URL(request.url);if(url.pathname.startsWith("/api/"))return api(request,env);return env.ASSETS.fetch(request);}};
+export default {async fetch(request,env){
+ const url=new URL(request.url);
+ if(url.pathname.startsWith("/api/")){
+  const origin=request.headers.get("Origin")||"";
+  const ok=origin==="https://cat-lawyer.pages.dev"||/^https:\/\/[a-z0-9-]+\.cat-lawyer\.pages\.dev$/.test(origin);
+  const headers={"Access-Control-Allow-Origin":ok?origin:"https://cat-lawyer.pages.dev","Access-Control-Allow-Credentials":"true","Access-Control-Allow-Methods":"GET,POST,OPTIONS","Access-Control-Allow-Headers":"Content-Type","Vary":"Origin"};
+  if(request.method==="OPTIONS")return new Response(null,{status:204,headers});
+  const response=await api(request,env);const out=new Headers(response.headers);
+  for(const [k,v] of Object.entries(headers))out.set(k,v);
+  return new Response(response.body,{status:response.status,headers:out});
+ }
+ return env.ASSETS.fetch(request);
+}};
