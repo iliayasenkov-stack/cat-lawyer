@@ -35,7 +35,8 @@ async function ensureSchema(db){
 }
 export default {async fetch(request,env){
  const url=new URL(request.url);
- if(url.pathname.startsWith("/api/")){\n  if(env.DB)await ensureSchema(env.DB);
+ if(url.pathname.startsWith("/api/")){
+  if(env.DB)await ensureSchema(env.DB);
   const origin=request.headers.get("Origin")||"";
   const ok=origin==="https://cat-lawyer.pages.dev"||/^https:\/\/[a-z0-9-]+\.cat-lawyer\.pages\.dev$/.test(origin);
   const headers={"Access-Control-Allow-Origin":ok?origin:"https://cat-lawyer.pages.dev","Access-Control-Allow-Credentials":"true","Access-Control-Allow-Methods":"GET,POST,OPTIONS","Access-Control-Allow-Headers":"Content-Type","Vary":"Origin"};
