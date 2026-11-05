@@ -47,3 +47,4 @@ export default {async fetch(request,env){
  }
  return new Response("Cat Lawyer API online",{status:200,headers:{"content-type":"text/plain; charset=utf-8"}});
 }};
+// Cat Lawyer Worker backend isolated from the Pages Functions project.
