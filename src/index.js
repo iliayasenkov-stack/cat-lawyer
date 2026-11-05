@@ -10,6 +10,7 @@ function tokenFrom(r){const p=(r.headers.get("Cookie")||"").split(";").map(x=>x.
 async function userFor(r,e){const t=tokenFrom(r);if(!t)return null;return await e.DB.prepare("SELECT u.id,u.name,u.email FROM sessions s JOIN users u ON u.id=s.user_id WHERE s.token_hash=? AND s.expires_at>?").bind(await digest(t),Math.floor(Date.now()/1000)).first();}
 async function session(e,id){const t=b64u(crypto.getRandomValues(new Uint8Array(32)));await e.DB.prepare("INSERT INTO sessions(token_hash,user_id,expires_at) VALUES(?,?,?)").bind(await digest(t),id,Math.floor(Date.now()/1000)+1209600).run();return "cl_session="+encodeURIComponent(t)+"; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=1209600";}
 async function api(r,e){
+ if(new URL(r.url).pathname==="/api/health"&&r.method==="GET")return json({ok:true,db:!!e.DB,ai:!!e.ai});
  if(!e.DB)return json({error:"База данных не подключена."},503);
  const p=new URL(r.url).pathname;
  try{
