@@ -45,5 +45,5 @@ export default {async fetch(request,env){
   for(const [k,v] of Object.entries(headers))out.set(k,v);
   return new Response(response.body,{status:response.status,headers:out});
  }
- return env.ASSETS.fetch(request);
+ return new Response("Cat Lawyer API online",{status:200,headers:{"content-type":"text/plain; charset=utf-8"}});
 }};
