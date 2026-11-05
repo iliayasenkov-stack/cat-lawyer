@@ -39,14 +39,14 @@ async function authRequest(path,body){
 async function registerAccount(){
  const name=$('authname').value.trim(),email=$('authemail').value.trim(),password=$('authpassword').value;
  if(name.length<2){$('authstatus').textContent='Введите имя (минимум 2 символа).';$('authname').focus();return}
- if(!/^\\S+@\\S+\\.\\S+$/.test(email)){$('authstatus').textContent='Введите корректную электронную почту.';$('authemail').focus();return}
+ if(!/^\S+@\S+\.\S+$/.test(email)){$('authstatus').textContent='Введите корректную электронную почту.';$('authemail').focus();return}
  if(password.length<8){$('authstatus').textContent='Пароль должен содержать минимум 8 символов.';$('authpassword').focus();return}
  const btn=$('registerBtn');btn.disabled=true;btn.textContent='Создаём аккаунт…';$('authstatus').textContent='Подключаемся к Cat Lawyer…';
  try{const d=await authRequest('/auth/register',{name,email,password});$('authstatus').textContent='Аккаунт создан. Ты вошёл как '+d.user.name+'!';await loadServerHistory()}catch(e){$('authstatus').textContent=e.message}finally{btn.disabled=false;btn.textContent='Создать аккаунт'}
 }
 async function loginAccount(){
  const email=$('authemail').value.trim(),password=$('authpassword').value;
- if(!/^\\S+@\\S+\\.\\S+$/.test(email)){$('authstatus').textContent='Введите корректную электронную почту.';return}
+ if(!/^\S+@\S+\.\S+$/.test(email)){$('authstatus').textContent='Введите корректную электронную почту.';return}
  if(!password){$('authstatus').textContent='Введите пароль.';return}
  const btn=$('loginBtn');btn.disabled=true;btn.textContent='Входим…';
  try{const d=await authRequest('/auth/login',{email,password});$('authstatus').textContent='С возвращением, '+d.user.name+'!';await loadServerHistory()}catch(e){$('authstatus').textContent=e.message}finally{btn.disabled=false;btn.textContent='Войти'}
@@ -60,4 +60,10 @@ function addReview(){const v=$('reviewtext').value.trim();if(!v){toast('Напи
 async function loadAuthState(){try{const d=await authRequest('/auth/me');if(d.user){$('authstatus').textContent='Ты вошёл как '+d.user.name+'.';loadServerHistory();}else{$('authstatus').textContent='Войди или создай аккаунт, чтобы сохранять историю на сервере.'}}catch(e){$('authstatus').textContent='Сервис авторизации временно недоступен.'}}$('chosenplan').textContent=localStorage.getItem('cl_plan')||'Не выбран';if(historyItems.length){$('history').textContent=historyItems.slice(0,5).join(' • ')}renderReviews();loadAuthState();
 
 // Надёжно подключаем интерактивные кнопки после загрузки DOM.
-document.addEventListener('DOMContentLoaded',()=>{document.querySelectorAll('#quiz button').forEach((b,i)=>b.addEventListener('click',()=>quiz(i===1)));document.querySelectorAll('[onclick="sendMessage()"]').forEach(b=>b.addEventListener('click',sendMessage));});</script></body></html>
+document.addEventListener('DOMContentLoaded',()=>{
+ document.querySelectorAll('#quiz button').forEach((b,i)=>b.addEventListener('click',()=>quiz(i===1)));
+ const sb=document.querySelector('[onclick="sendMessage()"]');if(sb)sb.addEventListener('click',sendMessage);
+ $('registerBtn')?.addEventListener('click',registerAccount);
+ $('loginBtn')?.addEventListener('click',loginAccount);
+ $('logoutBtn')?.addEventListener('click',logoutAccount);
+});</script></body></html>
