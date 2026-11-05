@@ -28,14 +28,13 @@ let schemaReady;
 async function ensureSchema(db){
  if(!schemaReady)schemaReady=(async()=>{
   const tableInfo=async table=>{const r=await db.prepare("PRAGMA table_info("+table+")").all();return r.results||[]};
-  const users=await tableInfo("users");
-  const expected=["id","name","email","password_hash","password_salt","created_at"];
-  const compatible=expected.every(c=>users.some(x=>x.name===c)) && users.every(x=>expected.includes(x.name));
-  if(users.length && !compatible){
-    await db.prepare("DROP TABLE IF EXISTS sessions").run();
-    await db.prepare("DROP TABLE IF EXISTS conversations").run();
-    await db.prepare("ALTER TABLE users RENAME TO users_legacy").run();
-  }
+  const has=async(table,cols)=>{const rows=await tableInfo(table);return rows.length===cols.length&&cols.every(c=>rows.some(x=>x.name===c))};
+  const usersOk=await has("users",["id","name","email","password_hash","password_salt","created_at"]);
+  const sessionsOk=await has("sessions",["token_hash","user_id","expires_at","created_at"]);
+  const convOk=await has("conversations",["id","user_id","message","reply","created_at"]);
+  if(!usersOk&& (await tableInfo("users")).length) await db.prepare("ALTER TABLE users RENAME TO users_legacy").run();
+  if(!sessionsOk&& (await tableInfo("sessions")).length) await db.prepare("ALTER TABLE sessions RENAME TO sessions_legacy").run();
+  if(!convOk&& (await tableInfo("conversations")).length) await db.prepare("ALTER TABLE conversations RENAME TO conversations_legacy").run();
   await db.prepare("CREATE TABLE IF NOT EXISTS users (id TEXT PRIMARY KEY,name TEXT NOT NULL,email TEXT NOT NULL UNIQUE COLLATE NOCASE,password_hash TEXT NOT NULL,password_salt TEXT NOT NULL,created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)").run();
   await db.prepare("CREATE TABLE IF NOT EXISTS sessions (token_hash TEXT PRIMARY KEY,user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,expires_at INTEGER NOT NULL,created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)").run();
   await db.prepare("CREATE INDEX IF NOT EXISTS sessions_user_idx ON sessions(user_id)").run();
