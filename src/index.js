@@ -27,15 +27,19 @@ async function api(r,e){
 let schemaReady;
 async function ensureSchema(db){
  if(!schemaReady)schemaReady=(async()=>{
-  await db.prepare("CREATE TABLE IF NOT EXISTS users (id TEXT PRIMARY KEY,name TEXT,email TEXT UNIQUE COLLATE NOCASE,password_hash TEXT,password_salt TEXT,created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)").run();
-  const cols=async table=>{const r=await db.prepare("PRAGMA table_info("+table+")").all();return new Set((r.results||[]).map(x=>x.name));};
-  let u=await cols("users");
-  if(!u.has("password_hash"))await db.prepare("ALTER TABLE users ADD COLUMN password_hash TEXT").run();
-  if(!u.has("password_salt"))await db.prepare("ALTER TABLE users ADD COLUMN password_salt TEXT").run();
-  if(!u.has("created_at"))await db.prepare("ALTER TABLE users ADD COLUMN created_at TEXT").run();
-  await db.prepare("CREATE TABLE IF NOT EXISTS sessions (token_hash TEXT PRIMARY KEY,user_id TEXT NOT NULL,expires_at INTEGER NOT NULL,created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)").run();
+  const tableInfo=async table=>{const r=await db.prepare("PRAGMA table_info("+table+")").all();return r.results||[]};
+  const users=await tableInfo("users");
+  const expected=["id","name","email","password_hash","password_salt","created_at"];
+  const compatible=expected.every(c=>users.some(x=>x.name===c)) && users.every(x=>expected.includes(x.name));
+  if(users.length && !compatible){
+    await db.prepare("DROP TABLE IF EXISTS sessions").run();
+    await db.prepare("DROP TABLE IF EXISTS conversations").run();
+    await db.prepare("ALTER TABLE users RENAME TO users_legacy").run();
+  }
+  await db.prepare("CREATE TABLE IF NOT EXISTS users (id TEXT PRIMARY KEY,name TEXT NOT NULL,email TEXT NOT NULL UNIQUE COLLATE NOCASE,password_hash TEXT NOT NULL,password_salt TEXT NOT NULL,created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)").run();
+  await db.prepare("CREATE TABLE IF NOT EXISTS sessions (token_hash TEXT PRIMARY KEY,user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,expires_at INTEGER NOT NULL,created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)").run();
   await db.prepare("CREATE INDEX IF NOT EXISTS sessions_user_idx ON sessions(user_id)").run();
-  await db.prepare("CREATE TABLE IF NOT EXISTS conversations (id TEXT PRIMARY KEY,user_id TEXT NOT NULL,message TEXT NOT NULL,reply TEXT NOT NULL,created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)").run();
+  await db.prepare("CREATE TABLE IF NOT EXISTS conversations (id TEXT PRIMARY KEY,user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,message TEXT NOT NULL,reply TEXT NOT NULL,created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)").run();
   await db.prepare("CREATE INDEX IF NOT EXISTS conversations_user_created_idx ON conversations(user_id,created_at DESC)").run();
  })();
  return schemaReady;
