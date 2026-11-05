@@ -1,9 +1,8 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "cat-lawyer",
-  "main": "src/index.js",
+  "pages_build_output_dir": ".",
   "compatibility_date": "2026-11-04",
-  "workers_dev": true,
   "ai": { "binding": "ai" },
   "d1_databases": [{
     "binding": "DB",
