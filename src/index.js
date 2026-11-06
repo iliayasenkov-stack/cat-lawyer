@@ -252,7 +252,7 @@ async function api(r,e){
         aiAvailable=false;
         reply=fallbackLegalReply(m);
       }
-      const u=await userFor(r,e);if(u)await e.DB.prepare("INSERT INTO conversations(id,user_id,message,reply) VALUES(?,?,?,?)").bind(crypto.randomUUID(),u.id,m,reply).run();
+      try{const u=await userFor(r,e);if(u)await e.DB.prepare("INSERT INTO conversations(id,user_id,message,reply) VALUES(?,?,?,?)").bind(crypto.randomUUID(),u.id,m,reply).run()}catch(historyErr){console.error("Cat Lawyer history save failed",historyErr)}
       return json({reply,ai:aiAvailable});
     }
     if(p==="/api/documents"&&r.method==="POST"){
