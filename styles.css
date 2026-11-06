@@ -129,3 +129,27 @@ body{background:linear-gradient(90deg,#eadbd1 0,#f7eee7 8%,#f7eee7 92%,#eadbd1 1
  .hero-cat{width:245px!important;height:245px!important}
  .float.one{top:30px;left:0}.float.two{bottom:34px;right:0}
 }
+
+/* Final premium layout pass */
+.topics-strip{background:#fffaf6;border-top:1px solid #ead9ce;border-bottom:1px solid #ead9ce;padding:28px 0}
+.topics-label{text-align:center;font-size:11px;font-weight:800;letter-spacing:.9px;text-transform:uppercase;color:#8a6b5e;margin-bottom:14px}
+.topic-pills{display:flex;justify-content:center;gap:9px;flex-wrap:wrap}
+.topic-pills span{background:#f5e5d9;border:1px solid #ead2c3;color:#683126;border-radius:999px;padding:9px 14px;font-size:11px;font-weight:700}
+.feature-intro{background:#f3e5dc}
+.split-feature{display:grid;grid-template-columns:1.2fr .8fr;gap:55px;align-items:center}
+.split-feature h2{font-size:clamp(30px,4vw,46px);line-height:1.08;letter-spacing:-2px;margin:18px 0}
+.split-feature h2 span{color:#6a2b22}
+.split-feature>div:first-child>p{color:#79675f;line-height:1.8;max-width:650px;font-size:14px}
+.feature-points{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:28px}
+.feature-points div{display:flex;flex-direction:column;gap:7px;padding:14px 12px;background:#fffaf6;border:1px solid #e4d0c3;border-radius:15px}
+.feature-points b{font-size:10px;color:#a36e5b;letter-spacing:1px}.feature-points span{font-size:11px;font-weight:800;color:#5d2a22;line-height:1.35}
+.feature-quote{background:#6a2b22;border-radius:28px;padding:34px;color:#fff7f1;min-height:260px;display:flex;flex-direction:column;justify-content:center;box-shadow:0 25px 60px rgba(75,31,22,.16)}
+.quote-logo{width:100px;height:100px;border-radius:50%;background:#fff8f1;padding:8px;margin-bottom:22px;box-shadow:0 12px 25px rgba(0,0,0,.12)}
+.quote-logo img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.feature-quote b{font-family:Georgia,serif;font-size:25px}.feature-quote p{font-size:12px;line-height:1.7;color:#ead7ce;margin-bottom:0}
+.learn-page .learn-sleeping-cat{display:none!important}
+.learn-cat{width:190px!important;height:190px!important;background:#fff7ef;border:9px solid #fff;border-radius:50%;box-shadow:0 18px 40px rgba(77,35,23,.14);padding:8px;overflow:hidden}
+.learn-cat img{width:100%!important;height:100%!important;object-fit:cover!important;border-radius:50%;filter:none!important}
+.learn-cat.happy img{transform:scale(1.03) rotate(-2deg)}.learn-cat.sad img{transform:scale(.98) rotate(2deg)}
+.learn-quiz{border-radius:28px!important}
+@media(max-width:800px){.split-feature{grid-template-columns:1fr;gap:28px}.feature-points{grid-template-columns:1fr}.feature-quote{min-height:220px}.topics-strip{padding:22px 0}.topic-pills{justify-content:flex-start}.topic-pills span{font-size:10px;padding:8px 11px}}
