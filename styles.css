@@ -41,3 +41,8 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.22;z-
 .learn-quiz #next{margin-top:16px!important;padding:12px 24px}
 @media(max-width:1050px){.learn-sleeping-cat{right:-45px;width:220px;opacity:.65}.learn-quiz{max-width:820px!important}}
 @media(max-width:800px){.nav .brand:before{width:42px;height:42px;flex-basis:42px}.learn-sleeping-cat{display:none}.learn-quiz{padding:24px 16px!important}.learn-cat{width:190px!important;height:190px!important}.learn-quiz #question{font-size:26px}.quiz-answer{font-size:14px;min-height:54px}}
+
+/* Final navigation cleanup */
+.nav .brand img{display:block!important}
+.nav .brand:before{display:none!important;content:none!important}
+.paw-rail,.side-cats{display:none!important}
