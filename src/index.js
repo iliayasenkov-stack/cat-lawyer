@@ -67,7 +67,7 @@ async function ensureAuthSchema(db){
   await add("users","name","TEXT DEFAULT ''"); await add("users","email","TEXT DEFAULT ''");
   await add("users","password_hash","TEXT DEFAULT ''"); await add("users","password_salt","TEXT DEFAULT ''");
   await add("users","created_at","TEXT DEFAULT ''"); await add("users","plan","TEXT");
-  await add("sessions","token_hash","TEXT DEFAULT ''); await add("sessions","user_id","TEXT"); await add("sessions","expires_at","INTEGER DEFAULT 0"); await add("sessions","created_at","TEXT DEFAULT '');
+  await add("sessions","token_hash","TEXT DEFAULT ''"); await add("sessions","user_id","TEXT"); await add("sessions","expires_at","INTEGER DEFAULT 0"); await add("sessions","created_at","TEXT DEFAULT ''");
   try{await db.prepare("CREATE UNIQUE INDEX IF NOT EXISTS users_email_idx ON users(email COLLATE NOCASE)").run()}catch{}
   try{await db.prepare("CREATE INDEX IF NOT EXISTS sessions_user_idx ON sessions(user_id)").run()}catch{} try{await db.prepare("CREATE UNIQUE INDEX IF NOT EXISTS sessions_token_hash_idx ON sessions(token_hash)").run()}catch{}
 }
