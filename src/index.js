@@ -18,7 +18,7 @@ const unb64u=s=>Uint8Array.from(atob(s.replace(/-/g,"+").replace(/_/g,"/")),c=>c
 const digest=async s=>hex(await crypto.subtle.digest("SHA-256",enc.encode(s)));
 async function passHash(p,s){
   const k=await crypto.subtle.importKey("raw",enc.encode(p),"PBKDF2",false,["deriveBits"]);
-  return hex(await crypto.subtle.deriveBits({name:"PBKDF2",salt:unb64u(s),iterations:210000,hash:"SHA-256"},k,256));
+  return hex(await crypto.subtle.deriveBits({name:"PBKDF2",salt:unb64u(s),iterations:100000,hash:"SHA-256"},k,256));
 }
 function tokenFrom(r){
   const p=(r.headers.get("Cookie")||"").split(";").map(x=>x.trim()).find(x=>x.startsWith("cl_session="));
@@ -125,13 +125,6 @@ async function ensureSchema(db){
 async function api(r,e){
   const url=new URL(r.url),p=url.pathname;
   if(p==="/api/health"&&r.method==="GET"){
-    if(new URL(r.url).searchParams.get("debug")==="1"&&e.DB){
-      const tables={};
-      for(const t of ["users","sessions","cl_auth_users","cl_auth_sessions"]){
-        try{tables[t]=(await e.DB.prepare("PRAGMA table_info("+t+")").all()).results||[]}catch(err){tables[t]={error:String(err?.message||err)}}
-      }
-      return json({ok:true,db:true,ai:!!e.ai,tables});
-    }
     return json({ok:true,db:!!e.DB,ai:!!e.ai});
   }
   if(!e.DB)return json({error:"База данных не подключена."},503);
@@ -257,7 +250,7 @@ async function api(r,e){
 export default {async fetch(request,env){
   const url=new URL(request.url);
   if(url.pathname.startsWith("/api/")){
-    if(url.pathname==="/api/health"&&request.method==="GET"){if(new URL(request.url).searchParams.get("debug")==="1"&&env.DB){try{await ensureAuthSchema(env.DB);let registration_test=null;if(new URL(request.url).searchParams.get("probe")==="1"){const pid=crypto.randomUUID(),pe="probe-"+pid+"@cat-lawyer.local";try{const salt=b64u(crypto.getRandomValues(new Uint8Array(16)));const hash=await passHash("ProbePassword123!",salt);await env.DB.prepare("INSERT INTO cl_auth_users(id,name,email,password_hash,password_salt,plan) VALUES(?,?,?,?,?,?)").bind(pid,"Probe",pe,hash,salt,"Базовый").run();await env.DB.prepare("DELETE FROM cl_auth_users WHERE id=?").bind(pid).run();registration_test={ok:true,hash:true,uuid:true,insert:true}}catch(err){registration_test={ok:false,error:String(err?.message||err)}}}const tables={};for(const t of ["users","sessions","cl_auth_users","cl_auth_sessions"]){try{tables[t]=(await env.DB.prepare("PRAGMA table_info("+t+")").all()).results||[]}catch(err){tables[t]={error:String(err?.message||err)}}}return new Response(JSON.stringify({ok:true,db:true,ai:!!env.ai,tables,registration_test}),{headers:{"content-type":"application/json"}})}catch(err){return new Response(JSON.stringify({ok:false,db:true,ai:!!env.ai,error:String(err?.message||err)}),{status:500,headers:{"content-type":"application/json"}})}}return new Response(JSON.stringify({ok:true,db:!!env.DB,ai:!!env.ai}),{headers:{"content-type":"application/json"}});}
+    if(url.pathname==="/api/health"&&request.method==="GET")return new Response(JSON.stringify({ok:true,db:!!env.DB,ai:!!env.ai}),{headers:{"content-type":"application/json"}});
     if(env.DB){
       try{
         const authPath=/^\/api\/auth\/(register|login|me|logout)$/.test(url.pathname);
