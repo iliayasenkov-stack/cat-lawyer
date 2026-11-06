@@ -87,6 +87,14 @@ async function aiText(e,messages,max_tokens=420){
     clearTimeout(timer);
   }
 }
+function validateAiReply(question,reply){
+  const q=String(question||"").toLowerCase(),r=String(reply||"").toLowerCase();
+  const distance=/интернет|онлайн|дистанцион|доставк|маркетплейс/.test(q);
+  if(!distance && /(?:вернуть|возврат)[^\\n]{0,100}7\\s*дн|7\\s*дн[^\\n]{0,100}(?:вернуть|возврат)/.test(r))return false;
+  if(/8-800-100-100-8/.test(r))return false;
+  if(/право потребителя на возврат товара в течение срока, указанного выше/.test(r))return false;
+  return r.length>=40;
+}
 function fallbackLegalReply(m){
   const q=String(m||"").toLowerCase();
   if(/вернуть|возврат|обмен|магазин|товар/.test(q)){
@@ -235,6 +243,7 @@ async function api(r,e){
       let reply,aiAvailable=true;
       try{
         reply=await aiText(e,[{role:"system",content:"Ты Cat Lawyer — юридический информационный помощник по действующему законодательству Российской Федерации на дату запроса. Главный приоритет — юридическая точность, а не уверенный тон. Не выдумывай статьи, сроки, судебную практику или факты. Различай товар надлежащего качества, недостаток товара и дистанционную покупку. Если фактов недостаточно — задай до трёх уточняющих вопросов. Не называй конкретную статью, если не уверен в её номере и содержании. Отвечай естественно и по-русски. Если данных достаточно, используй разделы: Коротко; Что может быть нарушено; Что делать; Куда обращаться; Что подготовить; Важно. В конце добавь дисклеймер о том, что ответ носит информационно-консультационный характер и не заменяет квалифицированного юриста."},{role:"user",content:m}],420);
+        if(!validateAiReply(m,reply))throw new Error("AI response failed legal safety validation");
       }catch(aiErr){
         console.error("Cat Lawyer Workers AI unavailable, using safe fallback",aiErr);
         aiAvailable=false;
