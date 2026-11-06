@@ -38,7 +38,7 @@ jobs:
             exit 1
           fi
           body=$(printf "%s" "$response" | sed '/^HTTP_STATUS:/d')
-          if ! printf "%s" "$body" | python -c 'import json,sys; d=json.load(sys.stdin); r=str(d.get("reply","")).strip(); sys.exit(0 if len(r)>=40 else 1)'; then
-            echo "AI smoke test failed: empty or suspiciously short reply"
+          if ! printf "%s" "$body" | python -c 'import json,sys,re; d=json.load(sys.stdin); r=str(d.get("reply","")).strip(); bad=("в течение 7 дней" in r.lower() or "8-800-100-100-8" in r); sys.exit(0 if len(r)>=40 and not bad else 1)'; then
+            echo "AI smoke test failed: empty, suspiciously short, or known-unsafe legal reply"
             exit 1
           fi
