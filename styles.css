@@ -97,3 +97,35 @@ body{background:#f7eee6}
  .doodle-one{top:20px;right:25px}.doodle-two{bottom:38px;left:18px}
  .trust-inner{gap:13px;padding:18px 0}.trust-inner span{font-size:9px}.trust-inner b{font-size:11px}
 }
+
+/* Premium refinement v2 — restrained, editorial, no cartoon decoration */
+body{background:linear-gradient(90deg,#eadbd1 0,#f7eee7 8%,#f7eee7 92%,#eadbd1 100%)}
+.nav{max-width:1120px!important}
+.hero{padding-top:72px;padding-bottom:86px}
+.hero-art{min-height:500px}
+.hero-halo{position:absolute;width:410px;height:410px;border-radius:50%;background:radial-gradient(circle at 50% 45%,#fff9f3 0,#f9dfc9 58%,#efc7ad 100%);box-shadow:0 24px 70px rgba(91,45,31,.12)}
+.hero-orbit{position:absolute;width:455px;height:455px;border:1px solid rgba(119,65,47,.16);border-radius:50%}
+.hero-cat{width:330px!important;height:330px!important;aspect-ratio:1;border-radius:50%!important;overflow:hidden!important;background:#fff!important;border:10px solid #fff!important;box-shadow:0 28px 70px rgba(76,37,26,.2)!important}
+.hero-cat img{width:100%!important;height:100%!important;object-fit:cover!important;filter:none!important;transform:none!important}
+.hero-doodle{display:none!important}
+.float{letter-spacing:.7px;font-size:9px;padding:11px 14px;border-radius:12px;color:#5b201d;box-shadow:0 12px 35px rgba(75,35,25,.11)}
+.float.one{top:86px;left:0}
+.float.two{bottom:90px;right:-4px}
+.float.one:before,.float.two:before{content:"";display:inline-block;width:5px;height:5px;border-radius:50%;background:#9d5a42;margin-right:8px;vertical-align:1px}
+.process-card{min-height:240px;border-radius:20px;box-shadow:0 14px 35px rgba(73,36,25,.06)!important}
+.process-card .ico{background:#6b2e27!important;color:#fff!important;border-radius:14px!important;width:48px!important;height:48px!important;font-size:12px!important;letter-spacing:1px}
+.process-card:after{width:120px;height:120px;background:#f5e5da}
+.card-link{font-size:10px;letter-spacing:.4px;text-transform:uppercase}
+.steps .tile h3{font-size:17px}
+.section-head h2{font-weight:800}
+.trust-strip{background:#fbf5f0}
+.chat-shell{border-radius:22px}
+.chat-top{background:#fffaf6}
+.avatar{border-radius:50%;border:2px solid #ead8cc}
+@media(max-width:760px){
+ .hero{padding-top:42px;padding-bottom:58px}
+ .hero-art{min-height:350px}
+ .hero-halo{width:300px;height:300px}.hero-orbit{width:325px;height:325px}
+ .hero-cat{width:245px!important;height:245px!important}
+ .float.one{top:30px;left:0}.float.two{bottom:34px;right:0}
+}
