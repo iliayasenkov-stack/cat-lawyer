@@ -15,9 +15,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - run: npm install --no-audit --no-fund
       - run: node build.mjs
-      - run: npx wrangler pages deploy . --project-name=cat-lawyer --branch=main
+      - run: npx --yes wrangler@latest pages deploy . --project-name=cat-lawyer --branch=main
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
