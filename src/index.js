@@ -112,7 +112,12 @@ async function api(r,e){
       const salt=b64u(crypto.getRandomValues(new Uint8Array(16))),hash=await passHash(pw,salt),id=crypto.randomUUID();
       try{await e.DB.prepare("INSERT INTO users(id,name,email,password_hash,password_salt) VALUES(?,?,?,?,?)").bind(id,name,email,hash,salt).run()}
       catch(err){const msg=String(err?.message||"");if(/unique|constraint/i.test(msg))return json({error:"Аккаунт с такой почтой уже существует."},409);throw err}
-      try {\n        return json({user:{id,name,email}},201,{"Set-Cookie":await session(e,id)});\n      } catch(err) {\n        console.error("Cat Lawyer session creation error",err);\n        return json({error:"Ошибка создания сессии.",debug:String(err?.message||err)},500);\n      }
+      try {
+        return json({user:{id,name,email}},201,{"Set-Cookie":await session(e,id)});
+      } catch(err) {
+        console.error("Cat Lawyer session creation error",err);
+        return json({error:"Ошибка создания сессии.",debug:String(err?.message||err)},500);
+      }
     }
     if(p==="/api/auth/login"&&r.method==="POST"){
       if(limited(r,"login:"+requestIP(r),10,60000))return json({error:"Слишком много попыток входа. Попробуйте через минуту."},429);
