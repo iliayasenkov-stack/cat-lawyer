@@ -515,3 +515,10 @@ main:before{
   .section{padding:56px 0}
   .price.popular{transform:none}
 }
+
+/* Safe final polish: reference-style judicial kittens and aligned brand mark */
+body:after{background-image:url('/assets/learning-kitten.svg')!important;background-size:contain!important;background-position:center!important;background-repeat:no-repeat!important;opacity:.34!important;transform:scale(.82) rotate(-3deg)!important}
+main:before{background-image:url('/assets/learning-kitten.svg')!important;background-size:contain!important;background-position:center!important;background-repeat:no-repeat!important;opacity:.34!important;transform:scaleX(-1) scale(.82) rotate(-3deg)!important}
+.nav .brand{align-items:center!important;line-height:1!important;white-space:nowrap}
+.nav .brand img{width:46px!important;height:46px!important;min-width:46px!important;object-fit:contain!important;padding:1px!important;border-radius:13px!important;display:block!important}
+@media(max-width:760px){.nav .brand img{width:42px!important;height:42px!important;min-width:42px!important}}
