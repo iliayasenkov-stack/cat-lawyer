@@ -3,7 +3,7 @@ const json=(data,status=200,headers={})=>Response.json(data,{status,headers:{"Ca
 const enc=new TextEncoder();
 const rate=new Map();
 function limited(request,key,limit=20,windowMs=60000){const now=Date.now(),v=rate.get(key)||{n:0,t:now};if(now-v.t>windowMs){v.n=0;v.t=now}v.n++;rate.set(key,v);return v.n>limit}
-function adminKey(request,env){const key=request.headers.get("X-Admin-Key")||"";return !!env.ADMIN_KEY&&key===env.ADMIN_KEY}
+async function adminAuth(request,env){const cookie=request.headers.get("Cookie")||"";const m=cookie.match(/(?:^|;\\s*)cl_admin=([^;]+)/);if(m&&env.ADMIN_PASSWORD){const raw=decodeURIComponent(m[1]);const parts=raw.split(".");if(parts.length===2){const ts=Number(parts[0]);if(Number.isFinite(ts)&&Date.now()-ts<86400000){const sig=await digest(ts+"."+env.ADMIN_PASSWORD);if(sig===parts[1])return true}}}const key=request.headers.get("X-Admin-Key")||"";return !!env.ADMIN_KEY&&key===env.ADMIN_KEY}
 function requestIP(request){return request.headers.get("CF-Connecting-IP")||"unknown"}
 const hex=b=>[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("");
 const b64u=b=>btoa(String.fromCharCode(...new Uint8Array(b))).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/g,"");
