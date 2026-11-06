@@ -59,6 +59,13 @@ async function aiText(e,messages,max_tokens=900){
   const out=await e.ai.run("@cf/meta/llama-3.1-8b-instruct-fp8",{messages,max_tokens,temperature:.65});
   return out.response||"Не удалось сформировать ответ.";
 }
+async function ensureAuthSchema(db){
+  await db.prepare("CREATE TABLE IF NOT EXISTS users (id TEXT PRIMARY KEY,name TEXT,email TEXT UNIQUE COLLATE NOCASE,password_hash TEXT,password_salt TEXT,created_at TEXT DEFAULT CURRENT_TIMESTAMP,plan TEXT)").run();
+  await db.prepare("CREATE TABLE IF NOT EXISTS sessions (token_hash TEXT PRIMARY KEY,user_id TEXT,expires_at INTEGER,created_at TEXT DEFAULT CURRENT_TIMESTAMP)").run();
+  try{await db.prepare("CREATE UNIQUE INDEX IF NOT EXISTS users_email_idx ON users(email COLLATE NOCASE)").run()}catch{}
+  try{await db.prepare("CREATE INDEX IF NOT EXISTS sessions_user_idx ON sessions(user_id)").run()}catch{}
+}
+
 async function ensureSchemaOnce(db){
   if(schemaPromise)return schemaPromise;
   schemaPromise=ensureSchema(db).catch(err=>{schemaPromise=null;throw err});
@@ -224,7 +231,10 @@ export default {async fetch(request,env){
   if(url.pathname.startsWith("/api/")){
     if(url.pathname==="/api/health"&&request.method==="GET")return new Response(JSON.stringify({ok:true,db:!!env.DB,ai:!!env.ai}),{headers:{"content-type":"application/json"}});
     if(env.DB){
-      try{await ensureSchemaOnce(env.DB)}catch(err){
+      try{
+        const authPath=/^\/api\/auth\/(register|login|me|logout)$/.test(url.pathname);
+        if(authPath) await ensureAuthSchema(env.DB); else await ensureSchemaOnce(env.DB);
+      }catch(err){
         console.error("Cat Lawyer schema error",err);
         const origin=request.headers.get("Origin")||"";
         const ok=origin==="https://cat-lawyer.pages.dev"||/^https:\/\/[a-z0-9-]+\.cat-lawyer\.pages\.dev$/.test(origin);
