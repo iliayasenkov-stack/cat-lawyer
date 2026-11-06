@@ -26,11 +26,11 @@ function tokenFrom(r){
 }
 async function userFor(r,e){
   const t=tokenFrom(r); if(!t)return null;
-  return await e.DB.prepare("SELECT u.id,u.name,u.email FROM sessions s JOIN users u ON u.id=s.user_id WHERE s.token_hash=? AND s.expires_at>?").bind(await digest(t),Math.floor(Date.now()/1000)).first();
+  return await e.DB.prepare("SELECT u.id,u.name,u.email FROM auth_sessions s JOIN auth_users u ON u.id=s.user_id WHERE s.token_hash=? AND s.expires_at>?").bind(await digest(t),Math.floor(Date.now()/1000)).first();
 }
 async function session(e,id){
   const t=b64u(crypto.getRandomValues(new Uint8Array(32)));
-  await e.DB.prepare("INSERT INTO sessions(token_hash,user_id,expires_at) VALUES(?,?,?)").bind(await digest(t),id,Math.floor(Date.now()/1000)+1209600).run();
+  await e.DB.prepare("INSERT INTO auth_sessions(token_hash,user_id,expires_at) VALUES(?,?,?)").bind(await digest(t),id,Math.floor(Date.now()/1000)+1209600).run();
   return "cl_session="+encodeURIComponent(t)+"; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=1209600";
 }
 function clearCookie(name="cl_session"){return name+"=; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=0"}
@@ -60,18 +60,19 @@ async function aiText(e,messages,max_tokens=900){
   return out.response||"Не удалось сформировать ответ.";
 }
 async function ensureAuthSchema(db){
-  await db.prepare("CREATE TABLE IF NOT EXISTS users (id TEXT PRIMARY KEY,name TEXT,email TEXT UNIQUE COLLATE NOCASE,password_hash TEXT,password_salt TEXT,created_at TEXT DEFAULT CURRENT_TIMESTAMP,plan TEXT)").run();
-  await db.prepare("CREATE TABLE IF NOT EXISTS sessions (token_hash TEXT PRIMARY KEY,user_id TEXT,expires_at INTEGER,created_at TEXT DEFAULT CURRENT_TIMESTAMP)").run();
+  await db.prepare("CREATE TABLE IF NOT EXISTS auth_users (id TEXT PRIMARY KEY,name TEXT NOT NULL,email TEXT NOT NULL UNIQUE COLLATE NOCASE,password_hash TEXT NOT NULL,password_salt TEXT NOT NULL,created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,plan TEXT NOT NULL DEFAULT 'Базовый')").run();
+  await db.prepare("CREATE TABLE IF NOT EXISTS auth_sessions (token_hash TEXT PRIMARY KEY,user_id TEXT NOT NULL,expires_at INTEGER NOT NULL,created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)").run();
   const info=async t=>(await db.prepare("PRAGMA table_info("+t+")").all()).results||[];
   const add=async(t,n,d)=>{if(!(await info(t)).some(x=>x.name===n))await db.prepare("ALTER TABLE "+t+" ADD COLUMN "+n+" "+d).run()};
-  await add("users","name","TEXT DEFAULT ''"); await add("users","email","TEXT DEFAULT ''");
-  await add("users","password_hash","TEXT DEFAULT ''"); await add("users","password_salt","TEXT DEFAULT ''");
-  await add("users","created_at","TEXT DEFAULT ''"); await add("users","plan","TEXT");
-  await add("sessions","token_hash","TEXT DEFAULT ''"); await add("sessions","user_id","TEXT"); await add("sessions","expires_at","INTEGER DEFAULT 0"); await add("sessions","created_at","TEXT DEFAULT ''");
-  try{await db.prepare("CREATE UNIQUE INDEX IF NOT EXISTS users_email_idx ON users(email COLLATE NOCASE)").run()}catch{}
-  try{await db.prepare("CREATE INDEX IF NOT EXISTS sessions_user_idx ON sessions(user_id)").run()}catch{} try{await db.prepare("CREATE UNIQUE INDEX IF NOT EXISTS sessions_token_hash_idx ON sessions(token_hash)").run()}catch{}
+  await add("auth_users","name","TEXT DEFAULT ''"); await add("auth_users","email","TEXT DEFAULT ''");
+  await add("auth_users","password_hash","TEXT DEFAULT ''"); await add("auth_users","password_salt","TEXT DEFAULT ''");
+  await add("auth_users","created_at","TEXT DEFAULT ''"); await add("auth_users","plan","TEXT DEFAULT 'Базовый'");
+  await add("auth_sessions","token_hash","TEXT DEFAULT ''"); await add("auth_sessions","user_id","TEXT");
+  await add("auth_sessions","expires_at","INTEGER DEFAULT 0"); await add("auth_sessions","created_at","TEXT DEFAULT ''");
+  await db.prepare("CREATE UNIQUE INDEX IF NOT EXISTS auth_users_email_idx ON auth_users(email COLLATE NOCASE)").run();
+  await db.prepare("CREATE INDEX IF NOT EXISTS auth_sessions_user_idx ON auth_sessions(user_id)").run();
+  await db.prepare("CREATE UNIQUE INDEX IF NOT EXISTS auth_sessions_token_hash_idx ON auth_sessions(token_hash)").run();
 }
-
 async function ensureSchemaOnce(db){
   if(schemaPromise)return schemaPromise;
   schemaPromise=ensureSchema(db).catch(err=>{schemaPromise=null;throw err});
@@ -142,31 +143,7 @@ async function api(r,e){
         salt=b64u(crypto.getRandomValues(new Uint8Array(16)));
         hash=await passHash(pw,salt);
         id=crypto.randomUUID();
-        const cols=(await e.DB.prepare("PRAGMA table_info(users)").all()).results||[];
-        const valuesByName={
-          id, name, email, password_hash:hash, password_salt:salt, plan:"Базовый",
-          username:email, login:email, full_name:name, display_name:name,
-          password:hash, role:"user", created_at:new Date().toISOString(), created:new Date().toISOString()
-        };
-        const insertCols=[],insertVals=[];
-        for(const col of cols){
-          const n=String(col.name||"");
-          if(!n)continue;
-          const isIntegerId=(n==="id"&&String(col.type||"").toUpperCase().includes("INT")&&Number(col.pk)===1);
-          if(isIntegerId)continue;
-          if(Object.prototype.hasOwnProperty.call(valuesByName,n)){
-            insertCols.push(n); insertVals.push(valuesByName[n]); continue;
-          }
-          if(Number(col.notnull)===1&&col.dflt_value==null){
-            const type=String(col.type||"").toUpperCase();
-            insertCols.push(n);
-            if(type.includes("INT")||type.includes("REAL")||type.includes("NUM"))insertVals.push(0);
-            else insertVals.push("");
-          }
-        }
-        if(!insertCols.length)throw new Error("users table has no writable columns");
-        const marks=insertCols.map(()=>"?").join(",");
-        await e.DB.prepare("INSERT INTO users("+insertCols.join(",")+") VALUES("+marks+")").bind(...insertVals).run();
+        await e.DB.prepare("INSERT INTO auth_users(id,name,email,password_hash,password_salt,plan) VALUES(?,?,?,?,?,?)").bind(id,name,email,hash,salt,"Базовый").run();
       } catch(err) {
         console.error("Cat Lawyer registration insert error",err);
         const msg=String(err?.message||"");
@@ -183,29 +160,29 @@ async function api(r,e){
     }
     if(p==="/api/auth/login"&&r.method==="POST"){
       if(limited(r,"login:"+requestIP(r),10,60000))return json({error:"Слишком много попыток входа. Попробуйте через минуту."},429);
-      const b=await r.json(),email=String(b.email||"").trim().toLowerCase(),pw=String(b.password||""),u=await e.DB.prepare("SELECT * FROM users WHERE email=?").bind(email).first();
+      const b=await r.json(),email=String(b.email||"").trim().toLowerCase(),pw=String(b.password||""),u=await e.DB.prepare("SELECT * FROM auth_users WHERE email=?").bind(email).first();
       if(!u||!u.password_salt||await passHash(pw,u.password_salt)!==u.password_hash)return json({error:"Неверная почта или пароль."},401);
       return json({user:{id:u.id,name:u.name,email:u.email}},200,{"Set-Cookie":await session(e,u.id)});
     }
     if(p==="/api/auth/delete"&&r.method==="POST"){
       const u=await userFor(r,e);if(!u)return json({error:"Требуется вход."},401);
-      await e.DB.batch([e.DB.prepare("DELETE FROM sessions WHERE user_id=?").bind(u.id),e.DB.prepare("DELETE FROM conversations WHERE user_id=?").bind(u.id),e.DB.prepare("DELETE FROM learn_progress WHERE user_id=?").bind(u.id),e.DB.prepare("DELETE FROM users WHERE id=?").bind(u.id)]);
+      await e.DB.batch([e.DB.prepare("DELETE FROM auth_sessions WHERE user_id=?").bind(u.id),e.DB.prepare("DELETE FROM conversations WHERE user_id=?").bind(u.id),e.DB.prepare("DELETE FROM learn_progress WHERE user_id=?").bind(u.id),e.DB.prepare("DELETE FROM auth_users WHERE id=?").bind(u.id)]);
       return json({ok:true},200,{"Set-Cookie":clearCookie()});
     }
     if(p==="/api/auth/logout"&&r.method==="POST"){
-      const t=tokenFrom(r);if(t)await e.DB.prepare("DELETE FROM sessions WHERE token_hash=?").bind(await digest(t)).run();
+      const t=tokenFrom(r);if(t)await e.DB.prepare("DELETE FROM auth_sessions WHERE token_hash=?").bind(await digest(t)).run();
       return json({ok:true},200,{"Set-Cookie":clearCookie()});
     }
     if(p==="/api/auth/me"&&r.method==="GET")return json({user:await userFor(r,e)});
     if(p==="/api/plan"&&r.method==="GET"){
       const u=await userFor(r,e);if(!u)return json({error:"Требуется вход."},401);
-      const row=await e.DB.prepare("SELECT plan FROM users WHERE id=?").bind(u.id).first();return json({plan:row?.plan||null});
+      const row=await e.DB.prepare("SELECT plan FROM auth_users WHERE id=?").bind(u.id).first();return json({plan:row?.plan||null});
     }
     if(p==="/api/plan"&&r.method==="POST"){
       const u=await userFor(r,e);if(!u)return json({error:"Требуется вход."},401);
       const plan=String((await r.json()).plan||"").trim(),allowed=["Базовый","Расширенный","Максимальный"];
       if(!allowed.includes(plan))return json({error:"Неизвестный тариф."},400);
-      await e.DB.prepare("UPDATE users SET plan=? WHERE id=?").bind(plan,u.id).run();return json({plan});
+      await e.DB.prepare("UPDATE auth_users SET plan=? WHERE id=?").bind(plan,u.id).run();return json({plan});
     }
     if(p==="/api/reviews"&&r.method==="GET"){
       const {results=[]}=await e.DB.prepare("SELECT id,name,text,rating,created_at FROM reviews WHERE approved=1 ORDER BY created_at DESC LIMIT 50").all();return json({items:results});
@@ -253,7 +230,7 @@ async function api(r,e){
     if(p.startsWith("/api/admin/")){
       if(!(await adminAuth(r,e)))return json({error:"Доступ запрещён."},401);
       if(p==="/api/admin/stats"&&r.method==="GET"){
-        const [u,c,v]=await Promise.all([e.DB.prepare("SELECT COUNT(*) n FROM users").first(),e.DB.prepare("SELECT COUNT(*) n FROM conversations").first(),e.DB.prepare("SELECT COUNT(*) n FROM reviews").first()]);
+        const [u,c,v]=await Promise.all([e.DB.prepare("SELECT COUNT(*) n FROM auth_users").first(),e.DB.prepare("SELECT COUNT(*) n FROM conversations").first(),e.DB.prepare("SELECT COUNT(*) n FROM reviews").first()]);
         return json({users:u?.n||0,conversations:c?.n||0,reviews:v?.n||0});
       }
       if(p==="/api/admin/reviews"&&r.method==="GET"){
