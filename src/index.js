@@ -127,7 +127,7 @@ async function api(r,e){
   if(p==="/api/health"&&r.method==="GET"){
     if(new URL(r.url).searchParams.get("debug")==="1"&&e.DB){
       const tables={};
-      for(const t of ["users","sessions"]){
+      for(const t of ["users","sessions","cl_auth_users","cl_auth_sessions"]){
         try{tables[t]=(await e.DB.prepare("PRAGMA table_info("+t+")").all()).results||[]}catch(err){tables[t]={error:String(err?.message||err)}}
       }
       return json({ok:true,db:true,ai:!!e.ai,tables});
