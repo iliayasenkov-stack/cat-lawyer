@@ -47,10 +47,40 @@
 @media(max-width:1050px){.learn-layout{grid-template-columns:100px minmax(0,1fr) 100px}.side-cat img{max-width:95px}.learning-body{grid-template-columns:200px 1fr}}
 @media(max-width:820px){.learn-layout{display:block;max-width:700px;margin:auto}.side-cat{display:none}.learning-body{grid-template-columns:1fr}.progress-box{display:none}.learn-title h1{font-size:40px}.question-box h2{font-size:29px}}
 @media(max-width:560px){.learn-page{padding-top:20px}.learn-title{padding:0 18px}.learn-title h1{font-size:34px}.learning-card-head{padding:14px 16px}.learning-body{padding:18px}.learning-footer{padding:12px 14px}.answer-btn{font-size:12px}}
+</style><style>
+/* FINAL LEARNING VISUAL — Cat Lawyer №9 direction */
+.learn-page{background:#f3e7da;padding:48px 0 90px}
+.learn-page:after{content:"";position:absolute;width:520px;height:520px;border-radius:50%;right:-210px;top:90px;background:rgba(167,106,77,.08);pointer-events:none}
+.learn-title{margin-bottom:38px}
+.learn-title .eyebrow{background:#fffaf5;border-color:#c9a18b;color:#71352b;font-size:9px}
+.learn-title h1{font-size:64px;color:#3b231e;margin-top:13px}
+.learn-title p{font-size:14px;color:#80685d}
+.learn-layout{grid-template-columns:210px minmax(650px,850px) 220px;gap:26px;align-items:center}
+.learning-card{border:1px solid #d8b9a4;border-radius:34px;background:#fffaf6;box-shadow:0 28px 75px rgba(71,39,27,.16)}
+.learning-card-head{padding:18px 25px;background:#fff7f0}
+.learning-body{grid-template-columns:225px 1fr;gap:34px;padding:34px}
+.progress-box{background:#f6e9de;border:1px solid #dfc7b5;border-radius:24px;padding:22px}
+.progress-circle{background:radial-gradient(circle,#fffaf6 59%,transparent 60%),conic-gradient(#7b3026 0 17%,#dfc9ba 17% 100%);width:112px;height:112px}
+.question-box{padding:4px 6px}
+.question-box h2{font-size:39px;letter-spacing:-1px;margin:15px 0 8px}
+.question-box .hint{font-size:13px}
+.answers{margin-top:25px;gap:12px}
+.answer-btn{min-height:64px;border-radius:17px;padding:13px 16px;background:#fffdfa;border-color:#d8b9a4;font-size:13px}
+.answer-btn .letter{width:34px;height:34px;border-radius:10px;background:#f0ddd0}
+.feedback{min-height:44px;margin-top:16px;border-radius:14px;background:#f5e9df}
+.side-cat{height:570px;display:flex;flex-direction:column;justify-content:center;align-items:center;position:relative}
+.side-cat.right img{width:205px;max-width:205px;max-height:430px;filter:drop-shadow(0 22px 20px rgba(65,37,28,.18))}
+.side-cat.right{transform:translateY(18px)}
+.cat-caption{margin-top:-8px;text-align:center;font-family:Georgia,serif;font-size:15px;line-height:1.25;color:#633027}
+.cat-caption span{font-family:inherit;font-size:11px;color:#9a7768}
+.learn-deco{font-family:Georgia,serif;font-size:180px;color:#8d4938;opacity:.08;line-height:1}
+.learn-paw{font-size:72px;opacity:.13;transform:rotate(-18deg);margin-top:20px}
+@media(max-width:1050px){.learn-layout{grid-template-columns:130px minmax(0,1fr) 150px}.side-cat.right img{width:145px}.learn-title h1{font-size:54px}}
+@media(max-width:820px){.learn-layout{display:block}.side-cat{display:none}.learn-title h1{font-size:42px}.learning-body{grid-template-columns:1fr}}
 </style></head><body><header class="wrap nav"><a class="brand" href="/"><img src="/assets/cat-lawyer-logo.svg" alt="Cat Lawyer"> CAT LAWYER</a><nav class="navlinks"><a href="/">Главная</a><a href="/assistant.html">Помощник</a><a href="/documents.html">Документы</a><a href="/learn.html">Обучение</a><a href="/pricing.html">Тарифы</a><a href="/friends.html">Друзья</a><a href="/reviews.html">Отзывы</a><a href="/about.html">О нас</a><a href="/help.html">Помощь</a><a href="/account.html">Кабинет</a></nav><button class="btn light menu-toggle" type="button" onclick="toggleMobileMenu()">Меню ☰</button></header><div id="mobileMenu" class="mobile-menu-panel"><a href="/">Главная</a><a href="/assistant.html">Помощник</a><a href="/documents.html">Документы</a><a href="/learn.html">Обучение</a><a href="/pricing.html">Тарифы</a><a href="/friends.html">Друзья</a><a href="/reviews.html">Отзывы</a><a href="/about.html">О нас</a><a href="/help.html">Помощь</a><a href="/account.html">Личный кабинет</a></div><main class="learn-page">
 <section class="learn-title"><div class="wrap"><div class="eyebrow">АКАДЕМИЯ CAT LAWYER</div><h1>Изучай язык права</h1><p>Короткие уроки, реальные юридические термины и практика.</p></div></section>
 <section class="wrap learn-layout">
-<aside class="side-cat left"><img src="/assets/kitten-left.svg" alt=""></aside>
+<aside class="side-cat left"><div class="learn-deco">§</div><div class="learn-paw">🐾</div></aside>
 <div class="learning-card">
 <div class="learning-card-head"><span id="progressText">ВОПРОС 1 ИЗ 6</span><span class="lesson-label">УРОК 01 · ОСНОВЫ ПРАВА</span></div>
 <div class="learning-body">
@@ -59,18 +89,18 @@
 <b id="progressTextSide">Урок 1 из 6</b><div class="progress-line"><i id="sideProgress"></i></div><small>+50 баллов за урок</small>
 <div class="lesson-list"><button class="active" type="button">Уроки</button><button type="button">Достижения</button><button type="button">Статистика</button><button type="button">Настройки</button></div>
 </aside>
-<div class="question-box"><div class="kicker">ЮРИДИЧЕСКИЙ ТЕРМИН</div><h2 id="question">Кто такой истец?</h2><p class="hint">Выбери один правильный вариант.</p><div id="answers" class="answers"></div><div id="r" class="feedback">Нажми на ответ — кот сразу покажет результат.</div></div>
+<div class="question-box"><div class="kicker">ЮРИДИЧЕСКИЙ ТЕРМИН</div><h2 id="question">Кто такой истец?</h2><p class="hint">Выбери один правильный вариант.</p><div id="answers" class="answers"></div><div id="r" class="feedback">Нажми на ответ — котик сразу покажет результат.</div></div>
 </div>
 <div class="learning-footer"><button class="back-btn" id="backLesson" type="button">← Назад</button><div class="result" id="footerResult"></div><button class="next-btn" id="next" type="button" style="display:none">Следующий вопрос →</button></div>
 </div>
-<aside class="side-cat right"><img src="/assets/kitten-right.svg" alt=""></aside>
+<aside class="side-cat right"><img src="/assets/judge-cat.svg" alt="Котик Cat Lawyer"><div class="cat-caption">Котик-помощник<br><span>учимся вместе</span></div></aside>
 </section></main><footer class="footer"><div class="wrap footer-inner"><b>🐱 Cat Lawyer — юридическое просто.</b><span>© 2026 Cat Lawyer. Информационный сервис.</span><span><a href="/assistant.html">Задать вопрос</a> · <a href="/pricing.html">Тарифы</a></span></div></footer><script>
 const lessons=[{q:'Кто такой истец?',a:['Судья','Тот, кто подал иск','Ответчик'],correct:1,explain:'Истец — лицо, которое обратилось в суд за защитой своего права или интереса.'},{q:'Кто такой ответчик?',a:['Лицо, к которому предъявлен иск','Секретарь суда','Свидетель'],correct:0,explain:'Ответчик — лицо, к которому истец предъявляет требование.'},{q:'Что такое иск?',a:['Требование о защите права, обращённое в суд','Протокол допроса','Судебный приговор'],correct:0,explain:'Иск содержит требование истца к ответчику и подаётся для судебной защиты.'},{q:'Что такое доказательства?',a:['Сведения, на основании которых суд устанавливает обстоятельства дела','Только показания истца','Любые документы без исключения'],correct:0,explain:'Доказательства позволяют суду установить обстоятельства, имеющие значение для дела.'},{q:'Что такое срок исковой давности?',a:['Срок для защиты права по иску','Срок работы суда','Срок хранения паспорта'],correct:0,explain:'Это срок для защиты нарушенного права по иску. Его правила зависят от конкретной ситуации.'},{q:'Что означает статья 106 УК РФ?',a:['Убийство матерью новорождённого ребёнка','Кража имущества','Причинение вреда здоровью'],correct:0,explain:'Статья 106 УК РФ предусматривает ответственность за убийство матерью новорождённого ребёнка при обстоятельствах, указанных в статье.'}];
 let i=0,score=0;
 const qEl=document.getElementById('question'),aEl=document.getElementById('answers'),rEl=document.getElementById('r'),next=document.getElementById('next'),pText=document.getElementById('progressText'),percent=document.getElementById('percent'),sideProgress=document.getElementById('sideProgress'),progressTextSide=document.getElementById('progressTextSide'),footerResult=document.getElementById('footerResult');
 function render(){
  const x=lessons[i];
- qEl.textContent=x.q;rEl.textContent='Нажми на ответ — кот сразу покажет результат.';footerResult.textContent='';next.style.display='none';next.textContent='Следующий вопрос →';
+ qEl.textContent=x.q;rEl.textContent='Нажми на ответ — котик сразу покажет результат.';footerResult.textContent='';next.style.display='none';next.textContent='Следующий вопрос →';
  pText.textContent='ВОПРОС '+(i+1)+' ИЗ '+lessons.length;
  const pct=Math.round((i+1)/lessons.length*100);percent.textContent=pct+'%';sideProgress.style.width=pct+'%';progressTextSide.textContent='Урок '+(i+1)+' из '+lessons.length;
  aEl.innerHTML=x.a.map((v,n)=>'<button class="answer-btn" type="button" data-i="'+n+'"><span class="letter">'+String.fromCharCode(65+n)+'</span><span>'+v+'</span></button>').join('');
