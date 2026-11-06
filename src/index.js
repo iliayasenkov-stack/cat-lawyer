@@ -54,17 +54,17 @@ async function adminCookie(env){
   const ts=Date.now().toString();
   return "cl_admin="+encodeURIComponent(ts+"."+await digest(ts+"."+env.ADMIN_PASSWORD))+"; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=86400";
 }
-async function aiText(e,messages,max_tokens=900){
+async function aiText(e,messages,max_tokens=420){
   if(!e.ai)throw new Error("AI binding missing");
   const controller=new AbortController();
-  const timer=setTimeout(()=>controller.abort(),40000);
+  const timer=setTimeout(()=>controller.abort(),55000);
   try{
     let out;
     try{
-      out=await e.ai.run("@cf/meta/llama-3.1-8b-instruct-fast",{messages,max_tokens,temperature:.65});
+      out=await e.ai.run("@cf/meta/llama-3.1-8b-instruct-fast",{messages,max_tokens,temperature:.45});
     }catch(firstErr){
       const prompt=messages.map(x=>String(x?.content||"")).filter(Boolean).join("\n\n");
-      out=await e.ai.run("@cf/meta/llama-3.1-8b-instruct-fast",{prompt,max_tokens,temperature:.65});
+      out=await e.ai.run("@cf/meta/llama-3.1-8b-instruct-fast",{prompt,max_tokens,temperature:.45});
     }
     const response=typeof out==="string"?out:(out?.response||out?.result?.response||"");
     if(!response)throw new Error("Workers AI returned an empty response");
@@ -211,7 +211,7 @@ async function api(r,e){
     if(p==="/api/chat"&&r.method==="POST"){
       if(limited(r,"chat:"+requestIP(r),20,60000))return json({error:"Слишком много запросов. Подожди немного и попробуй снова."},429);
       const m=String((await r.json()).message||"").trim();if(!m||m.length>5000)return json({error:"Сообщение пустое или слишком длинное."},400);
-      const reply=await aiText(e,[{role:"system",content:"Ты Cat Lawyer — юридический информационный помощник по законодательству РФ. Отвечай по-русски, естественно и понятными словами. Если фактов мало, сначала задай до трёх конкретных уточняющих вопросов. Не выдумывай статьи, сроки, судебную практику, реквизиты органов или адреса. Если информации достаточно, используй строго: 1) «Коротко»; 2) «Что может быть нарушено»; 3) «Что делать»; 4) «Куда обращаться»; 5) «Что подготовить»; 6) «Важно». Не проси лишние персональные данные. В конце содержательного ответа добавляй блок «Дисклеймер»: «Ответ Cat Lawyer носит исключительно информационно-консультационный характер, не является юридическим заключением, не имеет юридической силы для реального обращения в государственные органы, суд, организации или иные учреждения и не заменяет помощь квалифицированного юриста. Перед реальным обращением рекомендуем проконсультироваться с юристом.»"},{role:"user",content:m}],700);
+      const reply=await aiText(e,[{role:"system",content:"Ты Cat Lawyer — юридический информационный помощник по законодательству РФ. Отвечай по-русски, естественно и понятными словами. Если фактов мало, сначала задай до трёх конкретных уточняющих вопросов. Не выдумывай статьи, сроки, судебную практику, реквизиты органов или адреса. Если информации достаточно, используй строго: 1) «Коротко»; 2) «Что может быть нарушено»; 3) «Что делать»; 4) «Куда обращаться»; 5) «Что подготовить»; 6) «Важно». Не проси лишние персональные данные. В конце содержательного ответа добавляй блок «Дисклеймер»: «Ответ Cat Lawyer носит исключительно информационно-консультационный характер, не является юридическим заключением, не имеет юридической силы для реального обращения в государственные органы, суд, организации или иные учреждения и не заменяет помощь квалифицированного юриста. Перед реальным обращением рекомендуем проконсультироваться с юристом.»"},{role:"user",content:m}],420);
       const u=await userFor(r,e);if(u)await e.DB.prepare("INSERT INTO conversations(id,user_id,message,reply) VALUES(?,?,?,?)").bind(crypto.randomUUID(),u.id,m,reply).run();
       return json({reply});
     }
