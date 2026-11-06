@@ -126,9 +126,11 @@ async function api(r,e){
       const tables={};
       for(const t of ["users","sessions"]){
         try{tables[t]=(await e.DB.prepare("PRAGMA table_info("+t+")").all()).results||[]}catch(err){tables[t]={error:String(err?.message||err)}}
-      }\n      return json({ok:true,db:true,ai:!!e.ai,tables});
+      }
+      return json({ok:true,db:true,ai:!!e.ai,tables});
     }
-    return json({ok:true,db:!!e.DB,ai:!!e.ai});\n  }
+    return json({ok:true,db:!!e.DB,ai:!!e.ai});
+  }
   if(!e.DB)return json({error:"База данных не подключена."},503);
   try{
     if(p==="/api/auth/register"&&r.method==="POST"){
