@@ -222,6 +222,7 @@ async function api(r,e){
 export default {async fetch(request,env){
   const url=new URL(request.url);
   if(url.pathname.startsWith("/api/")){
+    if(url.pathname==="/api/health"&&request.method==="GET")return new Response(JSON.stringify({ok:true,db:!!env.DB,ai:!!env.ai}),{headers:{"content-type":"application/json"}});
     if(env.DB){
       try{await ensureSchemaOnce(env.DB)}catch(err){
         console.error("Cat Lawyer schema error",err);
