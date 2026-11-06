@@ -67,9 +67,9 @@ async function ensureAuthSchema(db){
   await add("users","name","TEXT DEFAULT ''"); await add("users","email","TEXT DEFAULT ''");
   await add("users","password_hash","TEXT DEFAULT ''"); await add("users","password_salt","TEXT DEFAULT ''");
   await add("users","created_at","TEXT DEFAULT ''"); await add("users","plan","TEXT");
-  await add("sessions","user_id","TEXT"); await add("sessions","expires_at","INTEGER DEFAULT 0"); await add("sessions","created_at","TEXT DEFAULT ''");
+  await add("sessions","token_hash","TEXT DEFAULT ''); await add("sessions","user_id","TEXT"); await add("sessions","expires_at","INTEGER DEFAULT 0"); await add("sessions","created_at","TEXT DEFAULT '');
   try{await db.prepare("CREATE UNIQUE INDEX IF NOT EXISTS users_email_idx ON users(email COLLATE NOCASE)").run()}catch{}
-  try{await db.prepare("CREATE INDEX IF NOT EXISTS sessions_user_idx ON sessions(user_id)").run()}catch{}
+  try{await db.prepare("CREATE INDEX IF NOT EXISTS sessions_user_idx ON sessions(user_id)").run()}catch{} try{await db.prepare("CREATE UNIQUE INDEX IF NOT EXISTS sessions_token_hash_idx ON sessions(token_hash)").run()}catch{}
 }
 
 async function ensureSchemaOnce(db){
@@ -128,14 +128,24 @@ async function api(r,e){
       if(limited(r,"register:"+requestIP(r),5,600000))return json({error:"Слишком много попыток регистрации. Попробуйте позже."},429);
       const b=await r.json(),name=String(b.name||"").trim().slice(0,80),email=String(b.email||"").trim().toLowerCase(),pw=String(b.password||"");
       if(name.length<2||!/^\S+@\S+\.\S+$/.test(email)||pw.length<10||pw.length>128)return json({error:"Укажите имя, корректную почту и пароль от 10 до 128 символов."},400);
-      const salt=b64u(crypto.getRandomValues(new Uint8Array(16))),hash=await passHash(pw,salt),id=crypto.randomUUID();
-      try{await e.DB.prepare("INSERT INTO users(id,name,email,password_hash,password_salt) VALUES(?,?,?,?,?)").bind(id,name,email,hash,salt).run()}
-      catch(err){const msg=String(err?.message||"");if(/unique|constraint/i.test(msg))return json({error:"Аккаунт с такой почтой уже существует."},409);throw err}
+      let salt,hash,id;
       try {
-        return json({user:{id,name,email}},201,{"Set-Cookie":await session(e,id)});
+        salt=b64u(crypto.getRandomValues(new Uint8Array(16)));
+        hash=await passHash(pw,salt);
+        id=crypto.randomUUID();
+        await e.DB.prepare("INSERT INTO users(id,name,email,password_hash,password_salt) VALUES(?,?,?,?,?)").bind(id,name,email,hash,salt).run();
+      } catch(err) {
+        console.error("Cat Lawyer registration insert error",err);
+        const msg=String(err?.message||"");
+        if(/unique|constraint/i.test(msg))return json({error:"Аккаунт с такой почтой уже существует."},409);
+        return json({error:"Не удалось создать аккаунт. Проверьте подключение базы данных и попробуйте ещё раз."},500);
+      }
+      try {
+        const cookie=await session(e,id);
+        return json({user:{id,name,email}},201,{"Set-Cookie":cookie});
       } catch(err) {
         console.error("Cat Lawyer session creation error",err);
-        return json({error:"Ошибка создания сессии.",debug:String(err?.message||err)},500);
+        return json({error:"Аккаунт создан, но не удалось открыть сессию. Попробуйте войти ещё раз."},500);
       }
     }
     if(p==="/api/auth/login"&&r.method==="POST"){
