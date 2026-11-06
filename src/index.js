@@ -2,6 +2,7 @@
 const json=(data,status=200,headers={})=>Response.json(data,{status,headers:{"Cache-Control":"no-store",...headers}});
 const enc=new TextEncoder();
 const rate=new Map();
+let schemaPromise=null;
 
 function limited(request,key,limit=20,windowMs=60000){
   const now=Date.now(),v=rate.get(key)||{n:0,t:now};
@@ -57,6 +58,11 @@ async function aiText(e,messages,max_tokens=900){
   if(!e.ai)throw new Error("AI binding missing");
   const out=await e.ai.run("@cf/meta/llama-3.1-8b-instruct-fp8",{messages,max_tokens,temperature:.65});
   return out.response||"Не удалось сформировать ответ.";
+}
+async function ensureSchemaOnce(db){
+  if(schemaPromise)return schemaPromise;
+  schemaPromise=ensureSchema(db).catch(err=>{schemaPromise=null;throw err});
+  return schemaPromise;
 }
 async function ensureSchema(db){
   const tableInfo=async table=>(await db.prepare("PRAGMA table_info("+table+")").all()).results||[];
@@ -217,7 +223,7 @@ export default {async fetch(request,env){
   const url=new URL(request.url);
   if(url.pathname.startsWith("/api/")){
     if(env.DB){
-      try{await ensureSchema(env.DB)}catch(err){
+      try{await ensureSchemaOnce(env.DB)}catch(err){
         console.error("Cat Lawyer schema error",err);
         const origin=request.headers.get("Origin")||"";
         const ok=origin==="https://cat-lawyer.pages.dev"||/^https:\/\/[a-z0-9-]+\.cat-lawyer\.pages\.dev$/.test(origin);
