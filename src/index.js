@@ -62,7 +62,7 @@ async function aiText(e,messages,max_tokens=420){
     "@cf/meta/llama-3.2-3b-instruct"
   ];
   const controller=new AbortController();
-  const timer=setTimeout(()=>controller.abort(),55000);
+  const timer=setTimeout(()=>controller.abort(),18000);
   try{
     let lastErr;
     const prompt=messages.map(x=>String(x?.content||"")).filter(Boolean).join("\n\n");
