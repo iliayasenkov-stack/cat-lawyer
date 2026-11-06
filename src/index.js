@@ -133,7 +133,7 @@ async function api(r,e){
         salt=b64u(crypto.getRandomValues(new Uint8Array(16)));
         hash=await passHash(pw,salt);
         id=crypto.randomUUID();
-        await e.DB.prepare("INSERT INTO users(id,name,email,password_hash,password_salt) VALUES(?,?,?,?,?)").bind(id,name,email,hash,salt).run();
+        await e.DB.prepare("INSERT INTO users(id,name,email,password_hash,password_salt,plan) VALUES(?,?,?,?,?,?)").bind(id,name,email,hash,salt,"Базовый").run();
       } catch(err) {
         console.error("Cat Lawyer registration insert error",err);
         const msg=String(err?.message||"");
