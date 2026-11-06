@@ -60,27 +60,46 @@ async function aiText(e,messages,max_tokens=900){
 }
 async function ensureSchema(db){
   const tableInfo=async table=>(await db.prepare("PRAGMA table_info("+table+")").all()).results||[];
-  const addColumn=async(table,name,definition)=>{
-    const rows=await tableInfo(table);
-    if(!rows.some(x=>x.name===name))await db.prepare("ALTER TABLE "+table+" ADD COLUMN "+name+" "+definition).run();
-  };
+  const has=async(table,name)=>{const rows=await tableInfo(table);return rows.some(x=>x.name===name)};
+  const add=async(table,name,definition)=>{if(!(await has(table,name)))await db.prepare("ALTER TABLE "+table+" ADD COLUMN "+name+" "+definition).run()};
+  const safeIndex=async(sql)=>{try{await db.prepare(sql).run()}catch(err){console.error("Cat Lawyer index migration:",err)}};
 
-  await db.prepare("CREATE TABLE IF NOT EXISTS users (id TEXT PRIMARY KEY,name TEXT NOT NULL,email TEXT NOT NULL UNIQUE COLLATE NOCASE,password_hash TEXT NOT NULL,password_salt TEXT NOT NULL,created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)").run();
-  await addColumn("users","plan","TEXT");
+  await db.prepare("CREATE TABLE IF NOT EXISTS users (id TEXT PRIMARY KEY,name TEXT,email TEXT UNIQUE COLLATE NOCASE,password_hash TEXT,password_salt TEXT,created_at TEXT DEFAULT CURRENT_TIMESTAMP,plan TEXT)").run();
+  await add("users","name","TEXT DEFAULT ''");
+  await add("users","email","TEXT DEFAULT ''");
+  await add("users","password_hash","TEXT DEFAULT ''");
+  await add("users","password_salt","TEXT DEFAULT ''");
+  await add("users","created_at","TEXT DEFAULT CURRENT_TIMESTAMP");
+  await add("users","plan","TEXT");
+  await safeIndex("CREATE UNIQUE INDEX IF NOT EXISTS users_email_idx ON users(email COLLATE NOCASE)");
 
-  await db.prepare("CREATE TABLE IF NOT EXISTS sessions (token_hash TEXT PRIMARY KEY,user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,expires_at INTEGER NOT NULL,created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)").run();
-  await db.prepare("CREATE INDEX IF NOT EXISTS sessions_user_idx ON sessions(user_id)").run();
+  await db.prepare("CREATE TABLE IF NOT EXISTS sessions (token_hash TEXT PRIMARY KEY,user_id TEXT,expires_at INTEGER,created_at TEXT DEFAULT CURRENT_TIMESTAMP)").run();
+  await add("sessions","user_id","TEXT");
+  await add("sessions","expires_at","INTEGER DEFAULT 0");
+  await add("sessions","created_at","TEXT DEFAULT CURRENT_TIMESTAMP");
+  await safeIndex("CREATE INDEX IF NOT EXISTS sessions_user_idx ON sessions(user_id)");
 
-  await db.prepare("CREATE TABLE IF NOT EXISTS conversations (id TEXT PRIMARY KEY,user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,message TEXT NOT NULL,reply TEXT NOT NULL,created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)").run();
-  await db.prepare("CREATE INDEX IF NOT EXISTS conversations_user_created_idx ON conversations(user_id,created_at DESC)").run();
+  await db.prepare("CREATE TABLE IF NOT EXISTS conversations (id TEXT PRIMARY KEY,user_id TEXT,message TEXT,reply TEXT,created_at TEXT DEFAULT CURRENT_TIMESTAMP)").run();
+  await add("conversations","user_id","TEXT");
+  await add("conversations","message","TEXT DEFAULT ''");
+  await add("conversations","reply","TEXT DEFAULT ''");
+  await add("conversations","created_at","TEXT DEFAULT CURRENT_TIMESTAMP");
+  await safeIndex("CREATE INDEX IF NOT EXISTS conversations_user_created_idx ON conversations(user_id,created_at DESC)");
 
-  await db.prepare("CREATE TABLE IF NOT EXISTS learn_progress (user_id TEXT PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,completed INTEGER NOT NULL DEFAULT 0,score INTEGER NOT NULL DEFAULT 0,created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)").run();
+  await db.prepare("CREATE TABLE IF NOT EXISTS learn_progress (user_id TEXT PRIMARY KEY,completed INTEGER DEFAULT 0,score INTEGER DEFAULT 0,created_at TEXT DEFAULT CURRENT_TIMESTAMP,updated_at TEXT DEFAULT CURRENT_TIMESTAMP)").run();
+  await add("learn_progress","completed","INTEGER DEFAULT 0");
+  await add("learn_progress","score","INTEGER DEFAULT 0");
+  await add("learn_progress","created_at","TEXT DEFAULT CURRENT_TIMESTAMP");
+  await add("learn_progress","updated_at","TEXT DEFAULT CURRENT_TIMESTAMP");
 
-  await db.prepare("CREATE TABLE IF NOT EXISTS reviews (id TEXT PRIMARY KEY,name TEXT NOT NULL,text TEXT NOT NULL,rating INTEGER NOT NULL DEFAULT 5,approved INTEGER NOT NULL DEFAULT 0,created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)").run();
-  await addColumn("reviews","rating","INTEGER NOT NULL DEFAULT 5");
-  await db.prepare("CREATE INDEX IF NOT EXISTS reviews_created_idx ON reviews(approved,created_at DESC)").run();
+  await db.prepare("CREATE TABLE IF NOT EXISTS reviews (id TEXT PRIMARY KEY,name TEXT,text TEXT,rating INTEGER DEFAULT 5,approved INTEGER DEFAULT 0,created_at TEXT DEFAULT CURRENT_TIMESTAMP)").run();
+  await add("reviews","name","TEXT DEFAULT 'Пользователь Cat Lawyer'");
+  await add("reviews","text","TEXT DEFAULT ''");
+  await add("reviews","rating","INTEGER DEFAULT 5");
+  await add("reviews","approved","INTEGER DEFAULT 0");
+  await add("reviews","created_at","TEXT DEFAULT CURRENT_TIMESTAMP");
+  await safeIndex("CREATE INDEX IF NOT EXISTS reviews_created_idx ON reviews(approved,created_at DESC)");
 }
-
 let schemaReady;
 async function api(r,e){
   const url=new URL(r.url),p=url.pathname;
