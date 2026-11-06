@@ -20,3 +20,24 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.22;z-
 @media(max-width:800px){.nav{width:calc(100% - 20px);margin-top:10px;height:64px;border-radius:19px}.nav .brand{font-size:16px}.nav .brand img,.nav .brand-mark{width:42px;height:42px}.side-cats{display:none}.section{padding:54px 0}.head h2{font-size:31px}.card,.tile,.price,.form{padding:21px}.friends-band{padding-top:62px;padding-bottom:64px}.paw-rail{display:none}}
 
 .learn-cat{width:150px;height:150px;margin:0 auto 12px;display:grid;place-items:center;animation:catFloat 2.8s ease-in-out infinite}.learn-cat img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 12px 10px rgba(77,35,23,.13));transition:.25s}.learn-cat.happy img{transform:translateY(-8px) rotate(-4deg) scale(1.04);filter:drop-shadow(0 16px 12px rgba(91,35,24,.18))}.learn-cat.sad img{transform:translateY(5px) rotate(5deg) scale(.97);filter:grayscale(.18) drop-shadow(0 8px 8px rgba(77,35,23,.12))}@keyframes catFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+
+/* Premium cat illustrations + learning quiz */
+.nav .brand img{display:none}
+.nav .brand:before{content:"";display:block;width:48px;height:48px;flex:0 0 48px;background:url('/assets/menu-cat.svg') center/contain no-repeat;border-radius:15px;filter:drop-shadow(0 4px 5px rgba(60,25,18,.18))}
+.learn-page{position:relative;overflow:visible}
+.learn-page .wrap{position:relative}
+.learn-page .head{position:relative;z-index:2}
+.learn-sleeping-cat{position:absolute;right:-110px;top:55px;width:290px;opacity:.95;z-index:0;filter:drop-shadow(0 15px 14px rgba(77,35,23,.12))}
+.learn-quiz{position:relative;z-index:2;max-width:900px!important;padding:30px 34px!important;background:rgba(255,250,245,.97)!important;box-shadow:0 22px 55px rgba(74,34,22,.14)!important}
+.learn-cat{width:230px!important;height:230px!important;margin:0 auto 2px!important}
+.learn-cat img{object-fit:contain!important}
+.learn-quiz #progressText{display:inline-block;background:#f4d8c0;color:#63291f;padding:8px 14px;border-radius:999px}
+.learn-quiz #question{font-family:Georgia,serif;font-size:32px;color:#4b241b;margin:20px 0 8px}
+.quiz-answers{display:grid;gap:12px;max-width:650px;margin:20px auto 4px}
+.quiz-answer{width:100%;min-height:58px;border:2px solid #e6c8b4;border-radius:18px;background:linear-gradient(180deg,#fffdf9,#fff5ed);color:#4d241c;font-weight:800;font-size:15px;display:flex;align-items:center;gap:16px;padding:12px 18px;text-align:left;cursor:pointer;box-shadow:0 6px 16px rgba(77,35,23,.06);transition:.18s}
+.quiz-answer:hover{transform:translateY(-2px);border-color:#a9664f;box-shadow:0 10px 22px rgba(77,35,23,.1);background:#fffaf5}
+.quiz-answer:disabled{cursor:default;opacity:.75;transform:none}
+.answer-icon{width:38px;height:38px;display:grid;place-items:center;flex:0 0 38px;border-radius:12px;background:#f4ddca;font-size:20px}
+.learn-quiz #next{margin-top:16px!important;padding:12px 24px}
+@media(max-width:1050px){.learn-sleeping-cat{right:-45px;width:220px;opacity:.65}.learn-quiz{max-width:820px!important}}
+@media(max-width:800px){.nav .brand:before{width:42px;height:42px;flex-basis:42px}.learn-sleeping-cat{display:none}.learn-quiz{padding:24px 16px!important}.learn-cat{width:190px!important;height:190px!important}.learn-quiz #question{font-size:26px}.quiz-answer{font-size:14px;min-height:54px}}
