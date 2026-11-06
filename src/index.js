@@ -133,7 +133,31 @@ async function api(r,e){
         salt=b64u(crypto.getRandomValues(new Uint8Array(16)));
         hash=await passHash(pw,salt);
         id=crypto.randomUUID();
-        await e.DB.prepare("INSERT INTO users(id,name,email,password_hash,password_salt,plan) VALUES(?,?,?,?,?,?)").bind(id,name,email,hash,salt,"Базовый").run();
+        const cols=(await e.DB.prepare("PRAGMA table_info(users)").all()).results||[];
+        const valuesByName={
+          id, name, email, password_hash:hash, password_salt:salt, plan:"Базовый",
+          username:email, login:email, full_name:name, display_name:name,
+          password:hash, role:"user", created_at:new Date().toISOString(), created:new Date().toISOString()
+        };
+        const insertCols=[],insertVals=[];
+        for(const col of cols){
+          const n=String(col.name||"");
+          if(!n)continue;
+          const isIntegerId=(n==="id"&&String(col.type||"").toUpperCase().includes("INT")&&Number(col.pk)===1);
+          if(isIntegerId)continue;
+          if(Object.prototype.hasOwnProperty.call(valuesByName,n)){
+            insertCols.push(n); insertVals.push(valuesByName[n]); continue;
+          }
+          if(Number(col.notnull)===1&&col.dflt_value==null){
+            const type=String(col.type||"").toUpperCase();
+            insertCols.push(n);
+            if(type.includes("INT")||type.includes("REAL")||type.includes("NUM"))insertVals.push(0);
+            else insertVals.push("");
+          }
+        }
+        if(!insertCols.length)throw new Error("users table has no writable columns");
+        const marks=insertCols.map(()=>"?").join(",");
+        await e.DB.prepare("INSERT INTO users("+insertCols.join(",")+") VALUES("+marks+")").bind(...insertVals).run();
       } catch(err) {
         console.error("Cat Lawyer registration insert error",err);
         const msg=String(err?.message||"");
