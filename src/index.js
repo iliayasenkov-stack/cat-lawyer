@@ -66,11 +66,11 @@ async function ensureSchema(db){
   const convOk=await has("conversations",["id","user_id","message","reply","created_at"]);
   const learnOk=await has("learn_progress",["user_id","completed","score"]);
   const reviewsOk=await has("reviews",["id","name","text","approved","created_at"]);
-  if(!usersOk&&(await tableInfo("users")).length)await db.prepare("ALTER TABLE users RENAME TO users_legacy").run();
-  if(!sessionsOk&&(await tableInfo("sessions")).length)await db.prepare("ALTER TABLE sessions RENAME TO sessions_legacy").run();
-  if(!convOk&&(await tableInfo("conversations")).length)await db.prepare("ALTER TABLE conversations RENAME TO conversations_legacy").run();
-  if(!learnOk&&(await tableInfo("learn_progress")).length)await db.prepare("ALTER TABLE learn_progress RENAME TO learn_progress_legacy").run();
-  if(!reviewsOk&&(await tableInfo("reviews")).length)await db.prepare("ALTER TABLE reviews RENAME TO reviews_legacy").run();
+  if(!usersOk&&(await tableInfo("users")).length){const legacy="users_legacy_"+Date.now();await db.prepare("ALTER TABLE users RENAME TO "+legacy).run();}
+  if(!sessionsOk&&(await tableInfo("sessions")).length){const legacy="sessions_legacy_"+Date.now();await db.prepare("ALTER TABLE sessions RENAME TO "+legacy).run();}
+  if(!convOk&&(await tableInfo("conversations")).length){const legacy="conversations_legacy_"+Date.now();await db.prepare("ALTER TABLE conversations RENAME TO "+legacy).run();}
+  if(!learnOk&&(await tableInfo("learn_progress")).length){const legacy="learn_progress_legacy_"+Date.now();await db.prepare("ALTER TABLE learn_progress RENAME TO "+legacy).run();}
+  if(!reviewsOk&&(await tableInfo("reviews")).length){const legacy="reviews_legacy_"+Date.now();await db.prepare("ALTER TABLE reviews RENAME TO "+legacy).run();}
   await db.prepare("CREATE TABLE IF NOT EXISTS users (id TEXT PRIMARY KEY,name TEXT NOT NULL,email TEXT NOT NULL UNIQUE COLLATE NOCASE,password_hash TEXT NOT NULL,password_salt TEXT NOT NULL,plan TEXT,created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)").run();
   if(!(await tableInfo("users")).some(x=>x.name==="plan"))await db.prepare("ALTER TABLE users ADD COLUMN plan TEXT").run();
   await db.prepare("CREATE TABLE IF NOT EXISTS sessions (token_hash TEXT PRIMARY KEY,user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,expires_at INTEGER NOT NULL,created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)").run();
