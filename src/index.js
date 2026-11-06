@@ -60,28 +60,27 @@ async function aiText(e,messages,max_tokens=900){
 }
 async function ensureSchema(db){
   const tableInfo=async table=>(await db.prepare("PRAGMA table_info("+table+")").all()).results||[];
-  const has=async(table,cols)=>{const rows=await tableInfo(table);return cols.every(c=>rows.some(x=>x.name===c))};
-  const usersOk=await has("users",["id","name","email","password_hash","password_salt","created_at"]);
-  const sessionsOk=await has("sessions",["token_hash","user_id","expires_at","created_at"]);
-  const convOk=await has("conversations",["id","user_id","message","reply","created_at"]);
-  const learnOk=await has("learn_progress",["user_id","completed","score"]);
-  const reviewsOk=await has("reviews",["id","name","text","approved","created_at"]);
-  if(!usersOk&&(await tableInfo("users")).length){await db.prepare("DROP INDEX IF EXISTS sessions_user_idx").run();const legacy="users_legacy_"+Date.now();await db.prepare("ALTER TABLE users RENAME TO "+legacy).run();}
-  if(!sessionsOk&&(await tableInfo("sessions")).length){await db.prepare("DROP INDEX IF EXISTS sessions_user_idx").run();const legacy="sessions_legacy_"+Date.now();await db.prepare("ALTER TABLE sessions RENAME TO "+legacy).run();}
-  if(!convOk&&(await tableInfo("conversations")).length){await db.prepare("DROP INDEX IF EXISTS conversations_user_created_idx").run();const legacy="conversations_legacy_"+Date.now();await db.prepare("ALTER TABLE conversations RENAME TO "+legacy).run();}
-  if(!learnOk&&(await tableInfo("learn_progress")).length){const legacy="learn_progress_legacy_"+Date.now();await db.prepare("ALTER TABLE learn_progress RENAME TO "+legacy).run();}
-  if(!reviewsOk&&(await tableInfo("reviews")).length){await db.prepare("DROP INDEX IF EXISTS reviews_created_idx").run();const legacy="reviews_legacy_"+Date.now();await db.prepare("ALTER TABLE reviews RENAME TO "+legacy).run();}
-  await db.prepare("CREATE TABLE IF NOT EXISTS users (id TEXT PRIMARY KEY,name TEXT NOT NULL,email TEXT NOT NULL UNIQUE COLLATE NOCASE,password_hash TEXT NOT NULL,password_salt TEXT NOT NULL,plan TEXT,created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)").run();
-  if(!(await tableInfo("users")).some(x=>x.name==="plan"))await db.prepare("ALTER TABLE users ADD COLUMN plan TEXT").run();
+  const addColumn=async(table,name,definition)=>{
+    const rows=await tableInfo(table);
+    if(!rows.some(x=>x.name===name))await db.prepare("ALTER TABLE "+table+" ADD COLUMN "+name+" "+definition).run();
+  };
+
+  await db.prepare("CREATE TABLE IF NOT EXISTS users (id TEXT PRIMARY KEY,name TEXT NOT NULL,email TEXT NOT NULL UNIQUE COLLATE NOCASE,password_hash TEXT NOT NULL,password_salt TEXT NOT NULL,created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)").run();
+  await addColumn("users","plan","TEXT");
+
   await db.prepare("CREATE TABLE IF NOT EXISTS sessions (token_hash TEXT PRIMARY KEY,user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,expires_at INTEGER NOT NULL,created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)").run();
   await db.prepare("CREATE INDEX IF NOT EXISTS sessions_user_idx ON sessions(user_id)").run();
+
   await db.prepare("CREATE TABLE IF NOT EXISTS conversations (id TEXT PRIMARY KEY,user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,message TEXT NOT NULL,reply TEXT NOT NULL,created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)").run();
   await db.prepare("CREATE INDEX IF NOT EXISTS conversations_user_created_idx ON conversations(user_id,created_at DESC)").run();
+
   await db.prepare("CREATE TABLE IF NOT EXISTS learn_progress (user_id TEXT PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,completed INTEGER NOT NULL DEFAULT 0,score INTEGER NOT NULL DEFAULT 0,created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)").run();
+
   await db.prepare("CREATE TABLE IF NOT EXISTS reviews (id TEXT PRIMARY KEY,name TEXT NOT NULL,text TEXT NOT NULL,rating INTEGER NOT NULL DEFAULT 5,approved INTEGER NOT NULL DEFAULT 0,created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)").run();
-  if(!(await tableInfo("reviews")).some(x=>x.name==="rating"))await db.prepare("ALTER TABLE reviews ADD COLUMN rating INTEGER NOT NULL DEFAULT 5").run();
+  await addColumn("reviews","rating","INTEGER NOT NULL DEFAULT 5");
   await db.prepare("CREATE INDEX IF NOT EXISTS reviews_created_idx ON reviews(approved,created_at DESC)").run();
 }
+
 let schemaReady;
 async function api(r,e){
   const url=new URL(r.url),p=url.pathname;
@@ -194,7 +193,13 @@ async function api(r,e){
 export default {async fetch(request,env){
   const url=new URL(request.url);
   if(url.pathname.startsWith("/api/")){
-    if(env.DB&&!schemaReady)schemaReady=ensureSchema(env.DB);
+    if(env.DB&&!schemaReady){
+      schemaReady=ensureSchema(env.DB).catch(err=>{
+        console.error("Cat Lawyer schema error",err);
+        schemaReady=null;
+        throw err;
+      });
+    }
     if(env.DB&&schemaReady)await schemaReady;
     const origin=request.headers.get("Origin")||"";
     const ok=origin==="https://cat-lawyer.pages.dev"||/^https:\/\/[a-z0-9-]+\.cat-lawyer\.pages\.dev$/.test(origin);
