@@ -1,5 +1,9 @@
 name: Deploy Cat Lawyer to Cloudflare Pages
 
+concurrency:
+  group: cat-lawyer-pages-deploy
+  cancel-in-progress: false
+
 on:
   push:
     branches: [main]
