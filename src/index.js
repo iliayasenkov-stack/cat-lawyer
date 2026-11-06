@@ -121,7 +121,7 @@ async function ensureSchema(db){
 }
 async function api(r,e){
   const url=new URL(r.url),p=url.pathname;
-  if(p==="/api/health"&&r.method==="GET")return json({ok:true,db:!!e.DB,ai:!!e.ai});
+  if(p==="/api/health"&&r.method==="GET"){\n    if(new URL(r.url).searchParams.get("debug")==="1"&&e.DB){\n      const tables={};\n      for(const t of ["users","sessions"]){\n        try{tables[t]=(await e.DB.prepare("PRAGMA table_info("+t+")").all()).results||[]}catch(err){tables[t]={error:String(err?.message||err)}}\n      }\n      return json({ok:true,db:true,ai:!!e.ai,tables});\n    }\n    return json({ok:true,db:!!e.DB,ai:!!e.ai});\n  }
   if(!e.DB)return json({error:"База данных не подключена."},503);
   try{
     if(p==="/api/auth/register"&&r.method==="POST"){
