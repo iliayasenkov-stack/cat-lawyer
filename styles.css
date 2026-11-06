@@ -46,3 +46,54 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.22;z-
 .nav .brand img{display:block!important}
 .nav .brand:before{display:none!important;content:none!important}
 .paw-rail,.side-cats{display:none!important}
+
+/* Cat Lawyer premium homepage */
+body{background:#f7eee6}
+.nav{margin-top:14px;height:64px;padding:0 10px 0 8px;background:rgba(91,32,29,.98);border-radius:20px;box-shadow:0 12px 32px rgba(75,31,22,.18);position:relative;z-index:10}
+.nav .brand{color:#fff!important}
+.nav .brand-mark{width:44px;height:44px;border-radius:13px;background:#fff8f1;border:2px solid rgba(255,255,255,.65)}
+.nav .brand-mark img{object-fit:cover}
+.navlinks a{color:#fff1e9!important;opacity:.92}
+.navlinks a:hover{opacity:1}
+.hero{min-height:575px;padding:58px 0 72px;position:relative}
+.hero h1{font-weight:800}
+.hero .lead{font-size:15px;max-width:560px}
+.hero-art{min-height:455px}
+.hero-art .blob{width:420px;height:420px;background:linear-gradient(145deg,#ffe6cf,#f3cdb4);box-shadow:0 25px 65px rgba(94,48,31,.1)}
+.hero-ring{position:absolute;border:2px solid rgba(153,83,56,.18);border-radius:50%;z-index:0}
+.ring-one{width:455px;height:455px}
+.ring-two{width:355px;height:355px;border-style:dashed;transform:rotate(17deg)}
+.hero-doodle{position:absolute;color:#9b5a43;font-size:30px;font-weight:800;z-index:2}
+.doodle-one{top:48px;right:68px}
+.doodle-two{bottom:72px;left:48px;font-size:25px}
+.hero-cat{width:340px!important;height:400px!important;border-radius:42% 42% 48% 48%!important;background:transparent!important;border:0!important;box-shadow:none!important;overflow:visible!important}
+.hero-cat img{object-fit:contain!important;filter:drop-shadow(0 22px 20px rgba(67,35,26,.2));transform:translateY(9px)}
+.float{font-size:11px;padding:12px 15px;border-radius:14px}
+.float.one{top:72px;left:2px}
+.float.two{bottom:78px;right:0}
+.steps{gap:18px}
+.process-card{position:relative;min-height:235px;padding:27px!important;overflow:hidden}
+.process-card:after{content:"";position:absolute;width:95px;height:95px;border-radius:50%;right:-35px;bottom:-35px;background:#f7e4d6}
+.step-no{position:absolute;right:20px;top:20px;font-size:12px;font-weight:800;color:#b18a79;letter-spacing:1px}
+.process-card .ico{width:50px;height:50px}
+.process-card h3{font-size:18px;margin-top:20px}
+.process-card p{max-width:270px}
+.card-link{display:inline-block;margin-top:18px;font-size:11px;font-weight:800;color:#7a3228}
+.trust-strip{background:#fffaf6;border-top:1px solid #ead9ce;border-bottom:1px solid #ead9ce}
+.trust-inner{min-height:92px;display:flex;align-items:center;justify-content:center;gap:48px}
+.trust-inner div{display:flex;flex-direction:column;gap:4px;text-align:center}
+.trust-inner b{font-size:13px;color:#5b201d}
+.trust-inner span{font-size:10px;color:#90766c}
+.trust-inner i{height:34px;width:1px;background:#ead9ce}
+#chat .section-head .eyebrow{margin-bottom:13px}
+#chat .chat-shell{box-shadow:0 18px 55px rgba(79,40,27,.1)}
+@media(max-width:760px){
+ .nav{margin-top:8px;height:60px;border-radius:16px}
+ .hero{min-height:auto;padding:42px 0 55px}
+ .hero-art{min-height:330px}
+ .hero-art .blob{width:290px;height:290px}
+ .ring-one{width:315px;height:315px}.ring-two{width:265px;height:265px}
+ .hero-cat{width:245px!important;height:300px!important}
+ .doodle-one{top:20px;right:25px}.doodle-two{bottom:38px;left:18px}
+ .trust-inner{gap:13px;padding:18px 0}.trust-inner span{font-size:9px}.trust-inner b{font-size:11px}
+}
