@@ -56,19 +56,30 @@ async function adminCookie(env){
 }
 async function aiText(e,messages,max_tokens=420){
   if(!e.ai)throw new Error("AI binding missing");
+  const models=[
+    "@cf/meta/llama-3.1-8b-instruct-fast",
+    "@cf/meta/llama-3.1-8b-instruct-fp8",
+    "@cf/meta/llama-3.2-3b-instruct"
+  ];
   const controller=new AbortController();
   const timer=setTimeout(()=>controller.abort(),55000);
   try{
-    let out;
-    try{
-      out=await e.ai.run("@cf/meta/llama-3.1-8b-instruct-fast",{messages,max_tokens,temperature:.45});
-    }catch(firstErr){
-      const prompt=messages.map(x=>String(x?.content||"")).filter(Boolean).join("\n\n");
-      out=await e.ai.run("@cf/meta/llama-3.1-8b-instruct-fast",{prompt,max_tokens,temperature:.45});
+    let lastErr;
+    const prompt=messages.map(x=>String(x?.content||"")).filter(Boolean).join("\n\n");
+    for(const model of models){
+      for(const input of [
+        {messages,max_tokens,temperature:.45},
+        {prompt,max_tokens,temperature:.45}
+      ]){
+        try{
+          const out=await e.ai.run(model,input);
+          const response=typeof out==="string"?out:(out?.response||out?.result?.response||"");
+          if(response&&String(response).trim())return String(response).trim();
+          lastErr=new Error(model+" returned an empty response");
+        }catch(err){lastErr=err}
+      }
     }
-    const response=typeof out==="string"?out:(out?.response||out?.result?.response||"");
-    if(!response)throw new Error("Workers AI returned an empty response");
-    return response;
+    throw lastErr||new Error("Workers AI returned an empty response");
   }catch(err){
     if(err?.name==="AbortError")throw new Error("Workers AI request timed out");
     throw err;
