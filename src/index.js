@@ -20,6 +20,8 @@ async function api(r,e){
   if(p==="/api/auth/me"&&r.method==="GET")return json({user:await userFor(r,e)});
   if(p==="/api/plan"&&r.method==="GET"){const u=await userFor(r,e);if(!u)return json({error:"Требуется вход."},401);const row=await e.DB.prepare("SELECT plan FROM users WHERE id=?").bind(u.id).first();return json({plan:row?.plan||null});}
   if(p==="/api/plan"&&r.method==="POST"){const u=await userFor(r,e);if(!u)return json({error:"Требуется вход."},401);const b=await r.json(),plan=String(b.plan||"").trim();const allowed=["Базовый","Расширенный","Максимальный"];if(!allowed.includes(plan))return json({error:"Неизвестный тариф."},400);await e.DB.prepare("UPDATE users SET plan=? WHERE id=?").bind(plan,u.id).run();return json({plan});}
+  if(p==="/api/reviews"&&r.method==="GET"){const {results=[]}=await e.DB.prepare("SELECT id,name,text,created_at FROM reviews WHERE approved=1 ORDER BY created_at DESC LIMIT 50").all();return json({items:results});}
+  if(p==="/api/reviews"&&r.method==="POST"){const b=await r.json(),name=String(b.name||"Пользователь Cat Lawyer").trim().slice(0,80),text=String(b.text||"").trim();if(text.length<3||text.length>1000)return json({error:"Отзыв должен содержать от 3 до 1000 символов."},400);const id=crypto.randomUUID();await e.DB.prepare("INSERT INTO reviews(id,name,text,approved) VALUES(?,?,?,1)").bind(id,name||"Пользователь Cat Lawyer",text).run();return json({id},201);}
   if(p==="/api/history"&&r.method==="GET"){const u=await userFor(r,e);if(!u)return json({error:"Требуется вход."},401);const {results=[]}=await e.DB.prepare("SELECT id,message,reply,created_at FROM conversations WHERE user_id=? ORDER BY created_at DESC LIMIT 100").bind(u.id).all();return json({items:results});}
   if(p==="/api/history"&&r.method==="POST"){const u=await userFor(r,e);if(!u)return json({error:"Требуется вход."},401);const b=await r.json(),m=String(b.message||"").trim(),a=String(b.reply||"").trim();if(!m||m.length>5000||!a||a.length>12000)return json({error:"Некорректная запись."},400);const id=crypto.randomUUID();await e.DB.prepare("INSERT INTO conversations(id,user_id,message,reply) VALUES(?,?,?,?)").bind(id,u.id,m,a).run();return json({id},201);}
   if(p==="/api/chat"&&r.method==="POST"){const b=await r.json(),m=String(b.message||"").trim();if(!m||m.length>5000)return json({error:"Сообщение пустое или слишком длинное."},400);if(!e.ai)return json({error:"Workers AI binding не подключён."},503);const out=await e.ai.run("@cf/meta/llama-3.1-8b-instruct-fp8",{messages:[{role:"system",content:"Ты Cat Lawyer — юридический информационный помощник по законодательству РФ. Отвечай по-русски, естественно, учитывай детали. Если фактов мало, задай до трёх конкретных вопросов. Не выдумывай статьи, сроки, судебную практику и адреса. Отделяй факты от предположений и рекомендуй проверять актуальную редакцию норм по официальным источникам. Объясняй возможные права, следующие шаги и куда обратиться. Не проси лишние персональные данные. Это не юридическое заключение."},{role:"user",content:m}],max_tokens:900,temperature:.65});const reply=out.response||"Не удалось сформировать ответ.";const u=await userFor(r,e);if(u)await e.DB.prepare("INSERT INTO conversations(id,user_id,message,reply) VALUES(?,?,?,?)").bind(crypto.randomUUID(),u.id,m,reply).run();return json({reply});}
@@ -30,7 +32,7 @@ let schemaReady;
 async function ensureSchema(db){
  if(!schemaReady)schemaReady=(async()=>{
   const tableInfo=async table=>{const r=await db.prepare("PRAGMA table_info("+table+")").all();return r.results||[]};
-  const has=async(table,cols)=>{const rows=await tableInfo(table);return rows.length===cols.length&&cols.every(c=>rows.some(x=>x.name===c))};
+  const has=async(table,cols)=>{const rows=await tableInfo(table);return cols.every(c=>rows.some(x=>x.name===c))};
   const usersOk=await has("users",["id","name","email","password_hash","password_salt","created_at"]);
   const sessionsOk=await has("sessions",["token_hash","user_id","expires_at","created_at"]);
   const convOk=await has("conversations",["id","user_id","message","reply","created_at"]);
@@ -43,6 +45,8 @@ async function ensureSchema(db){
   await db.prepare("CREATE INDEX IF NOT EXISTS sessions_user_idx ON sessions(user_id)").run();
   await db.prepare("CREATE TABLE IF NOT EXISTS conversations (id TEXT PRIMARY KEY,user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,message TEXT NOT NULL,reply TEXT NOT NULL,created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)").run();
   await db.prepare("CREATE INDEX IF NOT EXISTS conversations_user_created_idx ON conversations(user_id,created_at DESC)").run();
+  await db.prepare("CREATE TABLE IF NOT EXISTS reviews (id TEXT PRIMARY KEY,name TEXT NOT NULL,text TEXT NOT NULL,approved INTEGER NOT NULL DEFAULT 1,created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)").run();
+  await db.prepare("CREATE INDEX IF NOT EXISTS reviews_created_idx ON reviews(approved,created_at DESC)").run();
  })();
  return schemaReady;
 }
