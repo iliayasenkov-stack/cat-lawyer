@@ -100,7 +100,6 @@ async function ensureSchema(db){
   await add("reviews","created_at","TEXT DEFAULT ''");
   await safeIndex("CREATE INDEX IF NOT EXISTS reviews_created_idx ON reviews(approved,created_at DESC)");
 }
-let schemaReady;
 async function api(r,e){
   const url=new URL(r.url),p=url.pathname;
   if(p==="/api/health"&&r.method==="GET")return json({ok:true,db:!!e.DB,ai:!!e.ai});
@@ -212,14 +211,15 @@ async function api(r,e){
 export default {async fetch(request,env){
   const url=new URL(request.url);
   if(url.pathname.startsWith("/api/")){
-    if(env.DB&&!schemaReady){
-      schemaReady=ensureSchema(env.DB).catch(err=>{
+    if(env.DB){
+      try{await ensureSchema(env.DB)}catch(err){
         console.error("Cat Lawyer schema error",err);
-        schemaReady=null;
-        throw err;
-      });
+        const origin=request.headers.get("Origin")||"";
+        const ok=origin==="https://cat-lawyer.pages.dev"||/^https:\/\/[a-z0-9-]+\.cat-lawyer\.pages\.dev$/.test(origin);
+        const headers={"Access-Control-Allow-Origin":ok?origin:"https://cat-lawyer.pages.dev","Access-Control-Allow-Credentials":"true","Access-Control-Allow-Methods":"GET,POST,OPTIONS","Access-Control-Allow-Headers":"Content-Type,X-Admin-Key","Vary":"Origin"};
+        return new Response(JSON.stringify({error:"База данных временно недоступна. Попробуйте ещё раз через несколько секунд."}),{status:503,headers:{"content-type":"application/json; charset=utf-8",...headers}});
+      }
     }
-    if(env.DB&&schemaReady)await schemaReady;
     const origin=request.headers.get("Origin")||"";
     const ok=origin==="https://cat-lawyer.pages.dev"||/^https:\/\/[a-z0-9-]+\.cat-lawyer\.pages\.dev$/.test(origin);
     const headers={"Access-Control-Allow-Origin":ok?origin:"https://cat-lawyer.pages.dev","Access-Control-Allow-Credentials":"true","Access-Control-Allow-Methods":"GET,POST,OPTIONS","Access-Control-Allow-Headers":"Content-Type,X-Admin-Key","Vary":"Origin"};
