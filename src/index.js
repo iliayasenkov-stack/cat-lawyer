@@ -62,6 +62,18 @@ async function aiText(e,messages,max_tokens=900){
 async function ensureAuthSchema(db){
   await db.prepare("CREATE TABLE IF NOT EXISTS cl_auth_users (id TEXT PRIMARY KEY,name TEXT NOT NULL,email TEXT NOT NULL UNIQUE COLLATE NOCASE,password_hash TEXT NOT NULL,password_salt TEXT NOT NULL,created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,plan TEXT NOT NULL DEFAULT 'Базовый')").run();
   await db.prepare("CREATE TABLE IF NOT EXISTS cl_auth_sessions (token_hash TEXT PRIMARY KEY,user_id TEXT NOT NULL,expires_at INTEGER NOT NULL,created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)").run();
+  const info=async t=>(await db.prepare("PRAGMA table_info("+t+")").all()).results||[];
+  const add=async(t,n,d)=>{if(!(await info(t)).some(x=>x.name===n))await db.prepare("ALTER TABLE "+t+" ADD COLUMN "+n+" "+d).run()};
+  await add("cl_auth_users","name","TEXT DEFAULT ''");
+  await add("cl_auth_users","email","TEXT DEFAULT ''");
+  await add("cl_auth_users","password_hash","TEXT DEFAULT ''");
+  await add("cl_auth_users","password_salt","TEXT DEFAULT ''");
+  await add("cl_auth_users","created_at","TEXT DEFAULT ''");
+  await add("cl_auth_users","plan","TEXT DEFAULT 'Базовый'");
+  await add("cl_auth_sessions","token_hash","TEXT DEFAULT ''");
+  await add("cl_auth_sessions","user_id","TEXT DEFAULT ''");
+  await add("cl_auth_sessions","expires_at","INTEGER DEFAULT 0");
+  await add("cl_auth_sessions","created_at","TEXT DEFAULT ''");
 }
 async function ensureSchemaOnce(db){
   if(schemaPromise)return schemaPromise;
