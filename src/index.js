@@ -91,7 +91,7 @@ async function api(r,e){
     if(p==="/api/auth/register"&&r.method==="POST"){
       if(limited(r,"register:"+requestIP(r),5,600000))return json({error:"Слишком много попыток регистрации. Попробуйте позже."},429);
       const b=await r.json(),name=String(b.name||"").trim().slice(0,80),email=String(b.email||"").trim().toLowerCase(),pw=String(b.password||"");
-      if(name.length<2||!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)||pw.length<10||pw.length>128)return json({error:"Укажите имя, корректную почту и пароль от 10 до 128 символов."},400);
+      if(name.length<2||!/^\S+@\S+\.\S+$/.test(email)||pw.length<10||pw.length>128)return json({error:"Укажите имя, корректную почту и пароль от 10 до 128 символов."},400);
       const salt=b64u(crypto.getRandomValues(new Uint8Array(16))),hash=await passHash(pw,salt),id=crypto.randomUUID();
       try{await e.DB.prepare("INSERT INTO users(id,name,email,password_hash,password_salt) VALUES(?,?,?,?,?)").bind(id,name,email,hash,salt).run()}
       catch(err){const msg=String(err?.message||"");if(/unique|constraint/i.test(msg))return json({error:"Аккаунт с такой почтой уже существует."},409);throw err}
