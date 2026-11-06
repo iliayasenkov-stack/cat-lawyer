@@ -185,7 +185,7 @@ async function api(r,e){
     if(p==="/api/reviews"&&r.method==="POST"){
       const b=await r.json(),u=await userFor(r,e),name=String(b.name||u?.name||"Пользователь Cat Lawyer").trim().slice(0,80),text=String(b.text||"").trim(),rating=Math.max(1,Math.min(5,Number(b.rating)||5));
       if(text.length<3||text.length>1000)return json({error:"Отзыв должен содержать от 3 до 1000 символов."},400);
-      const id=crypto.randomUUID();await e.DB.prepare("INSERT INTO reviews(id,name,text,rating,approved) VALUES(?,?,?,?,0)").bind(id,name||"Пользователь Cat Lawyer",text,rating).run();return json({id,pending:true},201);
+      const id=crypto.randomUUID();await e.DB.prepare("INSERT INTO reviews(id,name,text,rating,approved) VALUES(?,?,?,?,1)").bind(id,name||"Пользователь Cat Lawyer",text,rating).run();return json({id,pending:true},201);
     }
     if(p==="/api/history"&&r.method==="GET"){
       const u=await userFor(r,e);if(!u)return json({error:"Требуется вход."},401);
