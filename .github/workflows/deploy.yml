@@ -33,3 +33,8 @@ jobs:
             echo "AI smoke test failed with HTTP $status"
             exit 1
           fi
+          body=$(printf "%s" "$response" | sed '/^HTTP_STATUS:/d')
+          if ! printf "%s" "$body" | python -c 'import json,sys; d=json.load(sys.stdin); r=str(d.get("reply","")).strip(); sys.exit(0 if len(r)>=40 else 1)'; then
+            echo "AI smoke test failed: empty or suspiciously short reply"
+            exit 1
+          fi
