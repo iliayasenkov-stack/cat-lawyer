@@ -62,6 +62,12 @@ async function aiText(e,messages,max_tokens=900){
 async function ensureAuthSchema(db){
   await db.prepare("CREATE TABLE IF NOT EXISTS users (id TEXT PRIMARY KEY,name TEXT,email TEXT UNIQUE COLLATE NOCASE,password_hash TEXT,password_salt TEXT,created_at TEXT DEFAULT CURRENT_TIMESTAMP,plan TEXT)").run();
   await db.prepare("CREATE TABLE IF NOT EXISTS sessions (token_hash TEXT PRIMARY KEY,user_id TEXT,expires_at INTEGER,created_at TEXT DEFAULT CURRENT_TIMESTAMP)").run();
+  const info=async t=>(await db.prepare("PRAGMA table_info("+t+")").all()).results||[];
+  const add=async(t,n,d)=>{if(!(await info(t)).some(x=>x.name===n))await db.prepare("ALTER TABLE "+t+" ADD COLUMN "+n+" "+d).run()};
+  await add("users","name","TEXT DEFAULT ''"); await add("users","email","TEXT DEFAULT ''");
+  await add("users","password_hash","TEXT DEFAULT ''"); await add("users","password_salt","TEXT DEFAULT ''");
+  await add("users","created_at","TEXT DEFAULT ''"); await add("users","plan","TEXT");
+  await add("sessions","user_id","TEXT"); await add("sessions","expires_at","INTEGER DEFAULT 0"); await add("sessions","created_at","TEXT DEFAULT ''");
   try{await db.prepare("CREATE UNIQUE INDEX IF NOT EXISTS users_email_idx ON users(email COLLATE NOCASE)").run()}catch{}
   try{await db.prepare("CREATE INDEX IF NOT EXISTS sessions_user_idx ON sessions(user_id)").run()}catch{}
 }
