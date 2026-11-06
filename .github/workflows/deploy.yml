@@ -21,3 +21,15 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      - name: Smoke test real AI chat
+        shell: bash
+        run: |
+          set -euo pipefail
+          sleep 5
+          response=$(curl -sS -X POST "https://cat-lawyer.pages.dev/api/chat" -H "Content-Type: application/json" --data '{"message":"Проверка связи Cat Lawyer. Ответь одним словом: готово."}' -w "\nHTTP_STATUS:%{http_code}")
+          echo "$response"
+          status=$(printf "%s" "$response" | sed -n 's/^HTTP_STATUS://p')
+          if [ "$status" != "200" ]; then
+            echo "AI smoke test failed with HTTP $status"
+            exit 1
+          fi
