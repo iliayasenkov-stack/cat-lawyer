@@ -59,7 +59,13 @@ async function aiText(e,messages,max_tokens=900){
   const controller=new AbortController();
   const timer=setTimeout(()=>controller.abort(),40000);
   try{
-    const out=await e.ai.run("@cf/meta/llama-3.1-8b-instruct-fast",{messages,max_tokens,temperature:.65});
+    let out;
+    try{
+      out=await e.ai.run("@cf/meta/llama-3.1-8b-instruct-fast",{messages,max_tokens,temperature:.65});
+    }catch(firstErr){
+      const prompt=messages.map(x=>String(x?.content||"")).filter(Boolean).join("\n\n");
+      out=await e.ai.run("@cf/meta/llama-3.1-8b-instruct-fast",{prompt,max_tokens,temperature:.65});
+    }
     const response=typeof out==="string"?out:(out?.response||out?.result?.response||"");
     if(!response)throw new Error("Workers AI returned an empty response");
     return response;
