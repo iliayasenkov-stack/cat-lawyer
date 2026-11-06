@@ -1,42 +1,92 @@
 <!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Изучай язык права — Cat Lawyer</title><link rel="stylesheet" href="/styles.css"><style>
-.reference-learn{min-height:calc(100vh - 150px);background:#f7eee6;padding-bottom:70px}
-.reference-hero{padding:46px 0 30px;text-align:center}
-.reference-badge{display:inline-flex;align-items:center;gap:9px;padding:8px 13px;border:1px solid #dfc4b2;border-radius:999px;background:#fff8f1;color:#6b2b20;font-size:10px;font-weight:800;letter-spacing:.12em}
-.badge-dot{width:7px;height:7px;border-radius:50%;background:#9a5a43}
-.reference-hero h1{margin:18px 0 8px;font-size:58px;letter-spacing:-2.5px}
-.reference-hero p{max-width:600px;margin:0 auto;color:#7b655c;line-height:1.7}
-.hero-rule{margin:20px auto 0;color:#b47b5f;font-size:14px}
-.reference-workspace{padding:10px 0 40px}
-.workspace-grid{align-items:stretch}
-.progress-panel{border:1px solid #e3cdbd;border-radius:26px;padding:23px;background:#fff9f4;box-shadow:0 16px 38px rgba(77,35,23,.07)}
-.panel-title{font-size:10px;font-weight:800;letter-spacing:.13em;color:#7c5b4e}
-.progress-ring{width:118px;height:118px;border-radius:50%;margin:24px auto 14px;display:grid;place-items:center;background:radial-gradient(circle,#fff9f4 58%,transparent 59%),conic-gradient(#8a3f32 0 17%,#ead8cc 17% 100%);box-shadow:inset 0 0 0 1px #e1c8b8}
-.progress-ring strong{font-family:Georgia,serif;font-size:27px;color:#64271f}
-.progress-copy{text-align:center;color:#7d655c;font-size:11px}.progress-copy b{display:block;color:#4b241b;margin-bottom:10px}
-.mini-progress{height:5px;border-radius:99px;background:#eadbd2;overflow:hidden;margin-bottom:10px}.mini-progress i{display:block;height:100%;width:17%;background:#7a3328;border-radius:inherit}
-.lesson-menu{display:grid;gap:7px;margin-top:28px}.lesson-menu button{border:0;background:transparent;text-align:left;padding:11px 12px;border-radius:12px;color:#7b655c;font-size:11px;cursor:pointer}.lesson-menu button.active{background:#f1ddcf;color:#64271f;font-weight:800}
-.quiz-card-ref{overflow:hidden;border:1px solid #e1c6b5;border-radius:28px;background:#fffaf5;box-shadow:0 22px 55px rgba(77,35,23,.11)}
-.quiz-top{display:flex;justify-content:space-between;align-items:center;padding:16px 25px;border-bottom:1px solid #ead8cc;color:#80675d;font-size:10px;font-weight:800;letter-spacing:.08em}
-.timer-ref{color:#9a5a43}
-.quiz-main-ref{display:grid;grid-template-columns:300px 1fr;gap:28px;padding:30px}
-.judge-stage{position:relative;display:grid;place-items:center;min-height:340px;border-radius:22px;background:radial-gradient(circle at 50% 45%,#fffaf5 0,#f4dfd1 70%,#eed1bd 100%);overflow:hidden}
-.judge-stage img{width:265px;height:265px;object-fit:contain;filter:drop-shadow(0 18px 15px rgba(77,35,23,.15))}
-.judge-glow{position:absolute;width:220px;height:220px;border-radius:50%;background:#fff;opacity:.36}
-.gavel-mark{position:absolute;bottom:18px;left:18px;font-size:9px;letter-spacing:.16em;color:#96624f;font-weight:800}
-.question-side{padding:15px 8px}.question-side h2{font-family:Georgia,serif;font-size:35px;line-height:1.08;margin:0 0 8px;color:#321916}.question-side .status{color:#91756a}
-.quiz-answers{display:grid;gap:11px;margin-top:22px}
-.quiz-answer{display:flex!important;align-items:center!important;gap:14px!important;width:100%!important;min-height:61px;border:1px solid #ddbaa5!important;border-radius:16px!important;background:#fffaf6!important;color:#4e211b!important;font-size:15px!important;font-weight:700!important;padding:11px 15px!important;text-align:left;cursor:pointer;box-shadow:0 5px 15px rgba(80,38,28,.045);transition:.16s}
-.quiz-answer:hover{border-color:#9c5744!important;transform:translateY(-1px);box-shadow:0 9px 20px rgba(80,38,28,.09)}
-.quiz-answer:disabled{opacity:.7;transform:none}
-.answer-letter{width:32px;height:32px;flex:0 0 32px;display:grid;place-items:center;border-radius:10px;background:#f1ddcf;color:#742f24;font-family:Georgia,serif;font-weight:800}
-.quiz-bottom{border-top:1px solid #ead8cc;display:flex;align-items:center;gap:12px;padding:15px 24px}.ref-back,.ref-next{border-radius:999px;padding:11px 18px;font-weight:800;font-size:11px;cursor:pointer}.ref-back{background:#fff8f1;border:1px solid #d7b7a5;color:#713026}.ref-next{background:#68271f;border:1px solid #68271f;color:white}.result-ref{flex:1;text-align:center;margin:0}
-.cat-poster{position:relative;min-height:420px;display:flex;align-items:flex-end;justify-content:center}.poster-cat{position:absolute;top:10px;width:205px;height:205px;border-radius:50%;background:#f0d7c7;display:grid;place-items:center;box-shadow:0 18px 42px rgba(77,35,23,.1)}.poster-cat img{width:188px;height:188px;object-fit:contain}.book-stack{width:180px;display:grid;gap:4px;margin-bottom:10px}.book-stack i{height:25px;border-radius:4px 10px 4px 4px;background:#743026;border:1px solid #59221b}.book-stack i:nth-child(2){width:160px;justify-self:end;background:#8e5b43}.book-stack i:nth-child(3){width:170px;background:#5f2a22}.poster-scale{position:absolute;right:4px;bottom:85px;font-size:9px;letter-spacing:.18em;color:#9a5a43;font-weight:800}
-@media(max-width:1050px){.workspace-grid{grid-template-columns:205px minmax(0,1fr)}.cat-poster{display:none}}
-@media(max-width:760px){.reference-hero{padding-top:30px}.reference-hero h1{font-size:38px}.reference-workspace{padding-top:5px}.workspace-grid{grid-template-columns:1fr}.progress-panel{display:none}.quiz-main-ref{grid-template-columns:1fr;padding:18px}.judge-stage{min-height:230px}.judge-stage img{width:205px;height:205px}.question-side{padding:6px 0}.question-side h2{font-size:28px}.quiz-answer{min-height:58px;font-size:14px!important}.quiz-bottom{padding:13px 16px}}
-</style></head><body><header class="wrap nav"><a class="brand" href="/"><img src="/assets/cat-lawyer-logo.svg" alt="Cat Lawyer"> CAT LAWYER</a><nav class="navlinks"><a href="/">Главная</a><a href="/assistant.html">Помощник</a><a href="/documents.html">Документы</a><a href="/learn.html">Обучение</a><a href="/pricing.html">Тарифы</a><a href="/friends.html">Друзья</a><a href="/reviews.html">Отзывы</a><a href="/about.html">О нас</a><a href="/help.html">Помощь</a><a href="/account.html">Кабинет</a></nav><button class="btn light menu-toggle" type="button" onclick="toggleMobileMenu()">Меню ☰</button></header><div id="mobileMenu" class="mobile-menu-panel"><a href="/">Главная</a><a href="/assistant.html">Помощник</a><a href="/documents.html">Документы</a><a href="/learn.html">Обучение</a><a href="/pricing.html">Тарифы</a><a href="/friends.html">Друзья</a><a href="/reviews.html">Отзывы</a><a href="/about.html">О нас</a><a href="/help.html">Помощь</a><a href="/account.html">Личный кабинет</a></div><main class="reference-learn"><div class="learn-atmosphere"><div class="column-ghost"></div><div class="paw-soft p1">✦</div><div class="paw-soft p2">✦</div><div class="paw-soft p3">✦</div></div>
-<section class="reference-hero"><div class="wrap"><div class="reference-badge"><span class="badge-dot"></span><span>АКАДЕМИЯ CAT LAWYER</span></div><h1>Изучай язык права</h1><p>Пройди урок, проверь свои знания и стань настоящим знатоком закона!</p><div class="hero-rule"><span>✦</span></div></div></section>
-<section class="reference-workspace"><div class="wrap workspace-grid">
-<aside class="progress-panel"><div class="panel-title">ВАШ ПРОГРЕСС</div><div class="progress-ring"><strong id="percent">17%</strong></div><div class="progress-copy"><b id="progressTextSide">Урок 1 из 6</b><div class="mini-progress"><i id="sideProgress"></i></div><span>+50 баллов за урок</span></div><div class="lesson-menu"><button class="active">Уроки</button><button>Достижения</button><button>Статистика</button><button>Настройки</button></div></aside>
-<div class="quiz-card-ref"><div class="quiz-top"><span id="progressText">Вопрос 1 из 6</span><span class="timer-ref">УРОК 01 / 06</span></div><div class="quiz-main-ref"><div class="judge-stage"><div class="judge-glow"></div><img src="/assets/cat-lawyer-logo.svg" alt="Кот Cat Lawyer"><div class="gavel-mark">CAT LAWYER</div></div><div class="question-side"><h2 id="question">Кто такой истец?</h2><p class="status" id="hint">Выбери правильный вариант.</p><div id="answers" class="quiz-answers"><button class="quiz-answer" type="button" data-i="0"><span class="answer-letter">A</span><span>Судья</span></button><button class="quiz-answer" type="button" data-i="1"><span class="answer-letter">B</span><span>Тот, кто подал иск</span></button><button class="quiz-answer" type="button" data-i="2"><span class="answer-letter">C</span><span>Ответчик</span></button></div></div></div><div class="quiz-bottom"><button class="ref-back" id="backLesson" type="button">← &nbsp; Назад</button><div id="r" class="status result-ref"></div><button class="ref-next" id="next" type="button" style="display:none">Далее &nbsp; →</button></div></div>
-<aside class="cat-poster"><div class="poster-cat"><img src="/assets/cat-lawyer-logo.svg" alt=""></div><div class="book-stack"><i></i><i></i><i></i></div><div class="poster-scale">LEX · 2026</div></aside>
-</div></section></main><footer class="footer"><div class="wrap footer-inner"><b>🐱 Cat Lawyer — юридическое просто.</b><span>© 2026 Cat Lawyer. Информационный сервис.</span><span><a href="/assistant.html">Задать вопрос</a> · <a href="/pricing.html">Тарифы</a></span></div></footer><script>const lessons=[{q:'Кто такой истец?',a:['Судья','Тот, кто подал иск','Ответчик'],correct:1,explain:'Истец — лицо, которое обратилось в суд за защитой своего права или интереса.'},{q:'Кто такой ответчик?',a:['Лицо, к которому предъявлен иск','Секретарь суда','Свидетель'],correct:0,explain:'Ответчик — лицо, к которому истец предъявляет требование.'},{q:'Что такое иск?',a:['Требование о защите права, обращённое в суд','Протокол допроса','Судебный приговор'],correct:0,explain:'Иск содержит требование истца к ответчику и подаётся для судебной защиты.'},{q:'Что такое доказательства?',a:['Сведения, на основании которых суд устанавливает обстоятельства дела','Только показания истца','Любые документы без исключения'],correct:0,explain:'Доказательства позволяют суду установить обстоятельства, имеющие значение для дела.'},{q:'Что такое срок исковой давности?',a:['Срок для защиты права по иску','Срок работы суда','Срок хранения паспорта'],correct:0,explain:'Это срок для защиты нарушенного права по иску. Его правила зависят от конкретной ситуации.'},{q:'Что означает статья 106 УК РФ?',a:['Убийство матерью новорождённого ребёнка','Кража имущества','Причинение вреда здоровью'],correct:0,explain:'Статья 106 УК РФ предусматривает ответственность за убийство матерью новорождённого ребёнка во время или сразу после родов, а также в соответствующих законом обстоятельствах.'}];let i=0,score=0,loadedProgress=null;const qEl=document.getElementById('question'),aEl=document.getElementById('answers'),rEl=document.getElementById('r'),next=document.getElementById('next'),cat=document.getElementById('cat'),pText=document.getElementById('progressText'),p=document.getElementById('progress'),percent=document.getElementById('percent'),sideProgress=document.getElementById('sideProgress'),progressTextSide=document.getElementById('progressTextSide');async function loadProgress(){try{const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),1800);const r=await fetch('/api/learn/progress',{credentials:'same-origin',signal:controller.signal});clearTimeout(timer);if(r.ok){loadedProgress=await r.json();if(loadedProgress.completed>0&&loadedProgress.completed<lessons.length){i=loadedProgress.completed;score=loadedProgress.score||0;render()}else if(loadedProgress.completed===lessons.length){i=0;score=0;render()}}}catch(e){}}async function saveProgress(){try{await fetch('/api/learn/progress',{method:'POST',headers:{'content-type':'application/json'},credentials:'same-origin',body:JSON.stringify({completed:Math.min(i+1,lessons.length),score})})}catch(e){}}function render(){const x=lessons[i];qEl.textContent=x.q;rEl.textContent='';next.style.display='none';cat.className='learn-cat';pText.textContent='Вопрос '+(i+1)+' из '+lessons.length;if(p)p.style.width=((i+1)/lessons.length*100)+'%';if(percent)percent.textContent=Math.round((i+1)/lessons.length*100)+'%';if(sideProgress)sideProgress.style.width=((i+1)/lessons.length*100)+'%';if(progressTextSide)progressTextSide.textContent='Вопрос '+(i+1)+' из '+lessons.length;aEl.innerHTML=x.a.map((v,n)=>'<button class="quiz-answer" type="button" data-i="'+n+'"><span class="answer-letter">'+String.fromCharCode(65+n)+'</span><span>'+v+'</span></button>').join('');aEl.querySelectorAll('button').forEach(b=>b.onclick=()=>answer(Number(b.dataset.i)));}function answer(n){const x=lessons[i];aEl.querySelectorAll('button').forEach(b=>b.disabled=true);if(n===x.correct){score++;cat.className='learn-cat happy';rEl.textContent='Мур-мур! Верно. '+x.explain}else{cat.className='learn-cat sad';rEl.textContent='Почти. Правильный ответ: '+x.a[x.correct]+'. '+x.explain}saveProgress();if(i<lessons.length-1){next.style.display='inline-block'}else{next.style.display='inline-block';next.textContent='Пройти ещё раз ↻';rEl.textContent+=(score===lessons.length?' Отличный результат: '+score+'/'+lessons.length+'!':' Результат: '+score+'/'+lessons.length+'. Повтори уроки и попробуй ещё раз.')}}document.getElementById('backLesson').onclick=()=>{if(i>0){i--;render()}};next.onclick=()=>{if(i===lessons.length-1){i=0;score=0;next.textContent='Следующий урок →'}else{i++;}render()};render();loadProgress();</script><script>function toggleMobileMenu(){const m=document.getElementById('mobileMenu');if(m)m.classList.toggle('open')}document.addEventListener('click',e=>{const m=document.getElementById('mobileMenu');if(m&&m.classList.contains('open')&&!m.contains(e.target)&&!e.target.closest('.menu-toggle'))m.classList.remove('open')});</script></body></html>
+.learn-page{background:#f6eee5;min-height:calc(100vh - 78px);position:relative;overflow:hidden;padding:34px 0 70px}
+.learn-page:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 12% 32%,rgba(190,135,102,.12),transparent 25%),radial-gradient(circle at 88% 62%,rgba(190,135,102,.10),transparent 24%);pointer-events:none}
+.learn-title{text-align:center;position:relative;z-index:2;margin:10px auto 28px}
+.learn-title .eyebrow{display:inline-flex;border:1px solid #d8b9a5;background:#fff8f2;color:#6b2c22;padding:8px 14px;border-radius:999px;font-size:10px;font-weight:800;letter-spacing:.14em}
+.learn-title h1{font-family:Georgia,"Times New Roman",serif;font-size:56px;line-height:1.02;letter-spacing:-2.4px;margin:16px 0 8px;color:#35201c}
+.learn-title p{margin:0;color:#7b665d;font-size:13px}
+.learn-layout{position:relative;z-index:2;display:grid;grid-template-columns:150px minmax(620px,820px) 150px;gap:22px;align-items:center;justify-content:center}
+.side-cat{height:500px;position:relative;display:flex;align-items:center;justify-content:center}
+.side-cat img{max-width:145px;max-height:330px;filter:drop-shadow(0 18px 18px rgba(78,40,28,.16))}
+.side-cat.left img{transform:rotate(-4deg)}
+.side-cat.right img{transform:rotate(4deg)}
+.learning-card{background:#fffaf6;border:1px solid #dfc6b5;border-radius:30px;box-shadow:0 24px 65px rgba(83,48,34,.14);overflow:hidden}
+.learning-card-head{display:flex;justify-content:space-between;align-items:center;padding:16px 22px;border-bottom:1px solid #ead8cc;color:#7c6258;font-size:10px;font-weight:800;letter-spacing:.1em}
+.lesson-label{color:#8b4938}
+.learning-body{display:grid;grid-template-columns:235px 1fr;gap:28px;padding:28px}
+.progress-box{background:#f8eee6;border:1px solid #ead7ca;border-radius:22px;padding:20px;display:flex;flex-direction:column}
+.progress-box .caption{font-size:9px;font-weight:800;letter-spacing:.13em;color:#80665b}
+.progress-circle{width:105px;height:105px;border-radius:50%;margin:22px auto 14px;display:grid;place-items:center;background:radial-gradient(circle,#fffaf6 59%,transparent 60%),conic-gradient(#713027 0 17%,#e5d3c7 17% 100%)}
+.progress-circle strong{font-family:Georgia,serif;font-size:25px;color:#60261f}
+.progress-box b{text-align:center;font-size:11px;color:#4d2821}
+.progress-line{height:5px;background:#e3d0c4;border-radius:99px;overflow:hidden;margin:12px 0}
+.progress-line i{display:block;height:100%;width:17%;background:#713027;border-radius:inherit;transition:width .25s}
+.progress-box small{display:block;text-align:center;color:#8a7167;font-size:10px}
+.lesson-list{display:grid;gap:6px;margin-top:auto;padding-top:22px}
+.lesson-list button{border:0;background:transparent;color:#7b665d;text-align:left;padding:9px 10px;border-radius:10px;font-size:10px;cursor:pointer}
+.lesson-list button.active{background:#ead2c3;color:#60261f;font-weight:800}
+.question-box{padding:7px 4px}
+.question-box .kicker{font-size:10px;color:#a06d58;font-weight:800;letter-spacing:.1em}
+.question-box h2{font-family:Georgia,serif;font-size:34px;line-height:1.12;color:#34201c;margin:12px 0 7px}
+.question-box .hint{font-size:12px;color:#866f66;margin:0}
+.answers{display:grid;gap:10px;margin-top:22px}
+.answer-btn{width:100%;display:flex;align-items:center;gap:13px;border:1px solid #d9b8a5;border-radius:15px;background:#fffdf9;color:#4b241d;padding:12px 14px;min-height:58px;text-align:left;font-size:13px;font-weight:700;cursor:pointer;transition:all .16s ease;box-shadow:0 5px 15px rgba(79,42,31,.05)}
+.answer-btn:hover{transform:translateY(-2px);border-color:#8d4938;box-shadow:0 10px 22px rgba(79,42,31,.10)}
+.answer-btn .letter{width:31px;height:31px;border-radius:9px;background:#f0ddd1;color:#6d2d24;display:grid;place-items:center;flex:0 0 31px;font-family:Georgia,serif;font-weight:800}
+.answer-btn.correct{background:#e9f2e7;border-color:#71926c;color:#31552d}
+.answer-btn.correct .letter{background:#cadfc6;color:#31552d}
+.answer-btn.wrong{background:#f7e5e1;border-color:#b56b5c;color:#75372e}
+.answer-btn.wrong .letter{background:#ecc5bc;color:#75372e}
+.answer-btn:disabled{cursor:default;transform:none;opacity:1}
+.feedback{min-height:42px;margin-top:14px;padding:11px 13px;border-radius:12px;background:#f8eee6;color:#72584e;font-size:11px;line-height:1.55}
+.learning-footer{display:flex;align-items:center;gap:10px;border-top:1px solid #ead8cc;padding:14px 20px}
+.learning-footer .result{flex:1;text-align:center;font-size:11px;color:#765e54}
+.learning-footer button{border-radius:999px;padding:10px 16px;font-size:10px;font-weight:800;cursor:pointer}
+.back-btn{background:#fff8f2;border:1px solid #d7b7a5;color:#713026}
+.next-btn{background:#64261f;border:1px solid #64261f;color:#fff}
+@media(max-width:1050px){.learn-layout{grid-template-columns:100px minmax(0,1fr) 100px}.side-cat img{max-width:95px}.learning-body{grid-template-columns:200px 1fr}}
+@media(max-width:820px){.learn-layout{display:block;max-width:700px;margin:auto}.side-cat{display:none}.learning-body{grid-template-columns:1fr}.progress-box{display:none}.learn-title h1{font-size:40px}.question-box h2{font-size:29px}}
+@media(max-width:560px){.learn-page{padding-top:20px}.learn-title{padding:0 18px}.learn-title h1{font-size:34px}.learning-card-head{padding:14px 16px}.learning-body{padding:18px}.learning-footer{padding:12px 14px}.answer-btn{font-size:12px}}
+</style></head><body><header class="wrap nav"><a class="brand" href="/"><img src="/assets/cat-lawyer-logo.svg" alt="Cat Lawyer"> CAT LAWYER</a><nav class="navlinks"><a href="/">Главная</a><a href="/assistant.html">Помощник</a><a href="/documents.html">Документы</a><a href="/learn.html">Обучение</a><a href="/pricing.html">Тарифы</a><a href="/friends.html">Друзья</a><a href="/reviews.html">Отзывы</a><a href="/about.html">О нас</a><a href="/help.html">Помощь</a><a href="/account.html">Кабинет</a></nav><button class="btn light menu-toggle" type="button" onclick="toggleMobileMenu()">Меню ☰</button></header><div id="mobileMenu" class="mobile-menu-panel"><a href="/">Главная</a><a href="/assistant.html">Помощник</a><a href="/documents.html">Документы</a><a href="/learn.html">Обучение</a><a href="/pricing.html">Тарифы</a><a href="/friends.html">Друзья</a><a href="/reviews.html">Отзывы</a><a href="/about.html">О нас</a><a href="/help.html">Помощь</a><a href="/account.html">Личный кабинет</a></div><main class="learn-page">
+<section class="learn-title"><div class="wrap"><div class="eyebrow">АКАДЕМИЯ CAT LAWYER</div><h1>Изучай язык права</h1><p>Короткие уроки, реальные юридические термины и практика.</p></div></section>
+<section class="wrap learn-layout">
+<aside class="side-cat left"><img src="/assets/kitten-left.svg" alt=""></aside>
+<div class="learning-card">
+<div class="learning-card-head"><span id="progressText">ВОПРОС 1 ИЗ 6</span><span class="lesson-label">УРОК 01 · ОСНОВЫ ПРАВА</span></div>
+<div class="learning-body">
+<aside class="progress-box">
+<div class="caption">ВАШ ПРОГРЕСС</div><div class="progress-circle"><strong id="percent">17%</strong></div>
+<b id="progressTextSide">Урок 1 из 6</b><div class="progress-line"><i id="sideProgress"></i></div><small>+50 баллов за урок</small>
+<div class="lesson-list"><button class="active" type="button">Уроки</button><button type="button">Достижения</button><button type="button">Статистика</button><button type="button">Настройки</button></div>
+</aside>
+<div class="question-box"><div class="kicker">ЮРИДИЧЕСКИЙ ТЕРМИН</div><h2 id="question">Кто такой истец?</h2><p class="hint">Выбери один правильный вариант.</p><div id="answers" class="answers"></div><div id="r" class="feedback">Нажми на ответ — кот сразу покажет результат.</div></div>
+</div>
+<div class="learning-footer"><button class="back-btn" id="backLesson" type="button">← Назад</button><div class="result" id="footerResult"></div><button class="next-btn" id="next" type="button" style="display:none">Следующий вопрос →</button></div>
+</div>
+<aside class="side-cat right"><img src="/assets/kitten-right.svg" alt=""></aside>
+</section></main><footer class="footer"><div class="wrap footer-inner"><b>🐱 Cat Lawyer — юридическое просто.</b><span>© 2026 Cat Lawyer. Информационный сервис.</span><span><a href="/assistant.html">Задать вопрос</a> · <a href="/pricing.html">Тарифы</a></span></div></footer><script>
+const lessons=[{q:'Кто такой истец?',a:['Судья','Тот, кто подал иск','Ответчик'],correct:1,explain:'Истец — лицо, которое обратилось в суд за защитой своего права или интереса.'},{q:'Кто такой ответчик?',a:['Лицо, к которому предъявлен иск','Секретарь суда','Свидетель'],correct:0,explain:'Ответчик — лицо, к которому истец предъявляет требование.'},{q:'Что такое иск?',a:['Требование о защите права, обращённое в суд','Протокол допроса','Судебный приговор'],correct:0,explain:'Иск содержит требование истца к ответчику и подаётся для судебной защиты.'},{q:'Что такое доказательства?',a:['Сведения, на основании которых суд устанавливает обстоятельства дела','Только показания истца','Любые документы без исключения'],correct:0,explain:'Доказательства позволяют суду установить обстоятельства, имеющие значение для дела.'},{q:'Что такое срок исковой давности?',a:['Срок для защиты права по иску','Срок работы суда','Срок хранения паспорта'],correct:0,explain:'Это срок для защиты нарушенного права по иску. Его правила зависят от конкретной ситуации.'},{q:'Что означает статья 106 УК РФ?',a:['Убийство матерью новорождённого ребёнка','Кража имущества','Причинение вреда здоровью'],correct:0,explain:'Статья 106 УК РФ предусматривает ответственность за убийство матерью новорождённого ребёнка при обстоятельствах, указанных в статье.'}];
+let i=0,score=0;
+const qEl=document.getElementById('question'),aEl=document.getElementById('answers'),rEl=document.getElementById('r'),next=document.getElementById('next'),pText=document.getElementById('progressText'),percent=document.getElementById('percent'),sideProgress=document.getElementById('sideProgress'),progressTextSide=document.getElementById('progressTextSide'),footerResult=document.getElementById('footerResult');
+function render(){
+ const x=lessons[i];
+ qEl.textContent=x.q;rEl.textContent='Нажми на ответ — кот сразу покажет результат.';footerResult.textContent='';next.style.display='none';next.textContent='Следующий вопрос →';
+ pText.textContent='ВОПРОС '+(i+1)+' ИЗ '+lessons.length;
+ const pct=Math.round((i+1)/lessons.length*100);percent.textContent=pct+'%';sideProgress.style.width=pct+'%';progressTextSide.textContent='Урок '+(i+1)+' из '+lessons.length;
+ aEl.innerHTML=x.a.map((v,n)=>'<button class="answer-btn" type="button" data-i="'+n+'"><span class="letter">'+String.fromCharCode(65+n)+'</span><span>'+v+'</span></button>').join('');
+ aEl.querySelectorAll('.answer-btn').forEach(btn=>btn.addEventListener('click',()=>answer(Number(btn.dataset.i))));
+}
+function answer(n){
+ const x=lessons[i],buttons=[...aEl.querySelectorAll('.answer-btn')];
+ buttons.forEach(b=>b.disabled=true);
+ buttons[n].classList.add(n===x.correct?'correct':'wrong');
+ if(n!==x.correct)buttons[x.correct].classList.add('correct');
+ if(n===x.correct){score++;rEl.textContent='Мур-мур! Верно. '+x.explain}else rEl.textContent='Не совсем. Правильный ответ: '+x.a[x.correct]+'. '+x.explain;
+ if(i<lessons.length-1){next.style.display='inline-block';footerResult.textContent='Ответ принят'}else{next.style.display='inline-block';next.textContent='Пройти ещё раз ↻';footerResult.textContent='Результат: '+score+'/'+lessons.length}
+ saveProgress();
+}
+async function saveProgress(){try{await fetch('/api/learn/progress',{method:'POST',headers:{'content-type':'application/json'},credentials:'same-origin',body:JSON.stringify({completed:Math.min(i+1,lessons.length),score})})}catch(e){}}
+document.getElementById('backLesson').onclick=()=>{if(i>0){i--;render()}};
+next.onclick=()=>{if(i===lessons.length-1){i=0;score=0}else{i++}render()};
+render();
+</script><script>function toggleMobileMenu(){const m=document.getElementById('mobileMenu');if(m)m.classList.toggle('open')}document.addEventListener('click',e=>{const m=document.getElementById('mobileMenu');if(m&&m.classList.contains('open')&&!m.contains(e.target)&&!e.target.closest('.menu-toggle'))m.classList.remove('open')});</script></body></html>
