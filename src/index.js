@@ -56,11 +56,19 @@ async function adminCookie(env){
 }
 async function aiText(e,messages,max_tokens=900){
   if(!e.ai)throw new Error("AI binding missing");
-  const prompt=messages.map(x=>String(x?.content||"")).filter(Boolean).join("\n\n");
-  const out=await e.ai.run("@cf/meta/llama-3.1-8b-instruct-fast",{prompt,max_tokens,temperature:.65});
-  const response=typeof out==="string"?out:(out?.response||out?.result?.response||"");
-  if(!response)throw new Error("Workers AI returned an empty response");
-  return response;
+  const controller=new AbortController();
+  const timer=setTimeout(()=>controller.abort(),20000);
+  try{
+    const out=await e.ai.run("@cf/meta/llama-3.1-8b-instruct-fast",{messages,max_tokens,temperature:.65});
+    const response=typeof out==="string"?out:(out?.response||out?.result?.response||"");
+    if(!response)throw new Error("Workers AI returned an empty response");
+    return response;
+  }catch(err){
+    if(err?.name==="AbortError")throw new Error("Workers AI request timed out");
+    throw err;
+  }finally{
+    clearTimeout(timer);
+  }
 }
 async function ensureAuthSchema(db){
   await db.prepare("CREATE TABLE IF NOT EXISTS cl_auth_users (id TEXT PRIMARY KEY,name TEXT NOT NULL,email TEXT NOT NULL UNIQUE COLLATE NOCASE,password_hash TEXT NOT NULL,password_salt TEXT NOT NULL,created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,plan TEXT NOT NULL DEFAULT 'Базовый')").run();
