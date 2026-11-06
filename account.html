@@ -113,7 +113,8 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 async function req(path,body){
   const opts={method:body?'POST':'GET',credentials:'same-origin',headers:body?{'content-type':'application/json'}:{}};
   if(body)opts.body=JSON.stringify(body);
-  const r=await fetch('/api'+path,opts);
+  const ctl=new AbortController();const timer=setTimeout(()=>ctl.abort(),15000);opts.signal=ctl.signal;
+  let r;try{r=await fetch('/api'+path,opts)}catch(err){if(err.name==='AbortError')throw new Error('Сервер не отвечает. Попробуй обновить страницу через несколько секунд.');throw err}finally{clearTimeout(timer)}
   let d={};try{d=await r.json()}catch{}
   if(!r.ok)throw new Error(d.error||'Ошибка сервера ('+r.status+').');
   return d;
