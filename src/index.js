@@ -56,7 +56,7 @@ async function adminCookie(env){
 }
 async function aiText(e,messages,max_tokens=900){
   if(!e.ai)throw new Error("AI binding missing");
-  const out=await e.ai.run("@cf/meta/llama-3.1-8b-instruct-fp8",{messages,max_tokens,temperature:.65});
+  const out=await e.ai.run("@cf/meta/llama-3.1-8b-instruct-fast",{messages,max_tokens,temperature:.65});
   return out.response||"Не удалось сформировать ответ.";
 }
 async function ensureAuthSchema(db){
