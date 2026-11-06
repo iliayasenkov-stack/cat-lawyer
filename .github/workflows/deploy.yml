@@ -26,7 +26,7 @@ jobs:
         run: |
           set -euo pipefail
           sleep 5
-          response=$(curl -sS -X POST "https://cat-lawyer.pages.dev/api/chat" -H "Content-Type: application/json" --data '{"message":"Проверка связи Cat Lawyer. Ответь одним словом: готово."}' -w "\nHTTP_STATUS:%{http_code}")
+          response=$(curl -sS -X POST "https://cat-lawyer.pages.dev/api/chat" -H "Content-Type: application/json" --data '{"message":"Я купил товар в магазине, хочу вернуть его, но продавец отказывается. Чек есть. Что мне делать по закону РФ? Ответь кратко и по делу."}' -w "\nHTTP_STATUS:%{http_code}")
           echo "$response"
           status=$(printf "%s" "$response" | sed -n 's/^HTTP_STATUS://p')
           if [ "$status" != "200" ]; then
