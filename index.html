@@ -16,7 +16,7 @@
 </head>
 <body>
 <header class="wrap nav">
-<a class="brand" href="/" style="text-decoration:none;color:inherit"><span class="brand-mark"><img src="/assets/cat-lawyer-logo.svg" alt="Cat Lawyer"></span><span class="brand-name">CAT LAWYER</span></a>
+<a class="brand" href="/" style="text-decoration:none;color:inherit"><img class="brand-logo" src="/assets/cat-lawyer-logo.svg" alt="Cat Lawyer"><span class="brand-name">CAT LAWYER</span></a>
 <nav class="navlinks">
 <a href="/">Главная</a><a href="/assistant.html">Помощник</a><a href="/documents.html">Документы</a><a href="/learn.html">Обучение</a><a href="/pricing.html">Тарифы</a><a href="/friends.html">Друзья</a><a href="/reviews.html">Отзывы</a><a href="/about.html">О нас</a><a href="/help.html">Помощь</a>
 </nav>
@@ -60,3 +60,10 @@ document.addEventListener('click',e=>{const m=document.getElementById('mobileMen
   .robe-kitten{height:112px;width:82px}
 }
 </style></body></html>
+<style>
+/* Main navigation: use the full Cat Lawyer logo, never crop it. */
+.nav .brand{display:flex!important;align-items:center!important;gap:10px!important;min-width:0!important;white-space:nowrap!important}
+.nav .brand-logo{width:50px!important;height:50px!important;min-width:50px!important;object-fit:contain!important;display:block!important;border-radius:0!important;padding:0!important;background:transparent!important}
+.nav .brand-name{line-height:1!important;white-space:nowrap!important}
+@media(max-width:760px){.nav .brand-logo{width:44px!important;height:44px!important;min-width:44px!important}.nav .brand-name{font-size:16px!important}}
+</style>
