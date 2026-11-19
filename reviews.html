@@ -18,7 +18,7 @@ async function add(){
   const res=await fetch('/api/reviews',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:n,text:t,rating})});
   const data=await res.json();
   if(!res.ok)throw new Error(data.error||'Ошибка');
-  document.getElementById('t').value='';await load();
+  document.getElementById('t').value='';alert('Отзыв отправлен на проверку. После модерации он появится на сайте.');await load();
  }catch(e){alert(e.message||'Не удалось сохранить отзыв.')}finally{btn.disabled=false}
 }
 load();
