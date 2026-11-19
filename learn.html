@@ -84,6 +84,11 @@
 @keyframes catExcited{0%,100%{transform:translateY(0) rotate(0) scale(1)}30%{transform:translateY(-18px) rotate(-7deg) scale(1.1)}60%{transform:translateY(-7px) rotate(7deg) scale(1.05)}}
 @keyframes catSerious{0%,100%{transform:translateY(0) rotate(0) scale(1)}35%{transform:translateY(3px) rotate(-3deg) scale(.98)}70%{transform:translateY(1px) rotate(3deg) scale(.98)}}
 @media(max-width:900px){.subjects{grid-template-columns:repeat(2,1fr)}.diagnostic-card{align-items:flex-start;flex-direction:column}.level-box{width:100%;box-sizing:border-box}}@media(max-width:560px){.subjects{grid-template-columns:1fr}.mode-row{overflow:auto;flex-wrap:nowrap;padding-bottom:3px}.mode{white-space:nowrap}.diagnostic-card{padding:18px}.diagnostic-card h2{font-size:25px}}
+
+/* lighter academy interface */
+.learn-page{padding-top:24px}.academy-shell{max-width:1050px}.diagnostic-card{padding:16px 20px;border-radius:20px;box-shadow:none}.diagnostic-card p{max-width:600px}.subjects{display:none}.learning-controls{padding:14px 16px;border-radius:18px;box-shadow:none}.learning-controls .control-title{font-size:17px}.lesson-picker{max-height:170px;overflow:auto}.mode-row{margin:10px 0}.disclaimer{margin-top:12px;padding:12px 15px}.learn-title{margin-bottom:18px}.learn-title h1{font-size:46px}.layout{grid-template-columns:145px minmax(520px,760px) 145px;gap:16px}.side img{width:135px}.card{border-radius:24px;box-shadow:0 18px 45px rgba(71,39,27,.11)}.body{grid-template-columns:165px 1fr;gap:20px;padding:22px}.question h2{font-size:32px}
+.profile-modal{position:fixed;inset:0;background:rgba(48,28,23,.45);backdrop-filter:blur(5px);display:none;align-items:center;justify-content:center;padding:18px;z-index:1000}.profile-modal.open{display:flex}.profile-box{width:min(620px,100%);background:#fffaf6;border:1px solid #d8b9a4;border-radius:24px;padding:26px;box-shadow:0 30px 90px rgba(0,0,0,.22)}.profile-box h2{font:30px Georgia,serif;color:#38211c;margin:5px 0}.profile-box p{color:#80685d;font-size:12px;line-height:1.5}.profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:18px 0}.profile-grid label{font-size:10px;font-weight:800;color:#75594f}.profile-grid select{display:block;width:100%;margin-top:6px;padding:12px;border:1px solid #d8b9a4;border-radius:12px;background:#fffdfa;color:#4d2821}.qual-btn{border:1px solid #64261f;background:#64261f;color:white;border-radius:999px;padding:11px 16px;font-weight:800;cursor:pointer}.qual-banner{display:flex;justify-content:space-between;align-items:center;gap:12px;background:#fff7f0;border:1px solid #dfc7b5;border-radius:18px;padding:13px 16px;margin:10px 0}
+@media(max-width:820px){.layout{display:block}.side{display:none}.body{grid-template-columns:1fr}.progress{display:none}.learn-title h1{font-size:38px}}@media(max-width:560px){.profile-grid{grid-template-columns:1fr}.profile-box{padding:20px}.learn-title h1{font-size:34px}}
 </style>
 </head>
 <body>
@@ -104,6 +109,7 @@
     <div><span class="eyebrow">АДАПТИВНАЯ АКАДЕМИЯ</span><h2>Твой путь в праве</h2><p>Кот определит уровень, запомнит ошибки и будет возвращать тебя к тем темам, где ты чаще всего ошибаешься.</p></div>
     <div class="level-box"><b id="academyLevel">Новичок</b><span id="academyProgress">0 XP · 0% курса</span></div>
   </div>
+  <div class="qual-banner"><div><b id="profileStatus">Расскажи немного о себе</b><br><span>Курс и уровень помогут подобрать программу обучения.</span></div><button class="qual-btn" id="profileBtn">Настроить обучение</button></div>
   <div class="mode-row">
     <button class="mode active" data-mode="learn">📖 Обучение</button>
     <button class="mode" data-mode="practice">🎯 Практика</button>
@@ -188,6 +194,12 @@
 <div class="caption">Право проще,<br><small>когда объясняет кот</small></div>
 </aside>
 </section>
+<div class="profile-modal" id="profileModal"><div class="profile-box"><span class="eyebrow">ПЕРВИЧНАЯ КВАЛИФИКАЦИЯ</span><h2>Сначала познакомимся 👋</h2><p>Ответь на несколько вопросов. Это не экзамен. Я использую ответы, чтобы подобрать сложность, темп и темы.</p><div class="profile-grid">
+<label>Ты сейчас...<select id="eduType"><option value="">Выбери</option><option>студент колледжа</option><option>студент университета</option><option>школьник</option><option>уже работаешь с правом</option><option>изучаю право самостоятельно</option></select></label>
+<label>Какой курс?<select id="eduCourse"><option value="">Выбери</option><option>1 курс</option><option>2 курс</option><option>3 курс</option><option>4 курс</option><option>5 курс</option><option>6 курс</option><option>не учусь по курсам</option></select></label>
+<label>Твой уровень сейчас<select id="eduLevel"><option value="">Выбери</option><option>почти не знаю право</option><option>знаю основы</option><option>уверенно ориентируюсь</option><option>хочу сложные кейсы</option></select></label>
+<label>Что важнее?<select id="eduGoal"><option value="">Выбери</option><option>подготовка к занятиям</option><option>подготовка к экзаменам</option><option>практические ситуации</option><option>углублённое изучение</option></select></label></div>
+<button class="qual-btn" id="saveProfile">Сохранить и пройти квалификационный урок →</button></div></div>
 </main>
 
 <footer class="footer">
@@ -244,6 +256,21 @@ const diagnosticLessons=[
 let activeLessons=[...masterLessons],activeTopic='',selectedDirection='all',selectedDifficulty='all',i=0,score=0,mode='learn',xp=+localStorage.getItem('cl_xp')||0,streak=+localStorage.getItem('cl_streak')||0,last=localStorage.getItem('cl_day')||'',current=null,catTurn=0;
 let mistakes=JSON.parse(localStorage.getItem('cl_mistakes')||'{}');
 const $=id=>document.getElementById(id);
+function openProfile(){ $('profileModal').classList.add('open') }
+function closeProfile(){ $('profileModal').classList.remove('open') }
+function saveProfile(){
+ const type=$('eduType').value,course=$('eduCourse').value,lev=$('eduLevel').value,goal=$('eduGoal').value;
+ if(!type||!course||!lev||!goal){cat('Мне нужны все четыре ответа. Это не бюрократия — я просто хочу подобрать тебе нормальный маршрут 😼','serious');return}
+ const profile={type,course,lev,goal,at:new Date().toISOString()};localStorage.setItem('cl_student_profile',JSON.stringify(profile));
+ $('profileStatus').textContent=type+' · '+course+' · '+goal;closeProfile();startQualification();
+}
+function startQualification(){
+ mode='diagnostic';i=0;score=0;activeLessons=[...diagnosticLessons];
+ document.querySelectorAll('.mode').forEach(x=>x.classList.toggle('active',x.dataset.mode==='diagnostic'));
+ cat('Профиль готов. Теперь короткий квалификационный урок: я проверю базу и пойму, с чего тебя лучше начать 😼','think');render();
+}
+$('profileBtn').onclick=openProfile;$('saveProfile').onclick=saveProfile;
+const savedProfile=JSON.parse(localStorage.getItem('cl_student_profile')||'null');if(savedProfile)$('profileStatus').textContent=savedProfile.type+' · '+savedProfile.course+' · '+savedProfile.goal;
 function level(){return xp>=1000?'Профи':xp>=500?'Продвинутый':xp>=250?'Уверенный':xp>=100?'Базовый уровень':'Новичок'}
 function stats(){ $('xp').textContent=xp;$('streak').textContent=streak;$('level').textContent=level();$('academyLevel').textContent=level();$('academyProgress').textContent=xp+' XP · '+Math.min(100,Math.round(xp/10))+'% курса'; }
 function day(){const d=new Date().toISOString().slice(0,10);if(last!==d){streak=last?streak+1:1;last=d;localStorage.setItem('cl_streak',streak);localStorage.setItem('cl_day',d)}stats()}
