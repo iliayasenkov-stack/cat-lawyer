@@ -1,1 +1,64 @@
-<?xml version="1.0" encoding="UTF-8"?><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 860"><image href="/assets/learning-kitten.svg" width="640" height="860"/><path d="M195 270 Q235 292 270 276 M370 276 Q405 292 445 270" fill="none" stroke="#4b302c" stroke-width="11" stroke-linecap="round"/><path d="M242 310 Q235 335 242 350 M398 310 Q405 335 398 350" fill="none" stroke="#75a9c7" stroke-width="9" stroke-linecap="round"/><path d="M295 420 Q320 398 345 420" fill="none" stroke="#68403e" stroke-width="6" stroke-linecap="round"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 860">
+<defs>
+  <linearGradient id="fur" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff8ed"/><stop offset=".42" stop-color="#e7c5a8"/><stop offset="1" stop-color="#9b6b58"/></linearGradient>
+  <linearGradient id="furShade" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#fff5e8"/><stop offset="1" stop-color="#d2a184"/></linearGradient>
+  <linearGradient id="coat" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#9a403b"/><stop offset=".55" stop-color="#64252b"/><stop offset="1" stop-color="#321821"/></linearGradient>
+  <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f4d58d"/><stop offset="1" stop-color="#b67a38"/></linearGradient>
+  <filter id="shadow" x="-40%" y="-40%" width="180%" height="190%"><feDropShadow dx="0" dy="22" stdDeviation="20" flood-color="#3a201b" flood-opacity=".24"/></filter>
+  <filter id="soft"><feGaussianBlur stdDeviation="7"/></filter>
+</defs>
+<ellipse cx="320" cy="820" rx="210" ry="26" fill="#4a2922" opacity=".15" filter="url(#soft)"/>
+<g filter="url(#shadow)">
+  <!-- flowing academic robe -->
+  <path d="M135 520 C178 488 228 475 320 480 C412 475 462 488 505 520 L565 735 C505 780 421 801 320 800 C219 801 135 780 75 735Z" fill="url(#coat)"/>
+  <path d="M203 520 C241 548 279 559 320 559 C361 559 399 548 437 520 L416 720 C382 741 351 750 320 750 C289 750 258 741 224 720Z" fill="#6c242c"/>
+  <path d="M260 535 C280 552 300 560 320 560 C340 560 360 552 380 535 L365 665 C349 677 335 683 320 683 C305 683 291 677 275 665Z" fill="#f6e6d5"/>
+  <path d="M320 563 l-27 37 27 20 27-20z" fill="url(#gold)"/>
+  <path d="M320 590v83 M286 628h68" stroke="#b97c3b" stroke-width="6" stroke-linecap="round"/>
+  <!-- paws on desk -->
+  <path d="M152 704 C145 663 170 642 211 649 C246 655 259 687 245 718 C227 746 167 742 152 704Z" fill="url(#furShade)"/>
+  <path d="M395 718 C381 687 394 655 429 649 C470 642 495 663 488 704 C473 742 413 746 395 718Z" fill="url(#furShade)"/>
+  <path d="M176 694 q16 -20 32 0 M205 690 q16 -18 31 3 M415 693 q16 -20 32 0 M444 693 q16 -18 30 2" fill="none" stroke="#a87861" stroke-width="5" stroke-linecap="round"/>
+  <!-- open law book -->
+  <path d="M74 744 Q188 716 320 754 Q452 716 566 744 L555 824 Q442 794 320 815 Q198 794 85 824Z" fill="#40202a" stroke="#b47a4f" stroke-width="4"/>
+  <path d="M320 758v48 M96 757 Q205 738 307 766 M333 766 Q435 738 544 757" fill="none" stroke="#e2bd7d" stroke-width="4" opacity=".8"/>
+  <path d="M132 773h130 M380 773h130 M124 792h118 M398 792h118" stroke="#d5aa70" stroke-width="3" opacity=".65"/>
+  <!-- head -->
+  <path d="M161 296 L183 106 Q188 70 214 94 L270 153 Q320 137 370 153 L426 94 Q452 70 457 106 L479 296Z" fill="url(#fur)"/>
+  <path d="M188 120 L215 218 L270 153Z M452 120 L425 218 L370 153Z" fill="#efb0aa" opacity=".9"/>
+  <!-- ears tufts -->
+  <path d="M188 118l31 36-15-2 M452 118l-31 36 15-2" fill="none" stroke="#8d5f52" stroke-width="9" stroke-linecap="round"/>
+  <ellipse cx="320" cy="316" rx="184" ry="184" fill="url(#fur)"/>
+  <!-- cheek fur, irregular -->
+  <path d="M178 330 C154 314 139 321 151 341 C132 338 133 354 155 358 C139 367 148 380 171 374 C154 391 171 401 192 386
+           M462 330 C486 314 501 321 489 341 C508 338 507 354 485 358 C501 367 492 380 469 374 C486 391 469 401 448 386"
+        fill="none" stroke="#a67965" stroke-width="7" stroke-linecap="round"/>
+  <!-- expressive eyes -->
+  <path d="M194 288 Q235 247 278 283 Q244 324 201 307Z" fill="#fffaf2"/>
+  <path d="M362 283 Q405 247 446 288 L439 307 Q396 324 362 283Z" fill="#fffaf2"/>
+  <ellipse cx="242" cy="291" rx="20" ry="34" fill="#302327"/>
+  <ellipse cx="398" cy="291" rx="20" ry="34" fill="#302327"/>
+  <ellipse cx="248" cy="281" rx="7" ry="12" fill="#fff"/>
+  <ellipse cx="404" cy="281" rx="7" ry="12" fill="#fff"/>
+  <path d="M194 258 Q235 227 279 255 M361 255 Q405 227 446 258" fill="none" stroke="#765044" stroke-width="9" stroke-linecap="round"/>
+  <!-- muzzle and smile -->
+  <ellipse cx="320" cy="378" rx="72" ry="55" fill="#fff0df"/>
+  <path d="M305 368 Q320 354 335 368 Q333 388 320 392 Q307 388 305 368Z" fill="#cf7776"/>
+  <path d="M320 392 Q301 419 275 407 M320 392 Q339 419 365 407" fill="none" stroke="#68403e" stroke-width="6" stroke-linecap="round"/>
+  <path d="M184 369 Q128 357 84 337 M184 388 Q123 385 78 373 M456 369 Q512 357 556 337 M456 388 Q517 385 562 373" fill="none" stroke="#8d6658" stroke-width="4" stroke-linecap="round"/>
+  <!-- academic cap -->
+  <path d="M145 174 Q320 52 495 174 L320 238Z" fill="#341922" stroke="#8e5048" stroke-width="7"/>
+  <path d="M177 169 Q320 88 463 169" fill="none" stroke="#b26d5c" stroke-width="6" opacity=".8"/>
+  <path d="M454 150 Q481 184 469 226" fill="none" stroke="#d4a25e" stroke-width="7" stroke-linecap="round"/>
+  <path d="M469 226 q13 16 0 31 q-13 -15 0 -31" fill="#d4a25e"/>
+  <!-- small gavel -->
+  <g transform="translate(472 525) rotate(18)">
+    <rect x="-12" y="0" width="30" height="118" rx="13" fill="#9a633d"/>
+    <rect x="-52" y="-28" width="112" height="43" rx="14" fill="url(#gold)" stroke="#9b6a3f" stroke-width="4"/>
+    <path d="M-30 -18h68" stroke="#fff0bd" stroke-width="5" stroke-linecap="round" opacity=".7"/>
+  </g>
+  <!-- badge -->
+  <circle cx="320" cy="555" r="24" fill="url(#gold)" stroke="#f4dca4" stroke-width="4"/>
+  <path d="M320 541l-11 16 11 10 11-10z" fill="#70332f"/>
+<g><ellipse cx="320" cy="315" rx="182" ry="175" fill="#b7a2a0" opacity=".18"/><path d="M194 285 Q235 310 278 286" fill="none" stroke="#765044" stroke-width="9" stroke-linecap="round"/><path d="M362 286 Q405 310 446 285" fill="none" stroke="#765044" stroke-width="9" stroke-linecap="round"/><path d="M303 386 Q320 402 337 386" fill="none" stroke="#68403e" stroke-width="8" stroke-linecap="round"/><path d="M240 320 Q230 350 244 366 M400 320 Q410 350 396 366" fill="none" stroke="#7691a8" stroke-width="6" stroke-linecap="round"/></g></g>
+</svg>
