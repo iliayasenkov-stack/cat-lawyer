@@ -17,8 +17,8 @@
 .layout{display:grid;grid-template-columns:190px minmax(600px,850px) 190px;gap:24px;align-items:center;justify-content:center}
 .side{display:flex;flex-direction:column;align-items:center;text-align:center}
 .side img{width:170px;filter:drop-shadow(0 20px 22px rgba(65,37,28,.15));transition:.2s}
-.side img.happy{transform:translateY(-7px) rotate(-3deg) scale(1.08)!important}
-.side img.sad{transform:translateY(4px) rotate(3deg) scale(.96)!important}
+
+
 .bubble{max-width:175px;background:#fffaf5;border:1px solid #d8b9a4;border-radius:18px;padding:10px 12px;color:#6e5147;font-size:10px;line-height:1.4;margin-bottom:10px;box-shadow:0 10px 22px rgba(79,42,31,.08)}
 .caption{margin-top:5px;color:#633027;font:15px Georgia,serif}
 .caption small{color:#9a7768;font:11px Arial,sans-serif}
@@ -277,10 +277,12 @@ function day(){const d=new Date().toISOString().slice(0,10);if(last!==d){streak=
 function shuffle(x){const correct=x.c;const p=x.a.map((v,n)=>({v,n}));for(let n=p.length-1;n>0;n--){let j=Math.floor(Math.random()*(n+1));[p[n],p[j]]=[p[j],p[n]]}return{a:p.map(x=>x.v),c:p.findIndex(x=>x.n===correct)}}
 function cat(text,mood=''){
   $('bubble').textContent=text;$('catSpeech').textContent=text;
-  const src={happy:'/assets/learning-kitten-happy.svg',sad:'/assets/learning-kitten-sad.svg',think:'/assets/learning-kitten-think.svg',excited:'/assets/learning-kitten-happy.svg',serious:'/assets/learning-kitten-serious.svg'}[mood]||'/assets/learning-kitten.svg';
+  const src='/assets/learning-kitten.svg';
   ['cat1','cat2'].forEach(id=>{
-    const el=$(id);el.src=src;
-    el.classList.remove('happy','sad','think','excited','serious');if(mood)el.classList.add(mood);
+    const el=$(id);
+    el.src=src;
+    el.classList.remove('happy','sad','think','excited','serious');
+    if(mood)el.classList.add(mood);
   });
   const avatar=$('catAvatar');if(avatar)avatar.src=src;
   const d=$('catDialogue');d.classList.remove('pop');void d.offsetWidth;d.classList.add('pop')
