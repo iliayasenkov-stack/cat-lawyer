@@ -38,8 +38,27 @@
 </main>
 <footer class="footer"><div class="wrap footer-inner"><div><b>🐱 cat lawyer</b><br>Юридическое просто.</div><div>© 2026 Cat Lawyer. Информационный сервис, не юридическая фирма.</div><div><a href="/about.html" style="color:inherit">О нас</a> · <a href="/help.html" style="color:inherit">Помощь</a> · <a href="/reviews.html" style="color:inherit">Отзывы</a></div></div></footer>
 <script>
-function toggleMenu(){const m=document.getElementById('mobileMenu');m.style.display=m.style.display==='block'?'none':'block'}
+function toggleMenu(){const m=document.getElementById('mobileMenu');if(!m)return;m.style.display=m.style.display==='block'?'none':'block'}
 document.addEventListener('click',e=>{const m=document.getElementById('mobileMenu');if(m&&m.style.display==='block'&&!m.contains(e.target)&&!e.target.closest('.menu-btn'))m.style.display='none'});
+const homeMessages=document.getElementById('messages'),homeQuestion=document.getElementById('question');
+function homeFormat(t){const esc=s=>String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));return esc(t).replace(/\n/g,'<br>')}
+async function sendMessage(){
+  const v=(homeQuestion?.value||'').trim();
+  if(!v)return;
+  const b=document.querySelector('#chat .chat-input button');if(b)b.disabled=true;
+  const u=document.createElement('div');u.className='msg user';u.textContent=v;homeMessages.appendChild(u);
+  const a=document.createElement('div');a.className='msg bot';a.textContent='Анализирую ситуацию…';homeMessages.appendChild(a);homeMessages.scrollTop=homeMessages.scrollHeight;homeQuestion.value='';
+  try{
+    const r=await fetch('/api/chat',{method:'POST',headers:{'content-type':'application/json'},credentials:'same-origin',body:JSON.stringify({message:v})});
+    const d=await r.json().catch(()=>({}));
+    if(!r.ok)throw new Error(d.error||'Не удалось получить ответ.');
+    a.innerHTML=homeFormat(d.reply||'Не удалось сформировать ответ.');
+    const link=document.createElement('a');link.className='btn light';link.href='/documents.html?situation='+encodeURIComponent(v);link.textContent='Составить документ';link.style.cssText='display:inline-block;margin:4px 0 8px';
+    homeMessages.appendChild(link);
+  }catch(e){a.textContent=e.message||'Не удалось получить ответ. Попробуй ещё раз.'}
+  finally{if(b)b.disabled=false;homeMessages.scrollTop=homeMessages.scrollHeight}
+}
+homeQuestion?.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage()}});
 </script>
 <style>
 /* Safe final polish: navigation logo + judicial kittens */
