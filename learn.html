@@ -59,7 +59,24 @@
 @media(max-width:820px){.layout{display:block;max-width:700px;margin:auto}.side{display:none}.body{grid-template-columns:1fr}.progress{display:none}.learn-title h1{font-size:42px}}
 @media(max-width:560px){.learn-page{padding-top:20px}.learn-title{padding:0 18px}.learn-title h1{font-size:34px}.body{padding:18px}.question h2{font-size:29px}.head{padding:14px 16px}.memory{padding:12px 14px;display:block}.memory b{display:block;margin-top:3px}.cat-dialogue{margin-top:12px}}
 
-.academy-shell{margin-top:10px;margin-bottom:28px}.diagnostic-card{display:flex;justify-content:space-between;gap:20px;align-items:center;background:#fffaf6;border:1px solid #d8b9a4;border-radius:26px;padding:22px 26px;box-shadow:0 14px 38px rgba(71,39,27,.08)}.diagnostic-card h2{font:30px Georgia,serif;margin:8px 0 5px;color:#38211c}.diagnostic-card p{margin:0;color:#80685d;max-width:720px;font-size:12px;line-height:1.5}.level-box{min-width:145px;text-align:center;background:#f4e3d7;border:1px solid #d7b7a4;border-radius:18px;padding:14px}.level-box b{display:block;color:#64261f;font:20px Georgia,serif}.level-box span{display:block;color:#876b61;font-size:10px;margin-top:4px}.mode-row{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}.mode{border:1px solid #d8b9a4;background:#fffaf5;color:#693027;border-radius:999px;padding:10px 14px;font-size:11px;font-weight:800;cursor:pointer}.mode.active{background:#64261f;color:white}.subjects{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}.subject{background:#fffaf6;border:1px solid #dec5b5;border-radius:17px;padding:13px;cursor:pointer;transition:.16s}.subject:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(71,39,27,.08)}.subject small{color:#a07868;font-size:9px;text-transform:uppercase;letter-spacing:.08em}.subject b{display:block;color:#4d2821;margin:4px 0;font-size:12px}.subject span{font-size:10px;color:#81695f}.subject .mini{height:4px;background:#ead8cc;border-radius:99px;margin-top:8px;overflow:hidden}.subject .mini i{display:block;height:100%;background:#713027}.disclaimer{background:#fff7f0;border:1px solid #dfc7b5;border-radius:18px;padding:16px 18px;color:#72584e;font-size:10px;line-height:1.55}.disclaimer b{color:#64261f}.disclaimer p{margin:7px 0}.side img{animation:catFloat 2.8s ease-in-out infinite;transform-origin:50% 90%}.side img.happy{animation:catHappy .55s ease-in-out 2}.side img.sad{animation:catSad .65s ease-in-out 2}@keyframes catFloat{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-8px) rotate(1deg)}}@keyframes catHappy{0%,100%{transform:translateY(0) rotate(0)}35%{transform:translateY(-12px) rotate(-5deg)}70%{transform:translateY(-5px) rotate(5deg)}}@keyframes catSad{0%,100%{transform:rotate(0) translateY(0) scale(.96)}25%{transform:rotate(8deg) translateY(5px) scale(.94)}55%{transform:rotate(-8deg) translateY(2px) scale(.97)}80%{transform:rotate(5deg) translateY(4px) scale(.95)}}
+.academy-shell{margin-top:10px;margin-bottom:28px}.diagnostic-card{display:flex;justify-content:space-between;gap:20px;align-items:center;background:#fffaf6;border:1px solid #d8b9a4;border-radius:26px;padding:22px 26px;box-shadow:0 14px 38px rgba(71,39,27,.08)}.diagnostic-card h2{font:30px Georgia,serif;margin:8px 0 5px;color:#38211c}.diagnostic-card p{margin:0;color:#80685d;max-width:720px;font-size:12px;line-height:1.5}.level-box{min-width:145px;text-align:center;background:#f4e3d7;border:1px solid #d7b7a4;border-radius:18px;padding:14px}.level-box b{display:block;color:#64261f;font:20px Georgia,serif}.level-box span{display:block;color:#876b61;font-size:10px;margin-top:4px}.mode-row{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}.mode{border:1px solid #d8b9a4;background:#fffaf5;color:#693027;border-radius:999px;padding:10px 14px;font-size:11px;font-weight:800;cursor:pointer}.mode.active{background:#64261f;color:white}.subjects{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}.subject{background:#fffaf6;border:1px solid #dec5b5;border-radius:17px;padding:13px;cursor:pointer;transition:.16s}.subject:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(71,39,27,.08)}.subject small{color:#a07868;font-size:9px;text-transform:uppercase;letter-spacing:.08em}.subject b{display:block;color:#4d2821;margin:4px 0;font-size:12px}.subject span{font-size:10px;color:#81695f}.subject .mini{height:4px;background:#ead8cc;border-radius:99px;margin-top:8px;overflow:hidden}.subject .mini i{display:block;height:100%;background:#713027}
+.learning-controls{margin:18px 0 0;background:#fffaf6;border:1px solid #d8b9a4;border-radius:24px;padding:18px 20px;box-shadow:0 12px 30px rgba(71,39,27,.07)}
+.control-title{font:20px Georgia,serif;color:#3b231e;margin:0 0 10px}
+.control-label{display:block;color:#80685d;font-size:9px;font-weight:800;letter-spacing:.1em;margin:12px 0 7px}
+.filter-row{display:flex;gap:7px;flex-wrap:wrap}
+.filter-btn{border:1px solid #d8b9a4;background:#fffdfa;color:#693027;border-radius:999px;padding:9px 12px;font-size:10px;font-weight:800;cursor:pointer}
+.filter-btn:hover{transform:translateY(-1px)}
+.filter-btn.active{background:#64261f;color:#fff;border-color:#64261f}
+.lesson-picker{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:9px}
+.lesson-btn{border:1px solid #dec5b5;background:#fffdfa;border-radius:14px;padding:11px;text-align:left;cursor:pointer;color:#4d2821}
+.lesson-btn.active{border-color:#64261f;box-shadow:0 0 0 2px rgba(100,38,31,.08);background:#fff4ec}
+.lesson-btn b{display:block;font-size:11px;margin-bottom:4px}
+.lesson-btn span{font-size:9px;color:#8a6b60}
+.lesson-empty{padding:12px;border:1px dashed #d8b9a4;border-radius:14px;color:#876b61;font-size:10px}
+@media(max-width:900px){.lesson-picker{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.lesson-picker{grid-template-columns:1fr}.learning-controls{padding:15px}.filter-row{flex-wrap:nowrap;overflow:auto;padding-bottom:3px}.filter-btn{white-space:nowrap}}
+
+.disclaimer{background:#fff7f0;border:1px solid #dfc7b5;border-radius:18px;padding:16px 18px;color:#72584e;font-size:10px;line-height:1.55}.disclaimer b{color:#64261f}.disclaimer p{margin:7px 0}.side img{animation:catFloat 2.8s ease-in-out infinite;transform-origin:50% 90%}.side img.happy{animation:catHappy .55s ease-in-out 2}.side img.sad{animation:catSad .65s ease-in-out 2}@keyframes catFloat{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-8px) rotate(1deg)}}@keyframes catHappy{0%,100%{transform:translateY(0) rotate(0)}35%{transform:translateY(-12px) rotate(-5deg)}70%{transform:translateY(-5px) rotate(5deg)}}@keyframes catSad{0%,100%{transform:rotate(0) translateY(0) scale(.96)}25%{transform:rotate(8deg) translateY(5px) scale(.94)}55%{transform:rotate(-8deg) translateY(2px) scale(.97)}80%{transform:rotate(5deg) translateY(4px) scale(.95)}}
 .side img.think{animation:catThink .8s ease-in-out 2;filter:drop-shadow(0 20px 22px rgba(65,37,28,.15)) saturate(.8)}
 .side img.excited{animation:catExcited .7s cubic-bezier(.2,.8,.2,1) 2}
 .side img.serious{animation:catSerious .75s ease-in-out 2}
@@ -94,6 +111,15 @@
     <button class="mode" data-mode="diagnostic">🧭 Диагностика</button>
   </div>
   <div class="subjects" id="subjects"></div>
+<div class="learning-controls">
+  <h3 class="control-title">Выбери, как хочешь учиться</h3>
+  <span class="control-label">НАПРАВЛЕНИЕ</span>
+  <div class="filter-row" id="directionFilters"></div>
+  <span class="control-label">УРОВЕНЬ СЛОЖНОСТИ</span>
+  <div class="filter-row" id="difficultyFilters"></div>
+  <span class="control-label">КОНКРЕТНЫЙ УРОК</span>
+  <div class="lesson-picker" id="lessonPicker"></div>
+</div>
   <div class="disclaimer"><b>🎓 Важная информация</b><p>Cat Lawyer предоставляет вспомогательный образовательный и информационный контекст и помогает разобраться в основных юридических понятиях, принципах и практических ситуациях.</p><p>Материалы платформы не заменяют полноценное юридическое образование, обучение в образовательной организации, учебную литературу, преподавателя или профессиональную юридическую консультацию.</p><p>Информация предназначена для обучения и общего ознакомления и не является индивидуальной юридической консультацией. Законодательство может изменяться, поэтому при решении конкретной юридической ситуации необходимо обращаться к актуальным нормативным правовым актам и, при необходимости, к квалифицированному специалисту.</p><strong>Cat Lawyer помогает понять право проще, но не заменяет образование и профессиональную юридическую помощь.</strong></div>
 </section>
 
@@ -215,20 +241,39 @@ const diagnosticLessons=[
  {t:'Профессиональная этика',m:'ДИАГНОСТИКА',mem:'Юрист должен учитывать конфликт интересов и профессиональные обязанности.',q:'Что такое конфликт интересов в профессиональной деятельности?',a:['Любой спор в интернете','Ситуация, при которой личная заинтересованность может влиять на исполнение профессиональных обязанностей','Только спор с клиентом'],c:1,e:'Конфликт интересов связан с пересечением профессиональных обязанностей и личной заинтересованности.',ok:'Этический компас работает.',bad:'Конфликт интересов — не любой спор, а юридически и профессионально значимая ситуация.'},
  {t:'Криминалистика',m:'ДИАГНОСТИКА',mem:'Криминалистика изучает средства и методы раскрытия, расследования и предупреждения преступлений.',q:'Для чего нужны криминалистические методы?',a:['Для развлечения следователя','Для решения задач раскрытия и расследования преступлений','Для замены закона'],c:1,e:'Криминалистические средства помогают решать практические задачи расследования.',ok:'Практическая часть права тоже знакома.',bad:'Криминалистика имеет прикладное назначение — помогать расследованию.'}
 ];
-let activeLessons=[...masterLessons],activeTopic='',i=0,score=0,mode='learn',xp=+localStorage.getItem('cl_xp')||0,streak=+localStorage.getItem('cl_streak')||0,last=localStorage.getItem('cl_day')||'',current=null,catTurn=0;
+let activeLessons=[...masterLessons],activeTopic='',selectedDirection='all',selectedDifficulty='all',i=0,score=0,mode='learn',xp=+localStorage.getItem('cl_xp')||0,streak=+localStorage.getItem('cl_streak')||0,last=localStorage.getItem('cl_day')||'',current=null,catTurn=0;
 let mistakes=JSON.parse(localStorage.getItem('cl_mistakes')||'{}');
 const $=id=>document.getElementById(id);
 function level(){return xp>=1000?'Профи':xp>=500?'Продвинутый':xp>=250?'Уверенный':xp>=100?'Базовый уровень':'Новичок'}
 function stats(){ $('xp').textContent=xp;$('streak').textContent=streak;$('level').textContent=level();$('academyLevel').textContent=level();$('academyProgress').textContent=xp+' XP · '+Math.min(100,Math.round(xp/10))+'% курса'; }
 function day(){const d=new Date().toISOString().slice(0,10);if(last!==d){streak=last?streak+1:1;last=d;localStorage.setItem('cl_streak',streak);localStorage.setItem('cl_day',d)}stats()}
 function shuffle(x){const correct=x.c;const p=x.a.map((v,n)=>({v,n}));for(let n=p.length-1;n>0;n--){let j=Math.floor(Math.random()*(n+1));[p[n],p[j]]=[p[j],p[n]]}return{a:p.map(x=>x.v),c:p.findIndex(x=>x.n===correct)}}
-function cat(text,mood=''){ $('bubble').textContent=text;$('catSpeech').textContent=text;['cat1','cat2'].forEach(id=>{const el=$(id);el.classList.remove('happy','sad','think','excited','serious');if(mood)el.classList.add(mood)});const d=$('catDialogue');d.classList.remove('pop');void d.offsetWidth;d.classList.add('pop') }
+function cat(text,mood=''){ $('bubble').textContent=text;$('catSpeech').textContent=text;const src={happy:'/assets/learning-kitten-happy.svg',sad:'/assets/learning-kitten-sad.svg',think:'/assets/learning-kitten-think.svg',excited:'/assets/learning-kitten-happy.svg',serious:'/assets/learning-kitten-serious.svg'}[mood]||'/assets/learning-kitten.svg';['cat1','cat2'].forEach(id=>{const el=$(id);el.src=src;el.classList.remove('happy','sad','think','excited','serious');if(mood)el.classList.add(mood)});const d=$('catDialogue');d.classList.remove('pop');void d.offsetWidth;d.classList.add('pop') }
 function catIntro(){return ['Так, будущий юрист, внимание 😼 Сначала читаем вопрос, потом отвечаем.','Не угадывай на скорость. Юристу полезнее подумать десять секунд.','Одно слово в юридическом вопросе иногда важнее трёх абзацев.','Я кот, но сегодня работаю преподавателем. Дисциплина строгая, миска — после урока 😂'][catTurn++%4]}
 function catCorrect(){return ['ВОТ! Именно! Мур-мур, юридическая логика на месте 😼','Красиво. Запомни правило, а не букву ответа.','Верно. Кот официально разрешает немного собой погордиться.','Молодец. Так и формируется нормальная юридическая база.'][catTurn++%4]}
 function catWrong(){return ['Мяу… нет, дружище. Сейчас разберём без паники 😼','Стоп-стоп. Ошибка полезная — теперь правило запомнится лучше.','Мимо, но не страшно. Юристу важнее уметь разобрать ошибку.','Вот здесь формулировка тебя поймала 😂 Давай разложим по полочкам.'][catTurn++%4]}
 function catNext(){return ['Готов? Следующий кейс ждёт.','Поехали дальше. Кот уже приготовил следующую ловушку 😼','Следующая тема. Читаем внимательно.','Ещё один вопрос — и шаг к следующему уровню.'][catTurn++%4]}
-function renderSubjects(){ $('subjects').innerHTML=subjects.map((s,n)=>`<button class="subject" data-sub="${n}"><small>${s[2]}</small><b>${s[0]}</b><span>${s[1]}</span><div class="mini"><i style="width:${Math.min(100,(s[3]*7))}%"></i></div></button>`).join('') }
-function render(){const x=activeLessons[i],s=shuffle(x);current={...x,a:s.a,c:s.c};$('question').textContent=current.q;$('topic').textContent=current.t.toUpperCase();$('chip').textContent=current.t;$('mode').textContent=mode==='exam'?'ЭКЗАМЕН':mode==='practice'?'ПРАКТИКА':mode==='diagnostic'?'ДИАГНОСТИКА':current.m;$('badge').textContent='Урок '+String(i+1).padStart(2,'0')+' · '+current.t;$('memory').textContent=' '+current.mem;$('result').textContent='';$('next').style.display='none';$('progressText').textContent='ВОПРОС '+(i+1)+' ИЗ '+activeLessons.length;let p=Math.round((i+1)/activeLessons.length*100);$('percent').textContent=p+'%';$('bar').style.width=p+'%';$('progressSide').textContent='Урок '+(i+1)+' из '+activeLessons.length;cat(i===0?catIntro():catNext(),'think');$('answers').innerHTML=current.a.map((v,n)=>`<button class="answer" data-i="${n}"><span class="letter">${String.fromCharCode(65+n)}</span><span>${v}</span></button>`).join('')}
+function difficultyOf(x){if(x.m==='ТЕРМИН'||x.m==='МИНИ-КЕЙС')return'Легко';if(x.m==='СИТУАЦИЯ'||x.m==='ПРОВЕРКА')return'Средне';return'Сложно'}
+function directionOf(x){if(x.t==='Договоры')return'Гражданское право';return x.t}
+function filteredPool(){let pool=[...masterLessons];if(selectedDirection!=='all')pool=pool.filter(x=>directionOf(x)===selectedDirection);if(selectedDifficulty!=='all')pool=pool.filter(x=>difficultyOf(x)===selectedDifficulty);return pool}
+function renderSubjects(){ 
+  $('subjects').innerHTML=subjects.map((s,n)=>`<button class="subject" data-sub="${n}"><small>${s[2]}</small><b>${s[0]}</b><span>${s[1]}</span><div class="mini"><i style="width:${Math.min(100,(s[3]*7))}%"></i></div></button>`).join('');
+  const dirs=[['all','Все направления'],...subjects.map(s=>[s[0],s[0]])];
+  $('directionFilters').innerHTML=dirs.map(([v,label])=>`<button class="filter-btn ${selectedDirection===v?'active':''}" data-direction="${v}">${label}</button>`).join('');
+  $('difficultyFilters').innerHTML=[['all','Любой уровень'],['Легко','Легко'],['Средне','Средне'],['Сложно','Сложно']].map(([v,label])=>`<button class="filter-btn ${selectedDifficulty===v?'active':''}" data-difficulty="${v}">${label}</button>`).join('');
+  renderLessonPicker();
+}
+function renderLessonPicker(){
+  const pool=filteredPool();
+  $('lessonPicker').innerHTML=pool.length?pool.map((x,n)=>`<button class="lesson-btn ${activeLessons[i]===x?'active':''}" data-lesson-index="${n}"><b>${x.q}</b><span>${directionOf(x)} · ${difficultyOf(x)}</span></button>`).join(''):'<div class="lesson-empty">По выбранным фильтрам уроков пока нет. Выбери другое направление или уровень.</div>';
+}
+function applyFilters(){
+  activeLessons=filteredPool();
+  i=0;score=0;activeTopic=selectedDirection==='all'?'':selectedDirection;
+  renderSubjects();render();
+  if(!activeLessons.length)cat('По этим фильтрам уроков пока нет. Я не буду делать вид, что они есть 😼 Выбери другой уровень или направление.','serious');
+}
+function render(){if(!activeLessons.length){current=null;$('question').textContent='Уроков по выбранным фильтрам пока нет';$('answers').innerHTML='';$('feedback').textContent='Выбери другое направление или уровень сложности.';$('next').style.display='none';$('progressText').textContent='НЕТ УРОКОВ';$('progressSide').textContent='0 уроков';$('percent').textContent='0%';$('bar').style.width='0%';renderLessonPicker();return}const x=activeLessons[i],s=shuffle(x);current={...x,a:s.a,c:s.c};$('question').textContent=current.q;$('topic').textContent=current.t.toUpperCase();$('chip').textContent=current.t;$('mode').textContent=mode==='exam'?'ЭКЗАМЕН':mode==='practice'?'ПРАКТИКА':mode==='diagnostic'?'ДИАГНОСТИКА':current.m;$('badge').textContent='Урок '+String(i+1).padStart(2,'0')+' · '+current.t;$('memory').textContent=' '+current.mem;$('result').textContent='';$('next').style.display='none';$('progressText').textContent='ВОПРОС '+(i+1)+' ИЗ '+activeLessons.length;let p=Math.round((i+1)/activeLessons.length*100);$('percent').textContent=p+'%';$('bar').style.width=p+'%';$('progressSide').textContent='Урок '+(i+1)+' из '+activeLessons.length;cat(i===0?catIntro():catNext(),'think');$('answers').innerHTML=current.a.map((v,n)=>`<button class="answer" data-i="${n}"><span class="letter">${String.fromCharCode(65+n)}</span><span>${v}</span></button>`).join('')}
 $('answers').addEventListener('click',e=>{const b=e.target.closest('.answer');if(b&&!b.disabled)answer(+b.dataset.i)});
 function answer(n){
  const bs=[...document.querySelectorAll('.answer')];bs.forEach(b=>b.disabled=true);
@@ -251,7 +296,7 @@ $('next').onclick=()=>{
      $('result').textContent=lv;
      if(lv==='Новичок'&&xp>99){} else if(lv==='Базовый уровень'&&xp<100)xp=100; else if(lv==='Уверенный'&&xp<250)xp=250; else if(lv==='Продвинутый'&&xp<500)xp=500; else if(lv==='Профи'&&xp<1000)xp=1000;
      localStorage.setItem('cl_xp',xp);stats();
-     mode='learn';activeLessons=[...masterLessons];i=0;score=0;
+     mode='learn';selectedDirection='all';selectedDifficulty='all';activeLessons=[...masterLessons];i=0;score=0;
      document.querySelectorAll('.mode').forEach(x=>x.classList.toggle('active',x.dataset.mode==='learn'));
      setTimeout(render,350);return;
    }
@@ -260,19 +305,31 @@ $('next').onclick=()=>{
  render();
 };
 $('subjects').addEventListener('click',e=>{
- const b=e.target.closest('.subject');if(!b)return;const n=+b.dataset.sub,subject=subjects[n][0];
- const filtered=masterLessons.filter(x=>x.t===subject);
- if(!filtered.length){activeTopic='';cat('У меня пока нет отдельной серии уроков по теме «'+subject+'». Я не буду делать вид, что она есть 😼 Добавим её в следующий модуль.','serious');return}
- activeTopic=subject;activeLessons=filtered;i=0;score=0;
- cat('Отличный выбор. Начинаем тему «'+subject+'». Ошибки по ней я буду запоминать отдельно 😼','think');
- document.querySelector('.card').scrollIntoView({behavior:'smooth',block:'start'});render();
+ const b=e.target.closest('.subject');if(!b)return;
+ const n=+b.dataset.sub;selectedDirection=subjects[n][0];selectedDifficulty='all';applyFilters();
+ cat('Направление выбрано: «'+selectedDirection+'». Теперь можно отдельно выбрать сложность и конкретный урок 😼','think');
+ document.querySelector('.learning-controls').scrollIntoView({behavior:'smooth',block:'center'});
+});
+$('directionFilters').addEventListener('click',e=>{
+ const b=e.target.closest('[data-direction]');if(!b)return;
+ selectedDirection=b.dataset.direction;applyFilters();
+});
+$('difficultyFilters').addEventListener('click',e=>{
+ const b=e.target.closest('[data-difficulty]');if(!b)return;
+ selectedDifficulty=b.dataset.difficulty;applyFilters();
+});
+$('lessonPicker').addEventListener('click',e=>{
+ const b=e.target.closest('[data-lesson-index]');if(!b)return;
+ const pool=filteredPool(),lesson=pool[+b.dataset.lessonIndex];
+ const idx=activeLessons.indexOf(lesson);
+ if(idx>=0){i=idx;score=0;render();cat('Урок выбран. Начинаем именно с него — без обязательного прохождения предыдущих 😼','think');document.querySelector('.card').scrollIntoView({behavior:'smooth',block:'start'})}
 });
 document.querySelectorAll('.mode').forEach(b=>b.onclick=()=>{
  document.querySelectorAll('.mode').forEach(x=>x.classList.remove('active'));b.classList.add('active');mode=b.dataset.mode;i=0;score=0;activeTopic='';
  if(mode==='diagnostic'){activeLessons=[...diagnosticLessons];cat('Диагностика без стресса. 12 вопросов по разным разделам — я определю стартовый уровень 😼','think')}
- else if(mode==='exam'){activeLessons=[...masterLessons].sort(()=>Math.random()-.5).slice(0,Math.min(10,masterLessons.length));cat('Экзамен включён. Подсказок не будет. Ошибки считаем честно 😼','serious')}
- else if(mode==='practice'){activeLessons=[...masterLessons].filter(x=>x.m==='СИТУАЦИЯ'||x.m==='МИНИ-КЕЙС');cat('Практика включена. Здесь будем решать жизненные ситуации, а не зубрить определения.','think')}
- else{activeLessons=[...masterLessons].sort((a,b)=>(mistakes[b.t]||0)-(mistakes[a.t]||0));cat('Режим обучения. Я объясняю, ты разбираешься, потом проверяем себя. Если тема слабая — вернёмся к ней.','think')}
+ else if(mode==='exam'){activeLessons=[...filteredPool()].sort(()=>Math.random()-.5).slice(0,Math.min(10,filteredPool().length));cat('Экзамен включён. Подсказок не будет. Ошибки считаем честно 😼','serious')}
+ else if(mode==='practice'){activeLessons=[...filteredPool()].filter(x=>x.m==='СИТУАЦИЯ'||x.m==='МИНИ-КЕЙС');cat('Практика включена. Здесь будем решать жизненные ситуации, а не зубрить определения.','think')}
+ else{activeLessons=[...filteredPool()].sort((a,b)=>(mistakes[b.t]||0)-(mistakes[a.t]||0));cat('Режим обучения. Я объясняю, ты разбираешься, потом проверяем себя. Если тема слабая — вернёмся к ней.','think')}
  render();
 });
 day();renderSubjects();render();function toggleMobileMenu(){const m=document.getElementById('mobileMenu');if(m)m.classList.toggle('open')}document.addEventListener('click',e=>{const m=document.getElementById('mobileMenu');if(m&&m.classList.contains('open')&&!m.contains(e.target)&&!e.target.closest('.menu-toggle'))m.classList.remove('open')});
