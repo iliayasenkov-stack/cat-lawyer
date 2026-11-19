@@ -265,14 +265,24 @@ function catNext(){return ['Готов? Следующий кейс ждёт.','
 function difficultyOf(x){return x.difficulty||((x.m==='ТЕРМИН'||x.m==='МИНИ-КЕЙС')?'Легко':(x.m==='СИТУАЦИЯ'||x.m==='ПРОВЕРКА')?'Средне':'Сложно')}
 function directionOf(x){if(x.t==='Договоры')return'Гражданское право';return x.t}
 function buildAcademyLessons(){
-  const byDirection=new Map();
-  for(const x of masterLessons)byDirection.set(directionOf(x),true);
-  const fromDiagnostic=diagnosticLessons.map(x=>({...x,m:'МИНИ-КЕЙС'}));
-  const pool=[...masterLessons,...fromDiagnostic];
+  const pool=[...masterLessons,...diagnosticLessons.map(x=>({...x,m:'МИНИ-КЕЙС'}))];
   const generated=[];
+  const levels=[['Легко','База'],['Средне','Разбор'],['Сложно','Кейс']];
   for(const s of subjects){
-    if(!byDirection.has(s[0])){
-      generated.push({t:s[0],m:'МИНИ-КЕЙС',difficulty:'Легко',mem:s[1]+'.',q:'Что в первую очередь изучает это направление?',a:[s[1],'Только историю государства','Только судебные решения'],c:0,e:'Это направление охватывает: '+s[1]+'.',ok:'Направление определено. Теперь можно идти глубже 😼',bad:'Здесь важно запомнить предмет регулирования: '+s[1]+'.'});
+    for(const [difficulty,label] of levels){
+      const exists=pool.some(x=>directionOf(x)===s[0]&&difficultyOf(x)===difficulty);
+      if(!exists){
+        generated.push({
+          t:s[0],m:difficulty==='Легко'?'МИНИ-КЕЙС':difficulty==='Средне'?'СИТУАЦИЯ':'ПРОВЕРКА ЗНАНИЙ',
+          difficulty,mem:s[1]+'.',
+          q:label+' по направлению «'+s[0]+'»: что нужно знать в первую очередь?',
+          a:[s[1],'Только историю государства','Только мнение преподавателя'],
+          c:0,
+          e:'Начальная карта направления: '+s[1]+'. Дальше можно переходить к более конкретным нормам и кейсам.',
+          ok:'Отлично. Направление выбрано, теперь можно углубляться 😼',
+          bad:'Для начала запомни предмет направления: '+s[1]+'.'
+        });
+      }
     }
   }
   return [...pool,...generated];
