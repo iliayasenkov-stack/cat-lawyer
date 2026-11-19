@@ -168,7 +168,7 @@
 <div id="answers" class="answers"></div>
 
 <div class="cat-dialogue" id="catDialogue">
-<img class="cat-avatar" src="/assets/learning-kitten.svg" alt="">
+<img class="cat-avatar" id="catAvatar" src="/assets/learning-kitten.svg" alt="">
 <div><strong id="catName">КОТ-НАСТАВНИК</strong><p id="catSpeech">Готов? Давай проверим, умеешь ли ты мыслить как юрист 😼</p></div>
 </div>
 
@@ -277,12 +277,12 @@ function day(){const d=new Date().toISOString().slice(0,10);if(last!==d){streak=
 function shuffle(x){const correct=x.c;const p=x.a.map((v,n)=>({v,n}));for(let n=p.length-1;n>0;n--){let j=Math.floor(Math.random()*(n+1));[p[n],p[j]]=[p[j],p[n]]}return{a:p.map(x=>x.v),c:p.findIndex(x=>x.n===correct)}}
 function cat(text,mood=''){
   $('bubble').textContent=text;$('catSpeech').textContent=text;
+  const src={happy:'/assets/learning-kitten-happy.svg',sad:'/assets/learning-kitten-sad.svg',think:'/assets/learning-kitten-think.svg',excited:'/assets/learning-kitten-happy.svg',serious:'/assets/learning-kitten-serious.svg'}[mood]||'/assets/learning-kitten.svg';
   ['cat1','cat2'].forEach(id=>{
-    const el=$(id);
-    el.src='/assets/learning-kitten.svg';
-    el.classList.remove('happy','sad','think','excited','serious');
-    if(mood)el.classList.add(mood);
+    const el=$(id);el.src=src;
+    el.classList.remove('happy','sad','think','excited','serious');if(mood)el.classList.add(mood);
   });
+  const avatar=$('catAvatar');if(avatar)avatar.src=src;
   const d=$('catDialogue');d.classList.remove('pop');void d.offsetWidth;d.classList.add('pop')
 }
 function catIntro(){return ['Так, будущий юрист, внимание 😼 Сначала читаем вопрос, потом отвечаем.','Не угадывай на скорость. Юристу полезнее подумать десять секунд.','Одно слово в юридическом вопросе иногда важнее трёх абзацев.','Я кот, но сегодня работаю преподавателем. Дисциплина строгая, миска — после урока 😂'][catTurn++%4]}
