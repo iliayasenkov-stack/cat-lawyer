@@ -235,7 +235,7 @@ async function api(r,e){
     if(p==="/api/reviews"&&r.method==="POST"){
       const b=await r.json(),u=await userFor(r,e),name=String(b.name||u?.name||"Пользователь Cat Lawyer").trim().slice(0,80),text=String(b.text||"").trim(),rating=Math.max(1,Math.min(5,Number(b.rating)||5));
       if(text.length<3||text.length>1000)return json({error:"Отзыв должен содержать от 3 до 1000 символов."},400);
-      const id=crypto.randomUUID();await e.DB.prepare("INSERT INTO reviews(id,name,text,rating,approved) VALUES(?,?,?,?,1)").bind(id,name||"Пользователь Cat Lawyer",text,rating).run();return json({id,pending:true},201);
+      const id=crypto.randomUUID();await e.DB.prepare("INSERT INTO reviews(id,name,text,rating,approved) VALUES(?,?,?,?,0)").bind(id,name||"Пользователь Cat Lawyer",text,rating).run();return json({id,pending:true},201);
     }
     if(p==="/api/history"&&r.method==="GET"){
       const u=await userFor(r,e);if(!u)return json({error:"Требуется вход."},401);
@@ -260,7 +260,14 @@ async function api(r,e){
       if(limited(r,"documents:"+requestIP(r),10,60000))return json({error:"Слишком много запросов. Попробуйте позже."},429);
       const b=await r.json(),type=String(b.type||"Обращение").trim(),situation=String(b.situation||"").trim();
       if(!["Претензия","Жалоба","Заявление","Обращение"].includes(type)||situation.length<10||situation.length>10000)return json({error:"Проверь тип документа и описание ситуации."},400);
-      const document=await aiText(e,[{role:"system",content:"Ты помощник Cat Lawyer. Составляй только информационный черновик документа по законодательству РФ. Тип документа: "+type+". Не выдумывай ФИО, адреса, номера, даты, организации, статьи или факты. Недостающие сведения обозначай квадратными скобками: [указать]. Структура должна быть пригодна для дальнейшей проверки человеком. В конце добавь короткую пометку, что документ нужно проверить перед отправкой."},{role:"user",content:situation}],1200);
+      let document;
+      try{
+        document=await aiText(e,[{role:"system",content:"Ты помощник Cat Lawyer. Составляй только информационный черновик документа по законодательству РФ. Тип документа: "+type+". Не выдумывай ФИО, адреса, номера, даты, организации, статьи, сроки или факты. Если норма или срок не подтверждены исходными данными, не утверждай их как факт. Недостающие сведения обозначай квадратными скобками: [указать]. Структура должна быть пригодна для дальнейшей проверки человеком. В конце добавь короткую пометку, что документ нужно проверить перед отправкой."},{role:"user",content:situation}],1200);
+        if(!validateAiReply(situation,document))throw new Error("Generated document failed legal safety validation");
+      }catch(err){
+        console.error("Cat Lawyer document generation failed validation",err);
+        document="ЧЕРНОВИК ДОКУМЕНТА\n\nТип: "+type+"\n\nОписание ситуации:\n"+situation+"\n\nТребования:\n[указать, чего именно вы просите]\n\nПриложения:\n[указать документы и доказательства]\n\nВажно: этот шаблон требует заполнения и проверки по актуальному законодательству РФ перед отправкой.";
+      }
       return json({type,document});
     }
     if(p==="/api/learn/progress"&&r.method==="GET"){
@@ -269,7 +276,7 @@ async function api(r,e){
     }
     if(p==="/api/learn/progress"&&r.method==="POST"){
       const u=await userFor(r,e);if(!u)return json({error:"Требуется вход."},401);
-      const b=await r.json(),completed=Math.max(0,Math.min(6,Number(b.completed)||0)),score=Math.max(0,Math.min(6,Number(b.score)||0));
+      const b=await r.json(),completed=Math.max(0,Math.min(100,Number(b.completed)||0)),score=Math.max(0,Math.min(100,Number(b.score)||0));
       await e.DB.prepare("INSERT INTO learn_progress(user_id,completed,score) VALUES(?,?,?) ON CONFLICT(user_id) DO UPDATE SET completed=excluded.completed,score=excluded.score,updated_at=CURRENT_TIMESTAMP").bind(u.id,completed,score).run();
       return json({completed,score});
     }
