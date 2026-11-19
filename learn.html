@@ -264,10 +264,34 @@ function saveProfile(){
  const profile={type,course,lev,goal,at:new Date().toISOString()};localStorage.setItem('cl_student_profile',JSON.stringify(profile));
  $('profileStatus').textContent=type+' · '+course+' · '+goal;closeProfile();startQualification();
 }
+function qualificationPool(){
+  const profile=JSON.parse(localStorage.getItem('cl_student_profile')||'null')||{};
+  const self=String(profile.lev||'');
+  const hard=self==='почти не знаю право'?[...diagnosticLessons]:
+    self==='знаю основы'?diagnosticLessons.map(upgradeDifficulty):
+    diagnosticLessons.map(upgradeDifficulty);
+  const seen=JSON.parse(localStorage.getItem('cl_seen_questions')||'{}');
+  const priority={
+    '1 курс':['Теория государства и права','Конституционное право','Римское право','Гражданское право'],
+    '2 курс':['Гражданское право','Административное право','Уголовное право','Трудовое право'],
+    '3 курс':['Уголовное право','Гражданский процесс','Уголовный процесс','Трудовое право'],
+    '4 курс':['Гражданский процесс','Уголовный процесс','Административный процесс','Предпринимательское право'],
+    '5 курс':['Международное право','Профессиональная этика','Криминалистика','Административный процесс'],
+    '6 курс':['Профессиональная этика','Криминалистика','Международное право','Предпринимательское право']
+  };
+  const preferred=priority[profile.course]||[];
+  const pool=[...hard].sort((a,b)=>{
+    const ap=preferred.indexOf(a.t),bp=preferred.indexOf(b.t);
+    const as=seen[a.q]?.correct?1:0,bs=seen[b.q]?.correct?1:0;
+    return (ap<0?99:ap)-(bp<0?99:bp)||as-bs;
+  });
+  const unseen=pool.filter(x=>!seen[x.q]?.correct);
+  return [...unseen,...pool.filter(x=>seen[x.q]?.correct)].slice(0,12);
+}
 function startQualification(){
- mode='diagnostic';i=0;score=0;activeLessons=[...diagnosticLessons];
+ mode='diagnostic';i=0;score=0;activeLessons=qualificationPool();
  document.querySelectorAll('.mode').forEach(x=>x.classList.toggle('active',x.dataset.mode==='diagnostic'));
- cat('Профиль готов. Теперь короткий квалификационный урок: я проверю базу и пойму, с чего тебя лучше начать 😼','think');render();
+ cat('Профиль готов. Теперь квалификационный урок. Я не буду гонять тебя по тому, что ты уже уверенно решал: сначала проверим базу, затем подстрою сложность 😼','think');render();
 }
 $('profileBtn').onclick=openProfile;$('saveProfile').onclick=saveProfile;
 const savedProfile=JSON.parse(localStorage.getItem('cl_student_profile')||'null');if(savedProfile)$('profileStatus').textContent=savedProfile.type+' · '+savedProfile.course+' · '+savedProfile.goal;
@@ -277,15 +301,24 @@ function day(){const d=new Date().toISOString().slice(0,10);if(last!==d){streak=
 function shuffle(x){const correct=x.c;const p=x.a.map((v,n)=>({v,n}));for(let n=p.length-1;n>0;n--){let j=Math.floor(Math.random()*(n+1));[p[n],p[j]]=[p[j],p[n]]}return{a:p.map(x=>x.v),c:p.findIndex(x=>x.n===correct)}}
 function cat(text,mood=''){
   $('bubble').textContent=text;$('catSpeech').textContent=text;
-  const src='/assets/mentor-happy.webp';
+  const src={
+    happy:'/assets/mentor-happy.webp',
+    excited:'/assets/mentor-happy.webp',
+    sad:'/assets/mentor-sad.webp',
+    think:'/assets/mentor-think.webp',
+    serious:'/assets/mentor-serious.webp',
+    curious:'/assets/mentor-curious.webp',
+    surprised:'/assets/mentor-surprised.webp',
+    calm:'/assets/mentor-think.webp'
+  }[mood]||'/assets/mentor-think.webp';
   ['cat1','cat2'].forEach(id=>{
-    const el=$(id);
+    const el=$(id); if(!el)return;
     el.src=src;
-    el.classList.remove('happy','sad','think','excited','serious');
+    el.classList.remove('happy','sad','think','excited','serious','curious','surprised','calm');
     if(mood)el.classList.add(mood);
   });
   const avatar=$('catAvatar');if(avatar)avatar.src=src;
-  const d=$('catDialogue');d.classList.remove('pop');void d.offsetWidth;d.classList.add('pop')
+  const d=$('catDialogue');d.classList.remove('pop');void d.offsetWidth;d.classList.add('pop');
 }
 function catIntro(){return ['Так, будущий юрист, внимание 😼 Сначала читаем вопрос, потом отвечаем.','Не угадывай на скорость. Юристу полезнее подумать десять секунд.','Одно слово в юридическом вопросе иногда важнее трёх абзацев.','Я кот, но сегодня работаю преподавателем. Дисциплина строгая, миска — после урока 😂'][catTurn++%4]}
 function catCorrect(){return ['ВОТ! Именно! Мур-мур, юридическая логика на месте 😼','Красиво. Запомни правило, а не букву ответа.','Верно. Кот официально разрешает немного собой погордиться.','Молодец. Так и формируется нормальная юридическая база.'][catTurn++%4]}
@@ -295,10 +328,10 @@ function catErrorExplanation(q,n){
   const correct=String(q.a?.[q.c]||'');
   const rule=String(q.e||'');
   const bad=String(q.bad||'');
-  return 'Ты выбрал: «'+picked+'». '+(bad||('Этот вариант не учитывает ключевой юридический критерий. '+rule))+' Правильная логика: «'+correct+'». '+rule;
+  return 'Разбираем ошибку. Ты выбрал: «'+picked+'». '+(bad||'Этот вариант звучит правдоподобно, но в нём пропущен главный юридический критерий.')+' Ключевой критерий: '+rule+' Поэтому правильная логика — «'+correct+'». Не заучивай букву: запомни именно критерий, по которому ты отсёк неверный вариант.';
 }
 function catCorrectExplanation(q){
-  return 'Верно. Почему: '+String(q.e||'Это соответствует условию вопроса.')+' Запомни именно логику, а не положение правильного ответа.';
+  return 'Почему это правильно: '+String(q.e||'Ответ соответствует условиям вопроса.')+' Юрист сначала выделяет юридически значимый критерий, а уже потом выбирает норму или требование. Запомни ход рассуждения, а не положение правильного ответа.';
 }
 function catNext(){return ['Готов? Следующий кейс ждёт.','Поехали дальше. Кот уже приготовил следующую ловушку 😼','Следующая тема. Читаем внимательно.','Ещё один вопрос — и шаг к следующему уровню.'][catTurn++%4]}
 function difficultyOf(x){return x.difficulty||((x.m==='ТЕРМИН'||x.m==='МИНИ-КЕЙС')?'Легко':(x.m==='СИТУАЦИЯ'||x.m==='ПРОВЕРКА')?'Средне':'Сложно')}
@@ -376,13 +409,16 @@ function applyFilters(){
   renderSubjects();render();
   if(!activeLessons.length)cat('По этим фильтрам уроков пока нет. Я не буду делать вид, что они есть 😼 Выбери другой уровень или направление.','serious');
 }
-function render(){if(!activeLessons.length){current=null;$('question').textContent='Уроков по выбранным фильтрам пока нет';$('answers').innerHTML='';$('feedback').textContent='Выбери другое направление или уровень сложности.';$('next').style.display='none';$('progressText').textContent='НЕТ УРОКОВ';$('progressSide').textContent='0 уроков';$('percent').textContent='0%';$('bar').style.width='0%';renderLessonPicker();return}const x=upgradeDifficulty(activeLessons[i]),s=shuffle(x);current={...x,a:s.a,c:s.c};$('question').textContent=current.q;$('topic').textContent=current.t.toUpperCase();$('chip').textContent=current.t;$('mode').textContent=mode==='exam'?'ЭКЗАМЕН':mode==='practice'?'ПРАКТИКА':mode==='diagnostic'?'ДИАГНОСТИКА':current.m;$('badge').textContent='Урок '+String(i+1).padStart(2,'0')+' · '+current.t;$('memory').textContent=' '+current.mem;$('result').textContent='';$('next').style.display='none';$('progressText').textContent='ВОПРОС '+(i+1)+' ИЗ '+activeLessons.length;let p=Math.round((i+1)/activeLessons.length*100);$('percent').textContent=p+'%';$('bar').style.width=p+'%';$('progressSide').textContent='Урок '+(i+1)+' из '+activeLessons.length;cat(i===0?catIntro():catNext(),'think');$('answers').innerHTML=current.a.map((v,n)=>`<button class="answer" data-i="${n}"><span class="letter">${String.fromCharCode(65+n)}</span><span>${v}</span></button>`).join('');renderLessonPicker()}
+function render(){if(!activeLessons.length){current=null;$('question').textContent='Уроков по выбранным фильтрам пока нет';$('answers').innerHTML='';$('feedback').textContent='Выбери другое направление или уровень сложности.';$('next').style.display='none';$('progressText').textContent='НЕТ УРОКОВ';$('progressSide').textContent='0 уроков';$('percent').textContent='0%';$('bar').style.width='0%';renderLessonPicker();return}const x=upgradeDifficulty(activeLessons[i]),s=shuffle(x);current={...x,a:s.a,c:s.c};$('question').textContent=current.q;$('topic').textContent=current.t.toUpperCase();$('chip').textContent=current.t;$('mode').textContent=mode==='exam'?'ЭКЗАМЕН':mode==='practice'?'ПРАКТИКА':mode==='diagnostic'?'ДИАГНОСТИКА':current.m;$('badge').textContent='Урок '+String(i+1).padStart(2,'0')+' · '+current.t;$('memory').textContent=' '+current.mem;$('result').textContent='';$('next').style.display='none';$('progressText').textContent='ВОПРОС '+(i+1)+' ИЗ '+activeLessons.length;let p=Math.round((i+1)/activeLessons.length*100);$('percent').textContent=p+'%';$('bar').style.width=p+'%';$('progressSide').textContent='Урок '+(i+1)+' из '+activeLessons.length;cat(i===0?catIntro():catNext(),i===0?'think':'curious');$('answers').innerHTML=current.a.map((v,n)=>`<button class="answer" data-i="${n}"><span class="letter">${String.fromCharCode(65+n)}</span><span>${v}</span></button>`).join('');renderLessonPicker()}
 $('answers').addEventListener('click',e=>{const b=e.target.closest('.answer');if(b&&!b.disabled)answer(+b.dataset.i)});
 function answer(n){
  const bs=[...document.querySelectorAll('.answer')];bs.forEach(b=>b.disabled=true);
  const correct=n===current.c;bs[n].classList.add(correct?'correct':'wrong');if(!correct)bs[current.c].classList.add('correct');
- if(correct){score++;if(mode!=='diagnostic')xp+=mode==='exam'?20:10;cat(catCorrect()+' '+catCorrectExplanation(current),'excited');$('feedback').textContent='Разбор: '+current.e;$('xpPop').textContent=mode==='diagnostic'?'+0 XP · диагностика':'+ '+(mode==='exam'?20:10)+' XP'}
- else{mistakes[current.t]=(mistakes[current.t]||0)+1;localStorage.setItem('cl_mistakes',JSON.stringify(mistakes));cat(catWrong()+' '+catErrorExplanation(current,n),'sad');$('feedback').textContent='Разбор ошибки: '+current.e+' Правильный ответ: '+current.a[current.c]+'.';$('xpPop').textContent='+0 XP · правило разобрано'}
+ const seen=JSON.parse(localStorage.getItem('cl_seen_questions')||'{}');
+ seen[current.q]={correct,at:new Date().toISOString()};
+ localStorage.setItem('cl_seen_questions',JSON.stringify(seen));
+ if(correct){score++;if(mode!=='diagnostic')xp+=mode==='exam'?20:10;cat(catCorrect()+' '+catCorrectExplanation(current),'happy');$('feedback').textContent='Разбор от кота: '+current.e;$('xpPop').textContent=mode==='diagnostic'?'+0 XP · квалификация':'+ '+(mode==='exam'?20:10)+' XP'}
+ else{mistakes[current.t]=(mistakes[current.t]||0)+1;localStorage.setItem('cl_mistakes',JSON.stringify(mistakes));cat(catWrong()+' '+catErrorExplanation(current,n),'sad');$('feedback').textContent='Разбор ошибки от кота: '+current.e+' Правильный ответ: '+current.a[current.c]+'. Теперь ты знаешь, какой критерий нужно проверять в следующий раз.';$('xpPop').textContent='+0 XP · ошибка разобрана'}
  if(mode!=='diagnostic')localStorage.setItem('cl_xp',xp);stats();
  $('next').style.display='inline-block';$('next').textContent=i===activeLessons.length-1?(mode==='diagnostic'?'Определить мой уровень →':'Завершить →'):'Продолжить с котом →';
  $('result').textContent=i===activeLessons.length-1?(mode==='diagnostic'?'Диагностика завершена':'Результат: '+score+'/'+activeLessons.length):(correct?'Ответ принят':'Ошибка разобрана');
@@ -429,7 +465,7 @@ $('lessonPicker').addEventListener('click',e=>{
 });
 document.querySelectorAll('.mode').forEach(b=>b.onclick=()=>{
  document.querySelectorAll('.mode').forEach(x=>x.classList.remove('active'));b.classList.add('active');mode=b.dataset.mode;i=0;score=0;activeTopic='';
- if(mode==='diagnostic'){activeLessons=[...diagnosticLessons];cat('Диагностика без стресса. 12 вопросов по разным разделам — я определю стартовый уровень 😼','think')}
+ if(mode==='diagnostic'){activeLessons=qualificationPool();cat('Квалификация без стресса. Вопросы смешаны по разделам, а сложность учитывает твой профиль и прошлые ответы 😼','think')}
  else if(mode==='exam'){activeLessons=[...filteredPool()].sort(()=>Math.random()-.5).slice(0,Math.min(10,filteredPool().length));cat('Экзамен включён. Подсказок не будет. Ошибки считаем честно 😼','serious')}
  else if(mode==='practice'){activeLessons=[...filteredPool()].filter(x=>x.m==='СИТУАЦИЯ'||x.m==='МИНИ-КЕЙС');cat('Практика включена. Здесь будем решать жизненные ситуации, а не зубрить определения.','think')}
  else{activeLessons=[...filteredPool()].sort((a,b)=>(mistakes[b.t]||0)-(mistakes[a.t]||0));cat('Режим обучения. Я объясняю, ты разбираешься, потом проверяем себя. Если тема слабая — вернёмся к ней.','think')}
