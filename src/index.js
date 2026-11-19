@@ -89,12 +89,13 @@ async function aiText(e,messages,max_tokens=420){
 }
 function validateAiReply(question,reply){
   const q=String(question||"").toLowerCase(),r=String(reply||"").toLowerCase();
-  const distance=/интернет|онлайн|дистанцион|доставк|маркетплейс/.test(q);
-  if(!distance && /(?:вернуть|возврат)[^\\n]{0,100}7\\s*дн|7\\s*дн[^\\n]{0,100}(?:вернуть|возврат)/.test(r))return false;
+  const consumerReturn=/(вернуть|возврат|обмен).*(товар|покуп|магазин)|((товар|покуп|магазин).*(вернуть|возврат|обмен))/.test(q);
+  if(consumerReturn && /(?:вернуть|возврат|обмен)[^\n]{0,160}7\s*дн|7\s*дн[^\n]{0,160}(?:вернуть|возврат|обмен)/.test(r))return false;
+  if(/федеральн(?:ый|ого) закон[^\n]{0,100}329-фз/.test(r))return false;
   if(/8-800-100-100-8/.test(r))return false;
-  if(/\\bфас\\b|федеральн(ая|ую) антимонопольн/.test(r))return false;
-  if(/гражданск(ий|ого) кодекс[^\\n]{0,80}стать(я|и)\\s*1/.test(r))return false;
-  if(/чек[^\\n]{0,80}(обязател|необходим)|обязателен[^\\n]{0,80}чек/.test(r))return false;
+  if(/\bфас\b|федеральн(ая|ую) антимонопольн/.test(r))return false;
+  if(/гражданск(ий|ого) кодекс[^\n]{0,80}стать\s*1\b/.test(r))return false;
+  if(/чек[^\n]{0,80}(обязател|необходим)|обязателен[^\n]{0,80}чек/.test(r))return false;
   if(/право потребителя на возврат товара в течение срока, указанного выше/.test(r))return false;
   return r.length>=40;
 }
