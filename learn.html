@@ -248,14 +248,42 @@ function level(){return xp>=1000?'Профи':xp>=500?'Продвинутый':x
 function stats(){ $('xp').textContent=xp;$('streak').textContent=streak;$('level').textContent=level();$('academyLevel').textContent=level();$('academyProgress').textContent=xp+' XP · '+Math.min(100,Math.round(xp/10))+'% курса'; }
 function day(){const d=new Date().toISOString().slice(0,10);if(last!==d){streak=last?streak+1:1;last=d;localStorage.setItem('cl_streak',streak);localStorage.setItem('cl_day',d)}stats()}
 function shuffle(x){const correct=x.c;const p=x.a.map((v,n)=>({v,n}));for(let n=p.length-1;n>0;n--){let j=Math.floor(Math.random()*(n+1));[p[n],p[j]]=[p[j],p[n]]}return{a:p.map(x=>x.v),c:p.findIndex(x=>x.n===correct)}}
-function cat(text,mood=''){ $('bubble').textContent=text;$('catSpeech').textContent=text;const src={happy:'/assets/learning-kitten-happy.svg',sad:'/assets/learning-kitten-sad.svg',think:'/assets/learning-kitten-think.svg',excited:'/assets/learning-kitten-happy.svg',serious:'/assets/learning-kitten-serious.svg'}[mood]||'/assets/learning-kitten.svg';['cat1','cat2'].forEach(id=>{const el=$(id);el.src=src;el.classList.remove('happy','sad','think','excited','serious');if(mood)el.classList.add(mood)});const d=$('catDialogue');d.classList.remove('pop');void d.offsetWidth;d.classList.add('pop') }
+function cat(text,mood=''){
+  $('bubble').textContent=text;$('catSpeech').textContent=text;
+  ['cat1','cat2'].forEach(id=>{
+    const el=$(id);
+    el.src='/assets/learning-kitten.svg';
+    el.classList.remove('happy','sad','think','excited','serious');
+    if(mood)el.classList.add(mood);
+  });
+  const d=$('catDialogue');d.classList.remove('pop');void d.offsetWidth;d.classList.add('pop')
+}
 function catIntro(){return ['Так, будущий юрист, внимание 😼 Сначала читаем вопрос, потом отвечаем.','Не угадывай на скорость. Юристу полезнее подумать десять секунд.','Одно слово в юридическом вопросе иногда важнее трёх абзацев.','Я кот, но сегодня работаю преподавателем. Дисциплина строгая, миска — после урока 😂'][catTurn++%4]}
 function catCorrect(){return ['ВОТ! Именно! Мур-мур, юридическая логика на месте 😼','Красиво. Запомни правило, а не букву ответа.','Верно. Кот официально разрешает немного собой погордиться.','Молодец. Так и формируется нормальная юридическая база.'][catTurn++%4]}
 function catWrong(){return ['Мяу… нет, дружище. Сейчас разберём без паники 😼','Стоп-стоп. Ошибка полезная — теперь правило запомнится лучше.','Мимо, но не страшно. Юристу важнее уметь разобрать ошибку.','Вот здесь формулировка тебя поймала 😂 Давай разложим по полочкам.'][catTurn++%4]}
 function catNext(){return ['Готов? Следующий кейс ждёт.','Поехали дальше. Кот уже приготовил следующую ловушку 😼','Следующая тема. Читаем внимательно.','Ещё один вопрос — и шаг к следующему уровню.'][catTurn++%4]}
-function difficultyOf(x){if(x.m==='ТЕРМИН'||x.m==='МИНИ-КЕЙС')return'Легко';if(x.m==='СИТУАЦИЯ'||x.m==='ПРОВЕРКА')return'Средне';return'Сложно'}
+function difficultyOf(x){return x.difficulty||((x.m==='ТЕРМИН'||x.m==='МИНИ-КЕЙС')?'Легко':(x.m==='СИТУАЦИЯ'||x.m==='ПРОВЕРКА')?'Средне':'Сложно')}
 function directionOf(x){if(x.t==='Договоры')return'Гражданское право';return x.t}
-function filteredPool(){let pool=[...masterLessons];if(selectedDirection!=='all')pool=pool.filter(x=>directionOf(x)===selectedDirection);if(selectedDifficulty!=='all')pool=pool.filter(x=>difficultyOf(x)===selectedDifficulty);return pool}
+function buildAcademyLessons(){
+  const byDirection=new Map();
+  for(const x of masterLessons)byDirection.set(directionOf(x),true);
+  const fromDiagnostic=diagnosticLessons.map(x=>({...x,m:'МИНИ-КЕЙС'}));
+  const pool=[...masterLessons,...fromDiagnostic];
+  const generated=[];
+  for(const s of subjects){
+    if(!byDirection.has(s[0])){
+      generated.push({t:s[0],m:'МИНИ-КЕЙС',difficulty:'Легко',mem:s[1]+'.',q:'Что в первую очередь изучает это направление?',a:[s[1],'Только историю государства','Только судебные решения'],c:0,e:'Это направление охватывает: '+s[1]+'.',ok:'Направление определено. Теперь можно идти глубже 😼',bad:'Здесь важно запомнить предмет регулирования: '+s[1]+'.'});
+    }
+  }
+  return [...pool,...generated];
+}
+const academyLessons=buildAcademyLessons();
+function filteredPool(){
+  let pool=[...academyLessons];
+  if(selectedDirection!=='all')pool=pool.filter(x=>directionOf(x)===selectedDirection);
+  if(selectedDifficulty!=='all')pool=pool.filter(x=>difficultyOf(x)===selectedDifficulty);
+  return pool;
+}
 function renderSubjects(){ 
   $('subjects').innerHTML=subjects.map((s,n)=>`<button class="subject" data-sub="${n}"><small>${s[2]}</small><b>${s[0]}</b><span>${s[1]}</span><div class="mini"><i style="width:${Math.min(100,(s[3]*7))}%"></i></div></button>`).join('');
   const dirs=[['all','Все направления'],...subjects.map(s=>[s[0],s[0]])];
@@ -296,7 +324,7 @@ $('next').onclick=()=>{
      $('result').textContent=lv;
      if(lv==='Новичок'&&xp>99){} else if(lv==='Базовый уровень'&&xp<100)xp=100; else if(lv==='Уверенный'&&xp<250)xp=250; else if(lv==='Продвинутый'&&xp<500)xp=500; else if(lv==='Профи'&&xp<1000)xp=1000;
      localStorage.setItem('cl_xp',xp);stats();
-     mode='learn';selectedDirection='all';selectedDifficulty='all';activeLessons=[...masterLessons];i=0;score=0;
+     mode='learn';selectedDirection='all';selectedDifficulty='all';activeLessons=[...academyLessons];i=0;score=0;
      document.querySelectorAll('.mode').forEach(x=>x.classList.toggle('active',x.dataset.mode==='learn'));
      setTimeout(render,350);return;
    }
@@ -332,7 +360,7 @@ document.querySelectorAll('.mode').forEach(b=>b.onclick=()=>{
  else{activeLessons=[...filteredPool()].sort((a,b)=>(mistakes[b.t]||0)-(mistakes[a.t]||0));cat('Режим обучения. Я объясняю, ты разбираешься, потом проверяем себя. Если тема слабая — вернёмся к ней.','think')}
  render();
 });
-day();renderSubjects();render();function toggleMobileMenu(){const m=document.getElementById('mobileMenu');if(m)m.classList.toggle('open')}document.addEventListener('click',e=>{const m=document.getElementById('mobileMenu');if(m&&m.classList.contains('open')&&!m.contains(e.target)&&!e.target.closest('.menu-toggle'))m.classList.remove('open')});
+day();renderSubjects();activeLessons=[...academyLessons];render();function toggleMobileMenu(){const m=document.getElementById('mobileMenu');if(m)m.classList.toggle('open')}document.addEventListener('click',e=>{const m=document.getElementById('mobileMenu');if(m&&m.classList.contains('open')&&!m.contains(e.target)&&!e.target.closest('.menu-toggle'))m.classList.remove('open')});
 </script>
 </body>
 </html>
