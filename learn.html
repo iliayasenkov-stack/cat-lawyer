@@ -277,7 +277,7 @@ function day(){const d=new Date().toISOString().slice(0,10);if(last!==d){streak=
 function shuffle(x){const correct=x.c;const p=x.a.map((v,n)=>({v,n}));for(let n=p.length-1;n>0;n--){let j=Math.floor(Math.random()*(n+1));[p[n],p[j]]=[p[j],p[n]]}return{a:p.map(x=>x.v),c:p.findIndex(x=>x.n===correct)}}
 function cat(text,mood=''){
   $('bubble').textContent=text;$('catSpeech').textContent=text;
-  const src='/assets/learning-kitten.svg';
+  const src='/assets/mentor-happy.webp';
   ['cat1','cat2'].forEach(id=>{
     const el=$(id);
     el.src=src;
