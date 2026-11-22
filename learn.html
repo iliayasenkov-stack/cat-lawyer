@@ -86,7 +86,7 @@
 @media(max-width:900px){.subjects{grid-template-columns:repeat(2,1fr)}.diagnostic-card{align-items:flex-start;flex-direction:column}.level-box{width:100%;box-sizing:border-box}}@media(max-width:560px){.subjects{grid-template-columns:1fr}.mode-row{overflow:auto;flex-wrap:nowrap;padding-bottom:3px}.mode{white-space:nowrap}.diagnostic-card{padding:18px}.diagnostic-card h2{font-size:25px}}
 
 /* lighter academy interface */
-.learn-page{padding-top:24px}.academy-shell{max-width:1050px}.diagnostic-card{padding:16px 20px;border-radius:20px;box-shadow:none}.diagnostic-card p{max-width:600px}.subjects{display:none}.cat-mentor-sprite{width:135px;height:190px;background-repeat:no-repeat;background-size:400% 300%;background-position:0 0;display:block;margin:0 auto;transition:background-position .16s ease,transform .16s ease}.cat-mentor-sprite.active{transform:translateY(-2px)}.cat-avatar.cat-mentor-sprite{width:72px;height:72px;flex:0 0 72px;margin:0;background-size:400% 300%}.learning-controls{padding:14px 16px;border-radius:18px;box-shadow:none}.learning-controls .control-title{font-size:17px}.lesson-picker{max-height:170px;overflow:auto}.mode-row{margin:10px 0}.disclaimer{margin-top:12px;padding:12px 15px}.learn-title{margin-bottom:18px}.learn-title h1{font-size:46px}.layout{grid-template-columns:145px minmax(520px,760px) 145px;gap:16px}.side img{width:135px}.card{border-radius:24px;box-shadow:0 18px 45px rgba(71,39,27,.11)}.body{grid-template-columns:165px 1fr;gap:20px;padding:22px}.question h2{font-size:32px}
+.learn-page{padding-top:24px}.academy-shell{max-width:1050px}.diagnostic-card{padding:16px 20px;border-radius:20px;box-shadow:none}.diagnostic-card p{max-width:600px}.subjects{display:none}.lesson-intro{background:linear-gradient(180deg,#fffaf4,#f8eee7);border:1px solid #ead9cf;border-radius:18px;padding:20px;margin:16px 0 18px}.lesson-label{font-size:10px;font-weight:900;letter-spacing:.13em;color:#8a4c42}.lesson-intro h3{margin:8px 0 8px;font-size:22px}.lesson-intro p{margin:0;line-height:1.7;color:#493c37}.lesson-why{display:grid;gap:4px;margin:15px 0;padding:13px 14px;border-radius:12px;background:#fff;border:1px solid #eadfd8;color:#554741}.lesson-why span{line-height:1.55}.cat-mentor-sprite{width:135px;height:190px;background-repeat:no-repeat;background-size:400% 300%;background-position:0 0;display:block;margin:0 auto;transition:background-position .16s ease,transform .16s ease}.cat-mentor-sprite.active{transform:translateY(-2px)}.cat-avatar.cat-mentor-sprite{width:72px;height:72px;flex:0 0 72px;margin:0;background-size:400% 300%}.learning-controls{padding:14px 16px;border-radius:18px;box-shadow:none}.learning-controls .control-title{font-size:17px}.lesson-picker{max-height:170px;overflow:auto}.mode-row{margin:10px 0}.disclaimer{margin-top:12px;padding:12px 15px}.learn-title{margin-bottom:18px}.learn-title h1{font-size:46px}.layout{grid-template-columns:145px minmax(520px,760px) 145px;gap:16px}.side img{width:135px}.card{border-radius:24px;box-shadow:0 18px 45px rgba(71,39,27,.11)}.body{grid-template-columns:165px 1fr;gap:20px;padding:22px}.question h2{font-size:32px}
 .profile-modal{position:fixed;inset:0;background:rgba(48,28,23,.45);backdrop-filter:blur(5px);display:none;align-items:center;justify-content:center;padding:18px;z-index:1000}.profile-modal.open{display:flex}.profile-box{width:min(620px,100%);background:#fffaf6;border:1px solid #d8b9a4;border-radius:24px;padding:26px;box-shadow:0 30px 90px rgba(0,0,0,.22)}.profile-box h2{font:30px Georgia,serif;color:#38211c;margin:5px 0}.profile-box p{color:#80685d;font-size:12px;line-height:1.5}.profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:18px 0}.profile-grid label{font-size:10px;font-weight:800;color:#75594f}.profile-grid select{display:block;width:100%;margin-top:6px;padding:12px;border:1px solid #d8b9a4;border-radius:12px;background:#fffdfa;color:#4d2821}.qual-btn{border:1px solid #64261f;background:#64261f;color:white;border-radius:999px;padding:11px 16px;font-weight:800;cursor:pointer}.qual-banner{display:flex;justify-content:space-between;align-items:center;gap:12px;background:#fff7f0;border:1px solid #dfc7b5;border-radius:18px;padding:13px 16px;margin:10px 0}
 @media(max-width:820px){.layout{display:block}.side{display:none}.body{grid-template-columns:1fr}.progress{display:none}.learn-title h1{font-size:38px}}@media(max-width:560px){.profile-grid{grid-template-columns:1fr}.profile-box{padding:20px}.learn-title h1{font-size:34px}}
 </style>
@@ -164,7 +164,14 @@
 <div class="kicker" id="topic">ГРАЖДАНСКОЕ ПРАВО</div>
 <div class="topic" id="chip">Гражданское право</div>
 <h2 id="question">Кто такой истец?</h2>
-<p class="hint">Выбери ответ. После выбора кот объяснит <b>что</b> правильно и <b>почему</b>.</p>
+<p class="hint">Сначала изучаем тему вместе с котом, затем проверяем понимание на сложном вопросе.</p>
+<div id="lessonIntro" class="lesson-intro">
+  <div class="lesson-label">📖 СНАЧАЛА ИЗУЧАЕМ</div>
+  <h3 id="lessonTitle">Ключевая идея</h3>
+  <p id="lessonTheory"></p>
+  <div class="lesson-why"><b>Как применять:</b><span id="lessonWhy"></span></div>
+  <button id="startLesson" class="next">Я понял. Проверяем себя →</button>
+</div>
 <div id="answers" class="answers"></div>
 
 <div class="cat-dialogue" id="catDialogue">
@@ -253,7 +260,7 @@ const diagnosticLessons=[
  {t:'Профессиональная этика',m:'ДИАГНОСТИКА',mem:'Юрист должен учитывать конфликт интересов и профессиональные обязанности.',q:'Что такое конфликт интересов в профессиональной деятельности?',a:['Любой спор в интернете','Ситуация, при которой личная заинтересованность может влиять на исполнение профессиональных обязанностей','Только спор с клиентом'],c:1,e:'Конфликт интересов связан с пересечением профессиональных обязанностей и личной заинтересованности.',ok:'Этический компас работает.',bad:'Конфликт интересов — не любой спор, а юридически и профессионально значимая ситуация.'},
  {t:'Криминалистика',m:'ДИАГНОСТИКА',mem:'Криминалистика изучает средства и методы раскрытия, расследования и предупреждения преступлений.',q:'Для чего нужны криминалистические методы?',a:['Для развлечения следователя','Для решения задач раскрытия и расследования преступлений','Для замены закона'],c:1,e:'Криминалистические средства помогают решать практические задачи расследования.',ok:'Практическая часть права тоже знакома.',bad:'Криминалистика имеет прикладное назначение — помогать расследованию.'}
 ];
-let activeLessons=[...masterLessons],activeTopic='',selectedDirection='all',selectedDifficulty='all',i=0,score=0,mode='learn',xp=+localStorage.getItem('cl_xp')||0,streak=+localStorage.getItem('cl_streak')||0,last=localStorage.getItem('cl_day')||'',current=null,catTurn=0;
+let activeLessons=[],activeTopic='',selectedDirection='all',selectedDifficulty='all',i=0,score=0,mode='learn',lessonStage='theory',xp=+localStorage.getItem('cl_xp')||0,streak=+localStorage.getItem('cl_streak')||0,last=localStorage.getItem('cl_day')||'',current=null,catTurn=0;
 let mistakes=JSON.parse(localStorage.getItem('cl_mistakes')||'{}');
 const $=id=>document.getElementById(id);
 function openProfile(){ $('profileModal').classList.add('open') }
@@ -406,12 +413,30 @@ function renderLessonPicker(){
   $('lessonPicker').innerHTML=pool.length?pool.map((x,n)=>`<button class="lesson-btn ${activeLessons[i]===x?'active':''}" data-lesson-index="${n}"><b>${x.q}</b><span>${directionOf(x)} · ${difficultyOf(x)}</span></button>`).join(''):'<div class="lesson-empty">По выбранным фильтрам уроков пока нет. Выбери другое направление или уровень.</div>';
 }
 function applyFilters(){
-  activeLessons=filteredPool();
+  const filtered=filteredPool();
+  activeLessons=mode==='learn'?filtered.slice(0,6):filtered;
   i=0;score=0;activeTopic=selectedDirection==='all'?'':selectedDirection;
   renderSubjects();render();
   if(!activeLessons.length)cat('По этим фильтрам уроков пока нет. Я не буду делать вид, что они есть 😼 Выбери другой уровень или направление.','serious');
 }
-function render(){if(!activeLessons.length){current=null;$('question').textContent='Уроков по выбранным фильтрам пока нет';$('answers').innerHTML='';$('feedback').textContent='Выбери другое направление или уровень сложности.';$('next').style.display='none';$('progressText').textContent='НЕТ УРОКОВ';$('progressSide').textContent='0 уроков';$('percent').textContent='0%';$('bar').style.width='0%';renderLessonPicker();return}const x=upgradeDifficulty(activeLessons[i]),s=shuffle(x);current={...x,a:s.a,c:s.c};$('question').textContent=current.q;$('topic').textContent=current.t.toUpperCase();$('chip').textContent=current.t;$('mode').textContent=mode==='exam'?'ЭКЗАМЕН':mode==='practice'?'ПРАКТИКА':mode==='diagnostic'?'ДИАГНОСТИКА':current.m;$('badge').textContent='Урок '+String(i+1).padStart(2,'0')+' · '+current.t;$('memory').textContent=' '+current.mem;$('result').textContent='';$('next').style.display='none';$('progressText').textContent='ВОПРОС '+(i+1)+' ИЗ '+activeLessons.length;let p=Math.round((i+1)/activeLessons.length*100);$('percent').textContent=p+'%';$('bar').style.width=p+'%';$('progressSide').textContent='Урок '+(i+1)+' из '+activeLessons.length;cat(i===0?catIntro():catNext(),i===0?'teacher':'curious');$('answers').innerHTML=current.a.map((v,n)=>`<button class="answer" data-i="${n}"><span class="letter">${String.fromCharCode(65+n)}</span><span>${v}</span></button>`).join('');renderLessonPicker()}
+function render(){lessonStage='theory';if(!activeLessons.length){current=null;$('question').textContent='Уроков по выбранным фильтрам пока нет';$('answers').innerHTML='';$('feedback').textContent='Выбери другое направление или уровень сложности.';$('next').style.display='none';$('progressText').textContent='НЕТ УРОКОВ';$('progressSide').textContent='0 уроков';$('percent').textContent='0%';$('bar').style.width='0%';renderLessonPicker();return}const x=upgradeDifficulty(activeLessons[i]),s=shuffle(x);current={...x,a:s.a,c:s.c};$('question').textContent=current.q;$('topic').textContent=current.t.toUpperCase();$('chip').textContent=current.t;$('mode').textContent=mode==='exam'?'ЭКЗАМЕН':mode==='practice'?'ПРАКТИКА':mode==='diagnostic'?'ДИАГНОСТИКА':current.m;$('badge').textContent='Урок '+String(i+1).padStart(2,'0')+' · '+current.t;$('memory').textContent=' '+current.mem;$('result').textContent='';$('next').style.display='none';$('progressText').textContent=mode==='learn'?'ТЕМА '+(i+1)+' ИЗ '+activeLessons.length:'ВОПРОС '+(i+1)+' ИЗ '+activeLessons.length;let p=Math.round((i+1)/activeLessons.length*100);$('percent').textContent=p+'%';$('bar').style.width=p+'%';$('progressSide').textContent=mode==='learn'?'Тема '+(i+1)+' из '+activeLessons.length:'Урок '+(i+1)+' из '+activeLessons.length;cat(i===0?catIntro():catNext(),i===0?'teacher':'curious');if(mode==='learn'){
+  $('lessonIntro').style.display='block';
+  $('lessonTitle').textContent=current.q.replace(/[?？]$/,'');
+  $('lessonTheory').textContent=current.mem||'Разберём юридическую конструкцию и научимся применять её к фактам.';
+  $('lessonWhy').textContent=current.e||'Сначала установи юридически значимые факты, затем выбирай норму и правовое последствие.';
+  $('startLesson').style.display='inline-block';
+  $('answers').style.display='none';
+}else{
+  $('lessonIntro').style.display='none';
+  $('answers').style.display='grid';
+}
+$('answers').innerHTML=current.a.map((v,n)=>`<button class="answer" data-i="${n}"><span class="letter">${String.fromCharCode(65+n)}</span><span>${v}</span></button>`).join('');renderLessonPicker()}
+$('startLesson').onclick=()=>{
+  lessonStage='question';
+  $('lessonIntro').style.display='none';
+  $('answers').style.display='grid';
+  cat('Теперь проверяем не память, а понимание. Я специально сделал варианты близкими по смыслу — читай каждое слово 😼','explaining');
+};
 $('answers').addEventListener('click',e=>{const b=e.target.closest('.answer');if(b&&!b.disabled)answer(+b.dataset.i)});
 function answer(n){
  const bs=[...document.querySelectorAll('.answer')];bs.forEach(b=>b.disabled=true);
@@ -469,11 +494,11 @@ document.querySelectorAll('.mode').forEach(b=>b.onclick=()=>{
  document.querySelectorAll('.mode').forEach(x=>x.classList.remove('active'));b.classList.add('active');mode=b.dataset.mode;i=0;score=0;activeTopic='';
  if(mode==='diagnostic'){activeLessons=qualificationPool();cat('Квалификация без стресса. Вопросы смешаны по разделам, а сложность учитывает твой профиль и прошлые ответы 😼','teacher')}
  else if(mode==='exam'){activeLessons=[...filteredPool()].sort(()=>Math.random()-.5).slice(0,Math.min(10,filteredPool().length));cat('Экзамен включён. Подсказок не будет. Ошибки считаем честно 😼','serious')}
- else if(mode==='practice'){activeLessons=[...filteredPool()].filter(x=>x.m==='СИТУАЦИЯ'||x.m==='МИНИ-КЕЙС');cat('Практика включена. Здесь будем решать жизненные ситуации, а не зубрить определения.','explaining')}
- else{activeLessons=[...filteredPool()].sort((a,b)=>(mistakes[b.t]||0)-(mistakes[a.t]||0));cat('Режим обучения. Я объясняю, ты разбираешься, потом проверяем себя. Если тема слабая — вернёмся к ней.','think')}
+ else if(mode==='practice'){activeLessons=[...filteredPool()].filter(x=>x.m==='СИТУАЦИЯ'||x.m==='МИНИ-КЕЙС').slice(0,8);cat('Практика включена. Здесь будем решать жизненные ситуации, а не зубрить определения.','explaining')}
+ else{activeLessons=[...filteredPool()].sort((a,b)=>(mistakes[b.t]||0)-(mistakes[a.t]||0)).slice(0,6);cat('Режим обучения. Я объясняю, ты разбираешься, потом проверяем себя. Если тема слабая — вернёмся к ней.','think')}
  render();
 });
-day();renderSubjects();activeLessons=[...academyLessons];render();function toggleMobileMenu(){const m=document.getElementById('mobileMenu');if(m)m.classList.toggle('open')}document.addEventListener('click',e=>{const m=document.getElementById('mobileMenu');if(m&&m.classList.contains('open')&&!m.contains(e.target)&&!e.target.closest('.menu-toggle'))m.classList.remove('open')});
+day();renderSubjects();activeLessons=[...academyLessons].slice(0,6);render();function toggleMobileMenu(){const m=document.getElementById('mobileMenu');if(m)m.classList.toggle('open')}document.addEventListener('click',e=>{const m=document.getElementById('mobileMenu');if(m&&m.classList.contains('open')&&!m.contains(e.target)&&!e.target.closest('.menu-toggle'))m.classList.remove('open')});
 </script>
 </body>
 </html>
