@@ -273,7 +273,7 @@ async function api(r,e){
     if(p==="/api/learn/calibrate"&&r.method==="POST"){
       if(limited(r,"learn-calibrate:"+requestIP(r),20,60000))return json({error:"Слишком много диагностических запросов."},429);
       const b=await r.json(),question=String(b.question||"").slice(0,3000),context=String(b.context||"").slice(0,3000),answer=String(b.answer||"").slice(0,10000),expected=String(b.expected||"").slice(0,3000);
-      if(answer.length<50||!question)return json({error:"Недостаточно данных для анализа."},400);
+      if(answer.length<30||!question)return json({error:"Недостаточно данных для анализа."},400);
       let analysis;
       try{
         const raw=await aiText(e,[{role:"system",content:"Ты диагностический методист юридической академии РФ. Оцени ответ студента по юридическому мышлению: выделение юридически значимых фактов, квалификация, последовательность анализа, понимание нормы, доказательства и осторожность вывода. Не требуй дословного совпадения с эталоном. Верни только JSON: {score:0-100,level:'начальный'|'базовый'|'средний'|'продвинутый',strengths:string[],weaknesses:string[],skills:string[],feedback:string,nextFocus:string}."},{role:"user",content:"Вопрос: "+question+"\nКонтекст: "+context+"\nЭталонная логика: "+expected+"\nОтвет студента: "+answer}],650);
