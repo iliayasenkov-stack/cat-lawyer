@@ -33,7 +33,7 @@ const subjects=[
 ];
 const groups=[['База права',['Теория государства и права','Конституционное право','Профессиональная этика']],['Отрасли',['Гражданское право','Права потребителей','Административное право','Уголовное право','Трудовое право','Семейное право']],['Процесс и практика',['Гражданский процесс','Уголовный процесс','Административный процесс']],['Дополнительно',['Римское право','Международное право']]];
 const moods={teacher:[0,0],happy:[1,0],think:[2,0],excited:[3,0],sad:[4,0],strict:[5,0],celebrate:[0,1],embarrassed:[1,1],wink:[2,1],tired:[3,1],curious:[4,1],determined:[5,1]};
-const CAT_SPRITE_PARTS=['01','02','03','04','05','06'].map(n=>'/assets/cat-mascot-'+n+'.b64');
+const CAT_SPRITE_URL='/assets/cat-mascot.b64';
 let state=JSON.parse(localStorage.getItem('cl_onboard')||'null')||{type:'',course:'',level:'',goal:'',subjects:[]};
 let xp=Number(localStorage.getItem('cl_xp')||0),calibration=0,calScore=0,calResults=[],selected=new Set(),plan=null,current=null,currentSubject='',answered=false,lessonNo=0,catUrl='';
 
@@ -53,8 +53,9 @@ function cat(mood,text){
 }
 async function loadCat(){
  try{
-  const parts=await Promise.all(CAT_SPRITE_PARTS.map(u=>fetch(u,{cache:'no-store'}).then(r=>{if(!r.ok)throw Error('cat');return r.text()})));
-  const b64=parts.join('');
+  const r=await fetch(CAT_SPRITE_URL,{cache:'no-store'});
+  if(!r.ok)throw Error('cat');
+  const b64=(await r.text()).trim();
   const bin=atob(b64),bytes=new Uint8Array(bin.length);
   for(let i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);
   catUrl=URL.createObjectURL(new Blob([bytes],{type:'image/webp'}));
