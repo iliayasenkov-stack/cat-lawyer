@@ -20,7 +20,7 @@
 <main class="learn-page"><div class="academy">
 <header class="hero"><div><span class="pill">CAT LAWYER · АКАДЕМИЯ</span><h1>Изучай язык права</h1><p>Не зубри определения. Кот объяснит тему, проверит понимание, даст кейс и будет перестраивать обучение по твоим ошибкам.</p></div><div class="xp"><b id="xp">0</b><span>XP · твой прогресс</span></div></header>
 <div class="workspace">
-<aside class="mentor"><div class="cat" id="mentorCat" style="background-image:url('/assets/cat-lawyer-logo.webp')"></div><div class="speech"><b id="mentorName">КОТ-НАСТАВНИК</b><span id="speech">Сначала узнаю твой уровень. Потом соберу программу именно под тебя 😼</span></div><div class="mood" id="mood">ГОТОВ УЧИТЬ</div></aside>
+<aside class="mentor"><div class="cat" id="mentorCat" style="background-image:url('/assets/learning-kitten.svg')"></div><div class="speech"><b id="mentorName">КОТ-НАСТАВНИК</b><span id="speech">Сначала узнаю твой уровень. Потом соберу программу именно под тебя 😼</span></div><div class="mood" id="mood">ГОТОВ УЧИТЬ</div></aside>
 <section class="main">
 <nav class="topbar"><button class="tab active" data-tab="learn">Обучение</button><button type="button" class="tab" data-tab="profile">Мой профиль</button><button type="button" class="tab" data-tab="reset">Настроить заново</button></nav>
 <div class="panel"><div class="panel-head"><b id="stage">НАСТРОЙКА</b><span id="counter">0%</span></div><div class="progress"><i id="bar"></i></div><div class="content" id="app"></div></div>
@@ -33,7 +33,7 @@ const subjects=[
 ];
 const groups=[['База права',['Теория государства и права','Конституционное право','Профессиональная этика']],['Отрасли',['Гражданское право','Права потребителей','Административное право','Уголовное право','Трудовое право','Семейное право']],['Процесс и практика',['Гражданский процесс','Уголовный процесс','Административный процесс']],['Дополнительно',['Римское право','Международное право']]];
 const moods={teacher:[0,0],happy:[1,0],think:[2,0],excited:[3,0],sad:[4,0],strict:[5,0],celebrate:[0,1],embarrassed:[1,1],wink:[2,1],tired:[3,1],curious:[4,1],determined:[5,1]};
-const CAT_IMAGE_URL='/assets/cat-lawyer-logo.webp';
+const CAT_IMAGE_URL='/assets/learning-kitten.svg';
 let state=JSON.parse(localStorage.getItem('cl_onboard')||'null')||{type:'',course:'',level:'',goal:'',subjects:[]};
 let xp=Number(localStorage.getItem('cl_xp')||0),calibration=0,calScore=0,calResults=[],selected=new Set(),plan=null,current=null,currentSubject='',answered=false,lessonNo=0,catUrl='';
 
