@@ -596,7 +596,7 @@ function openSubjectPicker(){
  const boxes=[...document.querySelectorAll('#onboardingContent .subject-choice')];
  const sync=()=>{
    const checked=boxes.filter(x=>x.querySelector('input').checked);
-   selectedSubjectCount.textContent=checked.length;
+   $('selectedSubjectCount').textContent=checked.length;
    boxes.forEach(x=>{const on=x.querySelector('input').checked;x.classList.toggle('selected',on);x.querySelector('.checkmark').textContent=on?'✓':''});
  };
  boxes.forEach(l=>l.addEventListener('click',()=>setTimeout(sync,0)));
