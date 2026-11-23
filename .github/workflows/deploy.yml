@@ -21,6 +21,17 @@ jobs:
         with:
           node-version: 22
       - run: node build.mjs
+      - name: Validate learning page JavaScript
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          html=Path("learn.html").read_text(encoding="utf-8")
+          scripts=re.findall(r"<script>([\\s\\S]*?)</script>",html)
+          assert scripts, "No inline learning script found"
+          Path("/tmp/learn.js").write_text("\\n".join(scripts),encoding="utf-8")
+          PY
+          node --check /tmp/learn.js
       - name: Show deploy revision
         run: echo "Deploying Cat Lawyer revision $GITHUB_SHA"
       - name: Deploy to Cloudflare Pages
