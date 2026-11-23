@@ -33,7 +33,7 @@ const subjects=[
 ];
 const groups=[['База права',['Теория государства и права','Конституционное право','Профессиональная этика']],['Отрасли',['Гражданское право','Права потребителей','Административное право','Уголовное право','Трудовое право','Семейное право']],['Процесс и практика',['Гражданский процесс','Уголовный процесс','Административный процесс']],['Дополнительно',['Римское право','Международное право']]];
 const moods={teacher:[0,0],happy:[1,0],think:[2,0],excited:[3,0],sad:[4,0],strict:[5,0],celebrate:[0,1],embarrassed:[1,1],wink:[2,1],tired:[3,1],curious:[4,1],determined:[5,1]};
-const CAT_IMAGE_PARTS=['1','2','3','4','5','6'].map(n=>'/assets/cat-mascot-real-'+n+'.b64');
+const CAT_IMAGE_URL='/assets/cat-lawyer-logo.webp';
 let state=JSON.parse(localStorage.getItem('cl_onboard')||'null')||{type:'',course:'',level:'',goal:'',subjects:[]};
 let xp=Number(localStorage.getItem('cl_xp')||0),calibration=0,calScore=0,calResults=[],selected=new Set(),plan=null,current=null,currentSubject='',answered=false,lessonNo=0,catUrl='';
 
@@ -41,28 +41,17 @@ function save(){localStorage.setItem('cl_onboard',JSON.stringify(state));localSt
 function progress(n){$('bar').style.width=n+'%';$('counter').textContent=n+'%'}
 function cat(mood,text){
  document.querySelectorAll('.cat').forEach(el=>{
-  if(catUrl){
-   el.style.backgroundImage='url("'+catUrl+'")';
-   el.style.backgroundSize='contain';
-   el.style.backgroundPosition='center';
-  }
+  el.style.backgroundImage='url("'+CAT_IMAGE_URL+'")';
+  el.style.backgroundSize='contain';
+  el.style.backgroundPosition='center';
   el.className='cat emotion-'+(mood||'teacher');
  });
  $('speech').textContent=text;
  $('mood').textContent=mood==='strict'?'ТРЕБУЕТ ВНИМАНИЯ':mood==='celebrate'?'ГОРДИТСЯ ТОБОЙ':mood==='sad'?'СОПЕРЕЖИВАЕТ':mood==='excited'?'РАДУЕТСЯ':'КОТ-НАСТАВНИК';
 }
-async function loadCat(){
- try{
-  const parts=await Promise.all(CAT_IMAGE_PARTS.map(u=>fetch(u,{cache:'no-store'}).then(r=>{if(!r.ok)throw Error('cat');return r.text()})));
-  const b64=parts.join('').trim();
-  const bin=atob(b64),bytes=new Uint8Array(bin.length);
-  for(let i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);
-  catUrl=URL.createObjectURL(new Blob([bytes],{type:'image/webp'}));
-  cat('teacher','Привет! Я твой Кот-юрист 😼 Я буду разговаривать с тобой, поддерживать, спорить с ошибками и радоваться твоим успехам.');
- }catch(e){
-  catUrl='';
-  $('speech').textContent='Я рядом. Начнём с самого важного: сначала факты, потом право 😼';
- }
+function loadCat(){
+ catUrl=CAT_IMAGE_URL;
+ cat('teacher','Привет! Я твой Кот-юрист 😼 Я буду разговаривать с тобой, поддерживать, спорить с ошибками и радоваться твоим успехам.');
 }
 
 function openModal(){ $('modal').classList.add('open') }
