@@ -92,7 +92,59 @@
 </style>
 <style>
 .academy-onboarding{position:fixed;inset:0;z-index:2000;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(43,24,20,.58);backdrop-filter:blur(8px)}.academy-onboarding.open{display:flex}.onboarding-box{width:min(760px,100%);max-height:92vh;overflow:auto;background:#fffaf6;border:1px solid #d8b9a4;border-radius:30px;box-shadow:0 35px 110px rgba(0,0,0,.28);padding:26px}.onboarding-top{display:flex;justify-content:space-between;align-items:center;color:#866b60;font-size:10px;font-weight:800}.onboarding-progress{height:5px;background:#ead8cc;border-radius:99px;overflow:hidden;margin:15px 0 24px}.onboarding-progress i{display:block;height:100%;width:25%;background:#64261f;transition:.25s}.onboard-cat{display:flex;align-items:center;gap:18px;margin-bottom:16px}.onboard-cat .cat-mentor-sprite{width:110px;height:110px;flex:0 0 110px}.onboard-copy h2{font:34px Georgia,serif;color:#38211c;margin:0 0 8px}.onboard-copy p{margin:0;color:#80685d;font-size:12px;line-height:1.6}.choice-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:18px 0}.choice-grid.course{grid-template-columns:repeat(3,1fr)}.choice{border:1px solid #d8b9a4;background:#fffdfa;border-radius:18px;padding:16px;text-align:left;cursor:pointer;color:#4d2821;transition:.16s}.choice:hover{transform:translateY(-2px);border-color:#8d4938}.choice.selected{background:#fff0e8;border-color:#64261f;box-shadow:0 0 0 2px rgba(100,38,31,.08)}.choice b{display:block;font-size:14px}.choice span{display:block;margin-top:5px;font-size:10px;color:#876b61;line-height:1.4}.onboard-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}.onboard-btn{border:1px solid #64261f;background:#64261f;color:#fff;border-radius:999px;padding:12px 18px;font-weight:800;cursor:pointer}.onboard-btn.secondary{background:#fff8f2;color:#64261f;border-color:#d8b9a4}.subject-choice{display:flex;align-items:flex-start;gap:10px}.subject-choice input{margin-top:3px;accent-color:#64261f}.subject-choice small{display:block;color:#927469;margin-top:4px;font-size:9px}.plan-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:15px}.plan-day{border:1px solid #e1c9b8;border-radius:16px;padding:12px;background:#fff}.plan-day b{font-size:10px;color:#64261f}.plan-day h4{font-size:12px;margin:6px 0;color:#4d2821}.plan-day p{font-size:9px;color:#80685d;line-height:1.45;margin:0}.source-check{margin-top:14px;padding:11px 13px;border-radius:14px;background:#f7eee8;border:1px solid #ead8cc;color:#70574e;font-size:10px;line-height:1.5}.case-box{display:none;margin-top:14px;padding:15px;border:1px solid #dec5b5;border-radius:16px;background:#fffdf9}.case-box b{color:#64261f}.case-box p{font-size:12px;line-height:1.6;color:#554741;margin:7px 0}.case-box textarea{width:100%;min-height:120px;box-sizing:border-box;border:1px solid #d8b9a4;border-radius:12px;padding:12px;font:13px/1.5 Arial;background:#fff}@media(max-width:650px){.onboarding-box{padding:20px;border-radius:22px}.onboard-cat .cat-mentor-sprite{width:82px;height:82px;flex-basis:82px}.onboard-copy h2{font-size:27px}.choice-grid,.choice-grid.course{grid-template-columns:1fr 1fr}.plan-grid{grid-template-columns:1fr 1fr}}
-</style></head>
+<style>
+/* === Academy visual refresh === */
+.academy-shell{position:relative}
+.diagnostic-card{background:linear-gradient(135deg,#fffaf6 0%,#fff4ea 58%,#f7e7dc 100%);box-shadow:0 18px 50px rgba(79,42,31,.10)!important;border-color:#d7b09b!important;position:relative;overflow:hidden}
+.diagnostic-card:after{content:"⚖️";position:absolute;right:25px;top:-20px;font-size:92px;opacity:.055;transform:rotate(10deg)}
+.diagnostic-card h2{font-size:34px!important}
+.qual-banner{background:linear-gradient(90deg,#fffaf5,#f6e6dc)!important;box-shadow:0 10px 28px rgba(79,42,31,.07)}
+.learn-title .eyebrow{box-shadow:0 5px 18px rgba(100,38,31,.08)}
+.learn-title h1{font-size:52px!important}
+.stats span{box-shadow:0 7px 18px rgba(79,42,31,.06);transition:.18s}
+.stats span:hover{transform:translateY(-2px)}
+.layout{align-items:stretch!important}
+.side{justify-content:center;position:relative}
+.side .bubble{position:relative;z-index:2;font-size:11px;box-shadow:0 12px 28px rgba(79,42,31,.12)}
+.side .caption{font-weight:700}
+.cat-mentor-sprite{filter:drop-shadow(0 18px 24px rgba(78,39,29,.20));min-height:150px}
+.side:before{content:"";position:absolute;width:170px;height:170px;border-radius:50%;background:radial-gradient(circle,#fff3e9 0%,rgba(255,243,233,0) 70%);z-index:0}
+.card{box-shadow:0 25px 70px rgba(71,39,27,.16)!important;border-color:#d4b09c!important}
+.lesson-intro{box-shadow:inset 0 1px rgba(255,255,255,.8),0 10px 26px rgba(79,42,31,.06)}
+.answer{box-shadow:0 4px 12px rgba(79,42,31,.04)}
+.answer:hover{box-shadow:0 10px 24px rgba(79,42,31,.10)}
+.cat-dialogue{box-shadow:0 12px 28px rgba(79,42,31,.09)!important}
+.academy-onboarding{background:rgba(43,24,20,.70)!important}
+.onboarding-box{width:min(920px,100%)!important;padding:30px!important;background:linear-gradient(145deg,#fffaf6,#fff3e9)!important}
+.onboard-cat{padding:18px 20px;border-radius:24px;background:linear-gradient(100deg,#fffdf9,#f7e7dc);border:1px solid #e4c6b4;box-shadow:0 12px 30px rgba(79,42,31,.08)}
+.onboard-cat .cat-mentor-sprite{width:145px!important;height:145px!important;flex-basis:145px!important;min-height:145px}
+.onboard-copy h2{font-size:36px!important}
+.subject-toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:18px 0 12px;padding:12px 14px;border:1px solid #e2c7b7;border-radius:17px;background:#fffdfa;position:sticky;top:0;z-index:3}
+.subject-count{font-size:11px;color:#73584e}.subject-count b{color:#64261f}
+.subject-tools{display:flex;gap:7px;flex-wrap:wrap}
+.subject-tool{border:1px solid #d8b9a4;background:#fff;color:#64261f;border-radius:999px;padding:8px 12px;font-size:10px;font-weight:900;cursor:pointer}
+.subject-tool.primary{background:#64261f;color:#fff}
+.subject-groups{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.subject-group{background:rgba(255,255,255,.68);border:1px solid #e1c7b7;border-radius:20px;padding:14px}
+.subject-group h3{font:18px Georgia,serif;color:#4d2821;margin:0 0 10px}
+.subject-group p{margin:0 0 10px;color:#927469;font-size:9px}
+.subject-choice{display:flex!important;align-items:center!important;gap:10px!important;padding:11px 12px!important;border-radius:14px!important;margin:6px 0;background:#fffdfa!important}
+.subject-choice:hover{transform:none!important;border-color:#a76a57!important}
+.subject-choice.selected{background:#fff0e7!important;border-color:#64261f!important;box-shadow:0 0 0 2px rgba(100,38,31,.07)!important}
+.subject-choice input{width:18px;height:18px;accent-color:#64261f}
+.subject-choice span{flex:1}
+.subject-choice b{font-size:12px!important}
+.subject-choice small{font-size:9px!important}
+.subject-choice .checkmark{width:22px;height:22px;border-radius:7px;background:#f1ddd0;color:#64261f;display:grid;place-items:center;font-weight:900}
+.subject-choice.selected .checkmark{background:#64261f;color:#fff}
+@media(max-width:700px){
+ .subject-groups{grid-template-columns:1fr}
+ .onboarding-box{padding:18px!important}
+ .onboard-cat .cat-mentor-sprite{width:100px!important;height:100px!important;flex-basis:100px!important;min-height:100px}
+ .onboard-copy h2{font-size:28px!important}
+ .subject-toolbar{align-items:flex-start;flex-direction:column}
+}
+</style></style></head>
 <body>
 <header class="wrap nav">
 <a class="brand" href="/"><img src="/assets/cat-lawyer-logo.svg" alt="Cat Lawyer"> CAT LAWYER</a>
@@ -316,8 +368,21 @@ function level(){return xp>=1000?'Профи':xp>=500?'Продвинутый':x
 function stats(){ $('xp').textContent=xp;$('streak').textContent=streak;$('level').textContent=level();$('academyLevel').textContent=level();$('academyProgress').textContent=xp+' XP · '+Math.min(100,Math.round(xp/10))+'% курса'; }
 function day(){const d=new Date().toISOString().slice(0,10);if(last!==d){streak=last?streak+1:1;last=d;localStorage.setItem('cl_streak',streak);localStorage.setItem('cl_day',d)}stats()}
 function shuffle(x){const correct=x.c;const p=x.a.map((v,n)=>({v,n}));for(let n=p.length-1;n>0;n--){let j=Math.floor(Math.random()*(n+1));[p[n],p[j]]=[p[j],p[n]]}return{a:p.map(x=>x.v),c:p.findIndex(x=>x.n===correct)}}
-let mentorSheet='';
-async function loadMentorSheet(){try{const r=await fetch('/assets/mentor-cats-sheet.b64',{cache:'no-store'});const b=(await r.text()).trim();mentorSheet='url("data:image/webp;base64,'+b+'")';['cat1','cat2','catAvatar'].forEach(id=>setMentorMood($(id),'teacher'));}catch(e){console.warn('mentor sheet load failed',e)}}loadMentorSheet();
+let mentorSheet='',mentorBlobUrl='';
+async function loadMentorSheet(){
+ try{
+  const r=await fetch('/assets/mentor-cats-sheet.b64',{cache:'no-store'});
+  const b=(await r.text()).trim();
+  const raw=atob(b);
+  const bytes=new Uint8Array(raw.length);
+  for(let i=0;i<raw.length;i++)bytes[i]=raw.charCodeAt(i);
+  const blob=new Blob([bytes],{type:'image/webp'});
+  mentorBlobUrl=URL.createObjectURL(blob);
+  mentorSheet='url("'+mentorBlobUrl+'")';
+  ['cat1','cat2','catAvatar'].forEach(id=>setMentorMood($(id),'teacher'));
+ }catch(e){console.warn('mentor sheet load failed',e)}
+}
+loadMentorSheet();
 const mentorMood={teacher:[0,0],confident:[1,0],explaining:[2,0],celebrate:[3,0],curious:[0,1],surprised:[1,1],strict:[2,1],calm:[3,1],sleepy:[0,2],tired:[1,2],happy:[2,2],smart:[3,2],think:[0,1],serious:[2,1],sad:[1,1],excited:[3,0]};
 function setMentorMood(el,mood){
   if(!el)return;
@@ -506,13 +571,45 @@ $('next').onclick=()=>{
  render();
 };
 function openSubjectPicker(){
- const saved=JSON.parse(localStorage.getItem('cl_onboard')||'{}');onboard.subjects=saved.subjects||[];$('academyOnboarding').classList.add('open');$('onboardingStep').textContent='Предметы';$('onboardingProgress').style.width='100%';
- $('onboardingContent').innerHTML='<div class="onboard-cat"><div class="cat-mentor-sprite" id="onboardCat"></div><div class="onboard-copy"><h2>Какие предметы нужны?</h2><p>Калибровка закончена. Теперь выбери направления, которые реально нужны тебе. AI построит план только по ним.</p></div></div><div class="choice-grid" style="grid-template-columns:1fr 1fr">'+subjects.map(s=>'<label class="choice subject-choice '+(onboard.subjects.includes(s[0])?'selected':'')+'"><input type="checkbox" value="'+s[0]+'" '+(onboard.subjects.includes(s[0])?'checked':'')+'><span><b>'+s[0]+'</b><small>'+s[1]+'</small></span></label>').join('')+'</div><div class="onboard-actions"><button class="onboard-btn" id="subjectsContinue">Собрать мой план →</button></div>';
+ const saved=JSON.parse(localStorage.getItem('cl_onboard')||'{}');
+ onboard.subjects=saved.subjects||[];
+ $('academyOnboarding').classList.add('open');
+ $('onboardingStep').textContent='Предметы · можно выбрать несколько';
+ $('onboardingProgress').style.width='100%';
+
+ const groups=[
+  ['База права',['Теория государства и права','Конституционное право','Юридическая психология','Профессиональная этика']],
+  ['Отрасли права',['Гражданское право','Права потребителей','Административное право','Уголовное право','Трудовое право','Семейное право','Жилищное право','Земельное право','Налоговое право','Предпринимательское право']],
+  ['Процесс и практика',['Гражданский процесс','Уголовный процесс','Административный процесс','Криминалистика']],
+  ['Дополнительно',['Римское право','Международное право']]
+ ];
+ const desc=Object.fromEntries(subjects.map(s=>[s[0],s[1]]));
+ const selected=new Set(onboard.subjects);
+
+ $('onboardingContent').innerHTML=
+ '<div class="onboard-cat"><div class="cat-mentor-sprite" id="onboardCat"></div><div class="onboard-copy"><div class="eyebrow">ШАГ 4 · ВЫБОР НАПРАВЛЕНИЙ</div><h2>Какие предметы хочешь подтянуть?</h2><p>Не надо проходить их по одному. Отметь сразу все нужные предметы — кот распределит нагрузку и построит один общий маршрут.</p></div></div>'+
+ '<div class="subject-toolbar"><div class="subject-count">Выбрано: <b id="selectedSubjectCount">0</b> из '+subjects.length+'</div><div class="subject-tools"><button type="button" class="subject-tool primary" id="selectAllSubjects">Выбрать все</button><button type="button" class="subject-tool" id="clearSubjects">Сбросить</button></div></div>'+
+ '<div class="subject-groups">'+groups.map(g=>'<section class="subject-group"><h3>'+g[0]+'</h3><p>Можно выбрать несколько</p>'+g[1].map(name=>'<label class="choice subject-choice '+(selected.has(name)?'selected':'')+'"><input type="checkbox" value="'+name+'" '+(selected.has(name)?'checked':'')+'><span><b>'+name+'</b><small>'+desc[name]+'</small></span><i class="checkmark">'+(selected.has(name)?'✓':'')+'</i></label>').join('')+'</section>').join('')+'</div>'+
+ '<div class="onboard-actions"><button class="onboard-btn" id="subjectsContinue">Построить мой план →</button></div>';
+
  setMentorMood($('onboardCat'),'smart');
- document.querySelectorAll('#onboardingContent .subject-choice').forEach(l=>l.addEventListener('click',()=>{setTimeout(()=>l.classList.toggle('selected',l.querySelector('input').checked),0)}));
- $('subjectsContinue').onclick=()=>{onboard.subjects=[...document.querySelectorAll('#onboardingContent input:checked')].map(x=>x.value);if(!onboard.subjects.length){cat('Выбери хотя бы один предмет. Я не буду составлять план из воздуха 😾','serious');return}localStorage.setItem('cl_onboard',JSON.stringify(onboard));closeProfile();openLearningPlan()};
-}
-async function openLearningPlan(){
+ const boxes=[...document.querySelectorAll('#onboardingContent .subject-choice')];
+ const sync=()=>{
+   const checked=boxes.filter(x=>x.querySelector('input').checked);
+   selectedSubjectCount.textContent=checked.length;
+   boxes.forEach(x=>{const on=x.querySelector('input').checked;x.classList.toggle('selected',on);x.querySelector('.checkmark').textContent=on?'✓':''});
+ };
+ boxes.forEach(l=>l.addEventListener('click',()=>setTimeout(sync,0)));
+ $('selectAllSubjects').onclick=()=>{boxes.forEach(x=>x.querySelector('input').checked=true);sync();cat('Вот это размах 😼 Выбрал весь учебный арсенал. Я распределю его по дням, чтобы не было каши.','excited')};
+ $('clearSubjects').onclick=()=>{boxes.forEach(x=>x.querySelector('input').checked=false);sync();setMentorMood($('onboardCat'),'calm')};
+ $('subjectsContinue').onclick=()=>{
+   onboard.subjects=boxes.filter(x=>x.querySelector('input').checked).map(x=>x.querySelector('input').value);
+   if(!onboard.subjects.length){cat('Хотя бы один предмет всё-таки нужен 😾 Выбери направления, которые хочешь подтянуть.','strict');return}
+   localStorage.setItem('cl_onboard',JSON.stringify(onboard));
+   closeProfile();openLearningPlan();
+ };
+ sync();
+}async function openLearningPlan(){
  const profile=JSON.parse(localStorage.getItem('cl_student_profile')||'{}');const picked=(JSON.parse(localStorage.getItem('cl_onboard')||'{}').subjects||[]);const use=picked.length?picked:['Теория государства и права','Конституционное право','Гражданское право'];
  $('academyOnboarding').classList.add('open');$('onboardingStep').textContent='Персональный план';$('onboardingProgress').style.width='100%';$('onboardingContent').innerHTML='<div class="onboard-cat"><div class="cat-mentor-sprite" id="onboardCat"></div><div class="onboard-copy"><h2>Собираю твою программу…</h2><p>Учитываю профиль, калибровку и выбранные предметы. Потом план будет перестраиваться по ошибкам.</p></div></div><div class="source-check">🔎 Проверяю официальный источник законодательства РФ и готовлю план.</div>';setMentorMood($('onboardCat'),'explaining');
  try{const r=await fetch('/api/learn/plan',{method:'POST',headers:{'content-type':'application/json'},credentials:'same-origin',body:JSON.stringify({profile,subjects:use})});const d=await r.json();if(!r.ok)throw new Error(d.error||'plan');localStorage.setItem('cl_learning_plan',JSON.stringify(d.plan));renderPlan(d.plan,use)}catch(e){$('onboardingContent').innerHTML='<div class="onboard-cat"><div class="cat-mentor-sprite" id="onboardCat"></div><div class="onboard-copy"><h2>Базовый маршрут готов</h2><p>Серверный AI сейчас недоступен. Обучение не остановится: начнём с выбранных предметов и будем адаптировать порядок по ошибкам.</p></div></div><div class="source-check">Источник для проверки актуальности: Официальный интернет-портал правовой информации — pravo.gov.ru.</div><div class="onboard-actions"><button class="onboard-btn" id="obContinue">Перейти к обучению →</button></div>';setMentorMood($('onboardCat'),'calm');$('obContinue').onclick=()=>{closeProfile();startAdaptiveLearning(use)}}}
