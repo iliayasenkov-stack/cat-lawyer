@@ -520,7 +520,7 @@ function subjectPicker(){
 }
 async function buildPlan(){
  cat('think','Собираю тебе персональный маршрут. Сейчас думаю, где дать больше практики 🤔');$('modalStep').textContent='ПЕРСОНАЛЬНЫЙ ПЛАН';$('modalTitle').textContent='План почти готов';$('modalDesc').textContent='Собираю маршрут по твоему уровню и выбранным предметам.';
- $('modalBody').innerHTML='<div class="intro"><div class="cat small"></div><div><h2>Формирую первые занятия…</h2><p>Это займёт несколько секунд. Если AI не ответит вовремя, продолжим сразу по резервному плану.</p></div></div>';
+ $('modalBody').innerHTML='<div class="intro"><div class="cat small"><img class="cat-direct" src="/assets/cat-lawyer-judge.webp" alt="Кот-юрист" draggable="false"></div><div><h2>Формирую первые занятия…</h2><p>Это займёт несколько секунд. Если AI не ответит вовремя, продолжим сразу по резервному плану.</p></div></div>';
  const fallback=()=>({summary:'Твой адаптивный маршрут: теория → применение → кейсы',days:[...selected].slice(0,5).map((x,i)=>({day:i+1,focus:x,lessons:[{title:'Ключевые понятия и применение',type:'теория'},{title:'Проверка понимания',type:'практика'},{title:'Юридический кейс',type:'кейс'}]})),sourceCheck:{reachable:false}});
  try{
   const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),7000);
@@ -540,7 +540,7 @@ function startLearning(){closeModal();lessonNo=0;wrongStreak=0;cat('happy','На
 async function loadLesson(){
  answered=false;cat('think','Готовлю следующее задание. Сначала думаю, что тебе сейчас полезнее 🤔');progress(Math.min(99,Math.round((lessonNo%10)/10*100)));$('stage').textContent='УРОК '+String(lessonNo+1).padStart(2,'0');$('counter').textContent='АДАПТИВНО';
  const pool=[...selected],subject=pool[lessonNo%pool.length]||'Теория государства и права',type=['mcq','free','case'][lessonNo%3];
- $('app').innerHTML='<div class="intro"><div class="cat small"></div><div><h2>Готовлю урок…</h2><p>AI отвечает не дольше нескольких секунд. При задержке урок откроется из резервного набора.</p></div></div>';
+ $('app').innerHTML='<div class="intro"><div class="cat small"><img class="cat-direct" src="/assets/cat-lawyer-judge.webp" alt="Кот-юрист" draggable="false"></div><div><h2>Готовлю урок…</h2><p>AI отвечает не дольше нескольких секунд. При задержке урок откроется из резервного набора.</p></div></div>';
  try{
   const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),7000);
   const r=await fetch('/api/learn/lesson',{method:'POST',headers:{'content-type':'application/json'},credentials:'same-origin',signal:controller.signal,body:JSON.stringify({subject,skill:'ключевые понятия и применение нормы',difficulty:state.level,type,diagnostics:calResults,plan,lessonNo})});
@@ -555,7 +555,7 @@ function renderLesson(subject){
   current._displayAnswers=order.map(i=>current.answers[i]);
   current._displayCorrect=order.indexOf(Number(current.correct)||0);
  }
- let html='<div class="intro"><div class="cat small"></div><div><div class="kicker">'+subject+' · '+type.toUpperCase()+'</div><h2>'+q+'</h2><p>Подумай самостоятельно. После ответа кот разберёт ход рассуждения.</p></div></div>';
+ let html='<div class="intro"><div class="cat small"><img class="cat-direct" src="/assets/cat-lawyer-judge.webp" alt="Кот-юрист" draggable="false"></div><div><div class="kicker">'+subject+' · '+type.toUpperCase()+'</div><h2>'+q+'</h2><p>Подумай самостоятельно. После ответа кот разберёт ход рассуждения.</p></div></div>';
  if(isWritten){
    html+='<div class="case">'+(current.context||'Сформулируй правовой вывод как юрист.')+'</div>';
    html+='<label style="display:block;margin-top:14px;font-size:10px;font-weight:900;letter-spacing:.08em;color:#8b5f52">ТВОЙ ОТВЕТ</label>';
