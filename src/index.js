@@ -272,7 +272,7 @@ async function api(r,e){
     }
     if(p==="/api/learn/plan"&&r.method==="POST"){
       if(limited(r,"learn-plan:"+requestIP(r),8,60000))return json({error:"Слишком много запросов. Подожди немного и попробуй снова."},429);
-      const u=await userFor(r,e);if(!u)return json({error:"Требуется вход."},401);
+      const u=await userFor(r,e);
       const b=await r.json(),profile=b.profile||{},subjects=Array.isArray(b.subjects)?b.subjects.map(x=>String(x).slice(0,80)).slice(0,12):[];
       if(!subjects.length)return json({error:"Выбери хотя бы один предмет."},400);
       let sourceStatus={officialPortal:"https://pravo.gov.ru/",checkedAt:new Date().toISOString(),reachable:false};
@@ -292,12 +292,12 @@ async function api(r,e){
       }
       plan.sourceCheck=sourceStatus;
       plan.generatedAt=new Date().toISOString();
-      try{await e.DB.prepare("CREATE TABLE IF NOT EXISTS learn_plans (user_id TEXT PRIMARY KEY,plan_json TEXT NOT NULL,updated_at TEXT DEFAULT CURRENT_TIMESTAMP)").run();await e.DB.prepare("INSERT INTO learn_plans(user_id,plan_json) VALUES(?,?) ON CONFLICT(user_id) DO UPDATE SET plan_json=excluded.plan_json,updated_at=CURRENT_TIMESTAMP").bind(u.id,JSON.stringify(plan)).run()}catch(err){console.error("Learn plan save failed",err)}
+      if(u){try{await e.DB.prepare("CREATE TABLE IF NOT EXISTS learn_plans (user_id TEXT PRIMARY KEY,plan_json TEXT NOT NULL,updated_at TEXT DEFAULT CURRENT_TIMESTAMP)").run();await e.DB.prepare("INSERT INTO learn_plans(user_id,plan_json) VALUES(?,?) ON CONFLICT(user_id) DO UPDATE SET plan_json=excluded.plan_json,updated_at=CURRENT_TIMESTAMP").bind(u.id,JSON.stringify(plan)).run()}catch(err){console.error("Learn plan save failed",err)}}
       return json({plan});
     }
     if(p==="/api/learn/lesson"&&r.method==="POST"){
       if(limited(r,"learn-lesson:"+requestIP(r),15,60000))return json({error:"Слишком много запросов. Подожди немного и попробуй снова."},429);
-      const u=await userFor(r,e);if(!u)return json({error:"Требуется вход."},401);
+      const u=await userFor(r,e);
       const b=await r.json(),subject=String(b.subject||"").slice(0,100),skill=String(b.skill||"").slice(0,180),difficulty=String(b.difficulty||"средняя").slice(0,40),type=String(b.type||"mcq").slice(0,20);
       if(!subject)return json({error:"Не указан предмет."},400);
       const prompt="Создай одно задание для обучения праву РФ по предмету «"+subject+"», навык: "+skill+", сложность: "+difficulty+", тип: "+type+". Используй только нормы и принципы, в которых уверен; если номер статьи сомнителен, не выдумывай его. Официальный источник для проверки актуальности: https://pravo.gov.ru/. Задание должно проверять понимание, а не угадывание. Для mcq дай 4 близких варианта и один правильный. Для free дай вопрос, эталонную логику и критерии проверки. Для case придумай обращение условного клиента с недостающими, но юридически значимыми фактами, а затем эталонный план рассуждения. Верни только JSON с полями type,subject,question,context,answers,correct,explanation,trap,sourceNote.";
