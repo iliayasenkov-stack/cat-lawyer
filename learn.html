@@ -273,9 +273,9 @@ function renderOnboarding(){
  if(step===1)box.innerHTML='<div class="onboard-cat"><div class="cat-mentor-sprite" id="onboardCat"></div><div class="onboard-copy"><h2>Ты студент?</h2><p>Сначала выбери формат обучения. От этого зависит порядок тем и сложность калибровочного урока.</p></div></div><div class="choice-grid"><button class="choice '+(onboard.type==='студент колледжа'?'selected':'')+'" data-v="студент колледжа"><b>🎓 Колледж</b><span>СПО, колледж, техникум</span></button><button class="choice '+(onboard.type==='студент университета'?'selected':'')+'" data-v="студент университета"><b>🏛 Университет</b><span>бакалавриат, специалитет, магистратура</span></button></div>';
  if(step===2)box.innerHTML='<div class="onboard-cat"><div class="cat-mentor-sprite" id="onboardCat"></div><div class="onboard-copy"><h2>Какой курс?</h2><p>Курс влияет на приоритет предметов, но не будет жёстким ограничением.</p></div></div><div class="choice-grid course">'+[1,2,3,4,5,6].map(n=>'<button class="choice '+(onboard.course===n+' курс'?'selected':'')+'" data-v="'+n+' курс"><b>'+n+' курс</b><span>Подстроить глубину и практику</span></button>').join('')+'</div><div class="onboard-actions"><button class="onboard-btn secondary" id="obBack">← Назад</button></div>';
  if(step===3)box.innerHTML='<div class="onboard-cat"><div class="cat-mentor-sprite" id="onboardCat"></div><div class="onboard-copy"><h2>Какой уровень знаний?</h2><p>Оцени себя честно. Калибровочный урок всё равно проверит ответами.</p></div></div><div class="choice-grid">'+[['знаю очень хорошо','Готов к сложным кейсам и нюансам'],['знаю но запинаюсь','База есть, но не всегда быстро вспоминаю'],['плохо знаю','Что-то помню, но система пока хромает'],['вообще не разбираюсь','Начинаем с фундамента']].map(x=>'<button class="choice '+(onboard.level===x[0]?'selected':'')+'" data-v="'+x[0]+'"><b>'+x[0]+'</b><span>'+x[1]+'</span></button>').join('')+'</div><div class="onboard-actions"><button class="onboard-btn secondary" id="obBack">← Назад</button></div>';
- if(step===4)box.innerHTML='<div class="onboard-cat"><div class="cat-mentor-sprite" id="onboardCat"></div><div class="onboard-copy"><h2>Какие предметы нужны?</h2><p>Выбери предметы. После калибровки AI соберёт персональный маршрут и будет менять его по твоим ошибкам.</p></div></div><div class="choice-grid" style="grid-template-columns:1fr 1fr">'+subjects.map(s=>'<label class="choice subject-choice '+(onboard.subjects.includes(s[0])?'selected':'')+'"><input type="checkbox" value="'+s[0]+'" '+(onboard.subjects.includes(s[0])?'checked':'')+'><span><b>'+s[0]+'</b><small>'+s[1]+'</small></span></label>').join('')+'</div><div class="onboard-actions"><button class="onboard-btn secondary" id="obBack">← Назад</button><button class="onboard-btn" id="obStart">Начать калибровочный урок →</button></div>';
+ if(step===4)box.innerHTML='<div class="onboard-cat"><div class="cat-mentor-sprite" id="onboardCat"></div><div class="onboard-copy"><h2>Калибровка готова</h2><p>Сначала пройдём калибровочный урок, затем выберем предметы и соберём AI-план.</p></div></div>';
  const oc=$('onboardCat');if(oc)setMentorMood(oc,step===3?'think':step===4?'smart':'teacher');
- box.querySelectorAll('.choice[data-v]').forEach(b=>b.onclick=()=>{if(step===1)onboard.type=b.dataset.v;if(step===2)onboard.course=b.dataset.v;if(step===3)onboard.level=b.dataset.v;onboard.step=Math.min(4,step+1);renderOnboarding()});
+ box.querySelectorAll('.choice[data-v]').forEach(b=>b.onclick=()=>{if(step===1){onboard.type=b.dataset.v;onboard.step=2;renderOnboarding();return}if(step===2){onboard.course=b.dataset.v;onboard.step=3;renderOnboarding();return}if(step===3){onboard.level=b.dataset.v;localStorage.setItem('cl_onboard',JSON.stringify(onboard));localStorage.setItem('cl_student_profile',JSON.stringify({type:onboard.type,course:onboard.course,lev:onboard.level,goal:'персональный адаптивный план',at:new Date().toISOString()}));closeProfile();startQualification();return}});
  const back=$('obBack');if(back)back.onclick=()=>{onboard.step=Math.max(1,step-1);renderOnboarding()};
  const start=$('obStart');if(start)start.onclick=()=>{onboard.subjects=[...box.querySelectorAll('input:checked')].map(x=>x.value);if(!onboard.subjects.length){cat('Выбери хотя бы один предмет. Иначе я не пойму, чему тебя учить 😼','serious');return}localStorage.setItem('cl_onboard',JSON.stringify(onboard));localStorage.setItem('cl_student_profile',JSON.stringify({type:onboard.type,course:onboard.course,lev:onboard.level,goal:'персональный адаптивный план',at:new Date().toISOString()}));$('profileStatus').textContent=onboard.type+' · '+onboard.course+' · '+onboard.subjects.length+' предмета';closeProfile();startQualification()};
 }
@@ -283,8 +283,9 @@ function saveProfile(){openProfile()}
 function qualificationPool(){
   const profile=JSON.parse(localStorage.getItem('cl_student_profile')||'null')||{};
   const self=String(profile.lev||'');
-  const hard=self==='почти не знаю право'?[...diagnosticLessons]:
-    self==='знаю основы'?diagnosticLessons.map(upgradeDifficulty):
+  const hard=self==='вообще не разбираюсь'?[...diagnosticLessons]:
+    self==='плохо знаю'?diagnosticLessons.map(x=>({...x,difficulty:'Средне'})):
+    self==='знаю но запинаюсь'?diagnosticLessons.map(upgradeDifficulty):
     diagnosticLessons.map(upgradeDifficulty);
   const seen=JSON.parse(localStorage.getItem('cl_seen_questions')||'{}');
   const priority={
@@ -485,12 +486,19 @@ $('next').onclick=()=>{
      localStorage.setItem('cl_xp',xp);stats();
      mode='learn';selectedDirection='all';selectedDifficulty='all';activeLessons=[...academyLessons];i=0;score=0;
      document.querySelectorAll('.mode').forEach(x=>x.classList.toggle('active',x.dataset.mode==='learn'));
-     setTimeout(()=>openLearningPlan(),350);return;
+     setTimeout(()=>openSubjectPicker(),350);return;
    }
    i=0;score=0;day();
  }else i++;
  render();
 };
+function openSubjectPicker(){
+ const saved=JSON.parse(localStorage.getItem('cl_onboard')||'{}');onboard.subjects=saved.subjects||[];$('academyOnboarding').classList.add('open');$('onboardingStep').textContent='Предметы';$('onboardingProgress').style.width='100%';
+ $('onboardingContent').innerHTML='<div class="onboard-cat"><div class="cat-mentor-sprite" id="onboardCat"></div><div class="onboard-copy"><h2>Какие предметы нужны?</h2><p>Калибровка закончена. Теперь выбери направления, которые реально нужны тебе. AI построит план только по ним.</p></div></div><div class="choice-grid" style="grid-template-columns:1fr 1fr">'+subjects.map(s=>'<label class="choice subject-choice '+(onboard.subjects.includes(s[0])?'selected':'')+'"><input type="checkbox" value="'+s[0]+'" '+(onboard.subjects.includes(s[0])?'checked':'')+'><span><b>'+s[0]+'</b><small>'+s[1]+'</small></span></label>').join('')+'</div><div class="onboard-actions"><button class="onboard-btn" id="subjectsContinue">Собрать мой план →</button></div>';
+ setMentorMood($('onboardCat'),'smart');
+ document.querySelectorAll('#onboardingContent .subject-choice').forEach(l=>l.addEventListener('click',()=>{setTimeout(()=>l.classList.toggle('selected',l.querySelector('input').checked),0)}));
+ $('subjectsContinue').onclick=()=>{onboard.subjects=[...document.querySelectorAll('#onboardingContent input:checked')].map(x=>x.value);if(!onboard.subjects.length){cat('Выбери хотя бы один предмет. Я не буду составлять план из воздуха 😾','serious');return}localStorage.setItem('cl_onboard',JSON.stringify(onboard));closeProfile();openLearningPlan()};
+}
 async function openLearningPlan(){
  const profile=JSON.parse(localStorage.getItem('cl_student_profile')||'{}');const picked=(JSON.parse(localStorage.getItem('cl_onboard')||'{}').subjects||[]);const use=picked.length?picked:['Теория государства и права','Конституционное право','Гражданское право'];
  $('academyOnboarding').classList.add('open');$('onboardingStep').textContent='Персональный план';$('onboardingProgress').style.width='100%';$('onboardingContent').innerHTML='<div class="onboard-cat"><div class="cat-mentor-sprite" id="onboardCat"></div><div class="onboard-copy"><h2>Собираю твою программу…</h2><p>Учитываю профиль, калибровку и выбранные предметы. Потом план будет перестраиваться по ошибкам.</p></div></div><div class="source-check">🔎 Проверяю официальный источник законодательства РФ и готовлю план.</div>';setMentorMood($('onboardCat'),'explaining');
