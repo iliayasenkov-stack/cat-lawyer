@@ -270,6 +270,29 @@ async function api(r,e){
       }
       return json({type,document});
     }
+    if(p==="/api/learn/calibrate"&&r.method==="POST"){
+      if(limited(r,"learn-calibrate:"+requestIP(r),20,60000))return json({error:"Слишком много диагностических запросов."},429);
+      const b=await r.json(),question=String(b.question||"").slice(0,3000),context=String(b.context||"").slice(0,3000),answer=String(b.answer||"").slice(0,10000),expected=String(b.expected||"").slice(0,3000);
+      if(answer.length<50||!question)return json({error:"Недостаточно данных для анализа."},400);
+      let analysis;
+      try{
+        const raw=await aiText(e,[{role:"system",content:"Ты диагностический методист юридической академии РФ. Оцени ответ студента по юридическому мышлению: выделение юридически значимых фактов, квалификация, последовательность анализа, понимание нормы, доказательства и осторожность вывода. Не требуй дословного совпадения с эталоном. Верни только JSON: {score:0-100,level:'начальный'|'базовый'|'средний'|'продвинутый',strengths:string[],weaknesses:string[],skills:string[],feedback:string,nextFocus:string}."},{role:"user",content:"Вопрос: "+question+"\nКонтекст: "+context+"\nЭталонная логика: "+expected+"\nОтвет студента: "+answer}],650);
+        analysis=JSON.parse(raw.replace(/^\s*```json\s*/,"").replace(/\s*```\s*$/,"") );analysis.score=Math.max(0,Math.min(100,Number(analysis.score)||0));
+        if(!Array.isArray(analysis.weaknesses))analysis.weaknesses=[];if(!Array.isArray(analysis.strengths))analysis.strengths=[];if(!Array.isArray(analysis.skills))analysis.skills=[];
+      }catch(err){analysis={score:50,level:"средний",strengths:[],weaknesses:["AI-анализ временно недоступен"],skills:[question],feedback:expected,nextFocus:"Повторить ключевую логику темы."}}
+      return json({analysis});
+    }
+    if(p==="/api/learn/evaluate"&&r.method==="POST"){
+      if(limited(r,"learn-evaluate:"+requestIP(r),20,60000))return json({error:"Слишком много проверок."},429);
+      const b=await r.json(),lesson=b.lesson||{},answer=String(b.answer||"").slice(0,10000),subject=String(b.subject||lesson.subject||"").slice(0,120);
+      if(answer.length<30||!lesson.question)return json({error:"Недостаточно данных для проверки."},400);
+      let analysis;
+      try{
+        const raw=await aiText(e,[{role:"system",content:"Ты преподаватель юридической академии РФ. Проверь письменный ответ студента по учебному заданию. Оцени юридическую логику, а не совпадение слов. Сравни с эталонной логикой, укажи пропущенные юридически значимые обстоятельства, неверные выводы и сильные стороны. Не выдумывай нормы. Верни только JSON: {score:0-100,correct:boolean,feedback:string,strengths:string[],weaknesses:string[],nextSkill:string}."},{role:"user",content:"Предмет: "+subject+"\nЗадание: "+JSON.stringify(lesson)+"\nОтвет студента: "+answer}],650);
+        analysis=JSON.parse(raw.replace(/^\s*```json\s*/,"").replace(/\s*```\s*$/,"") );analysis.score=Math.max(0,Math.min(100,Number(analysis.score)||0));analysis.correct=analysis.score>=60;
+      }catch(err){analysis={score:50,correct:false,feedback:"Не удалось автоматически оценить ответ. Сверь его с эталонной логикой задания.",strengths:[],weaknesses:["Автоматическая проверка недоступна"],nextSkill:"Повторить тему задания."}}
+      return json({analysis});
+    }
     if(p==="/api/learn/plan"&&r.method==="POST"){
       if(limited(r,"learn-plan:"+requestIP(r),8,60000))return json({error:"Слишком много запросов. Подожди немного и попробуй снова."},429);
       const u=await userFor(r,e);
@@ -281,7 +304,7 @@ async function api(r,e){
         sourceStatus.reachable=sr.ok;
         sourceStatus.status=sr.status;
       }catch(err){sourceStatus.error="Портал не ответил при этой проверке";}
-      const prompt="Составь персональный учебный план Cat Lawyer по действующему законодательству РФ. Профиль: "+JSON.stringify(profile)+"; выбранные предметы: "+subjects.join(", ")+". Официальный контрольный источник: https://pravo.gov.ru/ . Сегодня: "+new Date().toISOString().slice(0,10)+". Не выдумывай нормы. Если номер статьи или содержание нормы не уверенны, не указывай их как факт и пометь тему для проверки. План должен быть адаптивным: 5 учебных дней, каждый день 2-3 шага, чередовать теорию, тест, свободный ответ и практический кейс с клиентом. Для каждого шага укажи subject,title,type(mcq/free/case),skill,difficulty. Верни только JSON: {summary,days:[{day,focus,lessons:[...]}],sources:[{name,url,why}]}";
+      const prompt="Составь персональный учебный план Cat Lawyer по действующему законодательству РФ. Профиль: "+JSON.stringify(profile)+"; диагностические ответы: "+JSON.stringify(profile.diagnostics||[])+"; выбранные предметы: "+subjects.join(", ")+". Официальный контрольный источник: https://pravo.gov.ru/ . Сегодня: "+new Date().toISOString().slice(0,10)+". Не выдумывай нормы. Если номер статьи или содержание нормы не уверенны, не указывай их как факт и пометь тему для проверки. План должен быть адаптивным: не повторяй освоенные навыки без причины; слабые навыки из диагностики получают больше практики и повторений, сильные переводятся на более сложные кейсы. Каждый следующий день должен учитывать предыдущие ошибки. 5 учебных дней, каждый день 2-3 шага, чередовать теорию, тест, свободный ответ и практический кейс с клиентом. Для каждого шага укажи subject,title,type(mcq/free/case),skill,difficulty. Верни только JSON: {summary,days:[{day,focus,lessons:[...]}],sources:[{name,url,why}]}";
       let plan;
       try{
         const raw=await aiText(e,[{role:"system",content:"Ты методист юридической академии. Генерируй только валидный JSON без markdown. Юридическая точность важнее полноты."},{role:"user",content:prompt}],1400);
@@ -300,7 +323,7 @@ async function api(r,e){
       const u=await userFor(r,e);
       const b=await r.json(),subject=String(b.subject||"").slice(0,100),skill=String(b.skill||"").slice(0,180),difficulty=String(b.difficulty||"средняя").slice(0,40),type=String(b.type||"mcq").slice(0,20);
       if(!subject)return json({error:"Не указан предмет."},400);
-      const prompt="Создай одно задание для обучения праву РФ по предмету «"+subject+"», навык: "+skill+", сложность: "+difficulty+", тип: "+type+". Используй только нормы и принципы, в которых уверен; если номер статьи сомнителен, не выдумывай его. Официальный источник для проверки актуальности: https://pravo.gov.ru/. Задание должно проверять понимание, а не угадывание. Для mcq дай 4 близких варианта и один правильный. Для free дай вопрос, эталонную логику и критерии проверки. Для case придумай обращение условного клиента с недостающими, но юридически значимыми фактами, а затем эталонный план рассуждения. Верни только JSON с полями type,subject,question,context,answers,correct,explanation,trap,sourceNote.";
+      const prompt="Создай одно задание для обучения праву РФ по предмету «"+subject+"», навык: "+skill+", сложность: "+difficulty+", тип: "+type+". Диагностика студента: "+JSON.stringify(b.diagnostics||[])+"; урок №"+String(b.lessonNo||0)+". Не повторяй простые задания по уже освоенным навыкам без причины. Используй только нормы и принципы, в которых уверен; если номер статьи сомнителен, не выдумывай его. Официальный источник для проверки актуальности: https://pravo.gov.ru/. Задание должно проверять понимание, а не угадывание. Для mcq дай 4 близких варианта и один правильный. Для free дай вопрос, эталонную логику и критерии проверки. Для case придумай обращение условного клиента с недостающими, но юридически значимыми фактами, а затем эталонный план рассуждения. Верни только JSON с полями type,subject,question,context,answers,correct,explanation,trap,sourceNote.";
       let item;
       try{
         const raw=await aiText(e,[{role:"system",content:"Ты преподаватель права и редактор юридических учебных материалов. Верни только валидный JSON."},{role:"user",content:prompt}],900);
