@@ -151,13 +151,18 @@ async function loadLesson(){
 }
 function renderLesson(subject){
  const type=current.type||'mcq',q=current.question||'Вопрос',isWritten=type==='free'||type==='case'||!Array.isArray(current.answers)||current.answers.length===0;
+ if(!isWritten&&Array.isArray(current.answers)){
+  const order=shuffleOrder(current.answers.length);
+  current._displayAnswers=order.map(i=>current.answers[i]);
+  current._displayCorrect=order.indexOf(Number(current.correct)||0);
+ }
  let html='<div class="intro"><div class="cat small"></div><div><div class="kicker">'+subject+' · '+type.toUpperCase()+'</div><h2>'+q+'</h2><p>Подумай самостоятельно. После ответа кот разберёт ход рассуждения.</p></div></div>';
  if(isWritten){
    html+='<div class="case">'+(current.context||'Сформулируй правовой вывод как юрист.')+'</div>';
    html+='<label style="display:block;margin-top:14px;font-size:10px;font-weight:900;letter-spacing:.08em;color:#8b5f52">ТВОЙ ОТВЕТ</label>';
    html+='<textarea class="textarea" id="answerText" placeholder="Напиши ответ своими словами…"></textarea>';
  }else{
-   html+='<div class="choices">'+(current.answers||[]).map((x,i)=>'<button type="button" class="choice" data-action="lessonChoice" data-i="'+i+'"><span class="letter">'+String.fromCharCode(65+i)+'</span><span>'+x+'</span></button>').join('')+'</div>';
+   html+='<div class="choices">'+(current._displayAnswers||current.answers||[]).map((x,i)=>'<button type="button" class="choice" data-action="lessonChoice" data-i="'+i+'"><span class="letter">'+String.fromCharCode(65+i)+'</span><span>'+x+'</span></button>').join('')+'</div>';
  }
  html+='<div id="feedback"></div><div class="actions"><button type="button" class="btn" data-action="reset">Настроить заново</button><button type="button" class="btn primary" id="next" data-action="check" '+(type==='mcq'?'disabled':'disabled')+'>'+(isWritten?'Напиши ответ':'Выбери вариант')+'</button></div>';
  $('app').innerHTML='<div class="lesson">'+html+'</div>';cat('teacher','Смотри на задачу спокойно. Сначала разберись в фактах, потом отвечай 😼');
@@ -168,7 +173,7 @@ function renderLesson(subject){
  }
 }
 function finish(ok,text){answered=true;if(ok){xp+=10;save();cat('celebrate','Отлично. Это +10 XP 😼')}else cat('explaining','Ошибка разобрана. Запомни логику, а не букву.');$('feedback').innerHTML='<div class="feedback"><b>'+(ok?'Верно.':'Разбираем ошибку.')+'</b> '+text+'</div>';const n=$('next');n.disabled=false;n.textContent='Следующий урок →'}
-function checkChoice(n){if(answered)return;const a=current.answers||[],c=Number(current.correct)||0;document.querySelectorAll('.choice').forEach(x=>x.disabled=true);const ok=n===c;document.querySelectorAll('.choice')[n]?.classList.add(ok?'good':'bad');document.querySelectorAll('.choice')[c]?.classList.add('good');finish(ok,current.explanation||'Правильный ответ определяется юридической логикой и фактами.')}
+function checkChoice(n){if(answered)return;const c=Number(current._displayCorrect??current.correct)||0;document.querySelectorAll('.choice').forEach(x=>x.disabled=true);const ok=n===c;document.querySelectorAll('.choice')[n]?.classList.add(ok?'good':'bad');document.querySelectorAll('.choice')[c]?.classList.add('good');finish(ok,current.explanation||'Правильный ответ определяется юридической логикой и фактами.')}
 async function checkText(){
  if(answered){lessonNo++;loadLesson();return}
  const el=$('answerText'),t=String(el?.value||'').trim();if(t.length<30){cat('strict','Раскрой мысль подробнее. Покажи, почему ты пришёл к выводу.');return}
