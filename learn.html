@@ -39,7 +39,23 @@ function cat(mood,text){const p=catMood[mood]||catMood.teacher;const el=$('mento
 function save(){localStorage.setItem('cl_onboard',JSON.stringify(state));localStorage.setItem('cl_xp',xp);$('xp').textContent=xp}
 function progress(n){$('bar').style.width=n+'%';$('counter').textContent=n+'%'}
 function profileStep(){
- $('modal').classList.add('open');$('modalStep').textContent='ШАГ 1 · ПРОФИЛЬ';$('modalTitle').textContent='Ты студент?';$('modalDesc').textContent='Выбери вариант. Потом уточним курс и твой реальный уровень.';$('modalBody').innerHTML='<div class="options"><button type="button" class="option" data-v="Колледж"><b>Колледж / СПО</b><span>Учитываю прикладную подготовку</span></button><button type="button" class="option" data-v="Университет"><b>Университет</b><span>Больше теории, практики и судебных кейсов</span></button></div>';document.querySelectorAll('.option').forEach(b=>b.addEventListener('click',e=>{e.preventDefault();state.type=b.dataset.v;courseStep()}));}
+ const modal=$('modal'),body=$('modalBody');
+ modal.classList.add('open');
+ $('modalStep').textContent='ШАГ 1 · ПРОФИЛЬ';
+ $('modalTitle').textContent='Ты студент?';
+ $('modalDesc').textContent='Выбери вариант. Потом уточним курс и твой реальный уровень.';
+ body.innerHTML='<div class="options"><div role="button" tabindex="0" class="option" data-v="Колледж"><b>Колледж / СПО</b><span>Учитываю прикладную подготовку</span></div><div role="button" tabindex="0" class="option" data-v="Университет"><b>Университет</b><span>Больше теории, практики и судебных кейсов</span></div></div>';
+ body.onclick=function(e){
+   const card=e.target.closest('.option');
+   if(!card)return;
+   state.type=card.getAttribute('data-v');
+   save();
+   courseStep();
+ };
+ body.onkeydown=function(e){
+   if(e.key==='Enter'||e.key===' '){const card=e.target.closest('.option');if(card){e.preventDefault();state.type=card.getAttribute('data-v');save();courseStep();}}
+ };
+}
 function courseStep(){
  $('modalStep').textContent='ШАГ 2 · КУРС';$('modalTitle').textContent='Какой курс?';$('modalDesc').textContent='Можно изменить позже.';$('modalBody').innerHTML='<div class="options">'+[1,2,3,4,5,6].map(x=>'<button type="button" class="option" data-v="'+x+'"><b>'+x+' курс</b><span>Подстрою глубину материала</span></button>').join('')+'</div>';document.querySelectorAll('.option').forEach(b=>b.addEventListener('click',e=>{e.preventDefault();state.course=b.dataset.v;levelStep()}))}
 function levelStep(){
