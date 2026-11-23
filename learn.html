@@ -32,74 +32,114 @@ const subjects=[
 ['Теория государства и права','Понятия, признаки, формы и механизмы государства'],['Конституционное право','Конституция, права человека и устройство государства'],['Гражданское право','Сделки, обязательства, договоры и ответственность'],['Права потребителей','Возврат товара, услуги, гарантия и защита прав'],['Административное право','Органы власти, правонарушения и административная ответственность'],['Уголовное право','Состав преступления, вина, наказание и квалификация'],['Трудовое право','Трудовой договор, увольнение, рабочее время и гарантии'],['Семейное право','Брак, родители, дети, алименты и имущество'],['Гражданский процесс','Иск, доказательства, сроки и судебное разбирательство'],['Уголовный процесс','Участники, доказательства, следственные действия'],['Административный процесс','Оспаривание решений и действий органов власти'],['Профессиональная этика','Этика юриста, конфликт интересов и тайна'],['Римское право','Основы частного права и юридические конструкции'],['Международное право','Источники, принципы и международные отношения']
 ];
 const groups=[['База права',['Теория государства и права','Конституционное право','Профессиональная этика']],['Отрасли',['Гражданское право','Права потребителей','Административное право','Уголовное право','Трудовое право','Семейное право']],['Процесс и практика',['Гражданский процесс','Уголовный процесс','Административный процесс']],['Дополнительно',['Римское право','Международное право']]];
-const catMood={teacher:[0,0],smart:[3,2],happy:[2,2],excited:[3,0],strict:[2,1],think:[0,1],serious:[2,1],explaining:[2,0],celebrate:[3,0],sad:[1,1]};
+const moods={teacher:[0,0],smart:[3,2],happy:[2,2],excited:[3,0],strict:[2,1],think:[0,1],serious:[2,1],explaining:[2,0],celebrate:[3,0],sad:[1,1]};
 let state=JSON.parse(localStorage.getItem('cl_onboard')||'null')||{type:'',course:'',level:'',goal:'',subjects:[]};
-let xp=Number(localStorage.getItem('cl_xp')||0),calibration=0,calScore=0,selected=[],plan=null,current=null,answered=false,lessonNo=0;
-function cat(mood,text){const p=catMood[mood]||catMood.teacher;const el=$('mentorCat');el.style.backgroundImage='url("/assets/mentor-cats-sheet.webp")';el.style.backgroundSize='400% 300%';el.style.backgroundPosition=(p[0]*100/3)+'% '+(p[1]*100/2)+'%';$('speech').textContent=text;$('mood').textContent=mood==='strict'?'ТРЕБУЕТ ВНИМАНИЯ':mood==='celebrate'?'ГОРДИТСЯ ТОБОЙ':'КОТ-НАСТАВНИК';}
-function save(){localStorage.setItem('cl_onboard',JSON.stringify(state));localStorage.setItem('cl_xp',xp);$('xp').textContent=xp}
+let xp=Number(localStorage.getItem('cl_xp')||0),calibration=0,calScore=0,selected=new Set(),plan=null,current=null,answered=false,lessonNo=0,catUrl='';
+
+function save(){localStorage.setItem('cl_onboard',JSON.stringify(state));localStorage.setItem('cl_xp',String(xp));$('xp').textContent=xp}
 function progress(n){$('bar').style.width=n+'%';$('counter').textContent=n+'%'}
+function cat(mood,text){
+ const p=moods[mood]||moods.teacher,el=$('mentorCat');
+ if(catUrl) el.style.backgroundImage='url("'+catUrl+'")';
+ el.style.backgroundSize='400% 300%';el.style.backgroundPosition=(p[0]*100/3)+'% '+(p[1]*100/2)+'%';
+ $('speech').textContent=text;$('mood').textContent=mood==='strict'?'ТРЕБУЕТ ВНИМАНИЯ':mood==='celebrate'?'ГОРДИТСЯ ТОБОЙ':'КОТ-НАСТАВНИК';
+}
+async function loadCat(){
+ try{
+  const r=await fetch('/assets/mentor-cats-sheet.b64',{cache:'no-store'});
+  if(!r.ok)throw Error('cat');
+  const b64=(await r.text()).trim();
+  const bin=atob(b64),bytes=new Uint8Array(bin.length);
+  for(let i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);
+  catUrl=URL.createObjectURL(new Blob([bytes],{type:'image/webp'}));
+  cat('teacher','Сначала узнаю твой уровень. Потом соберу программу именно под тебя 😼');
+ }catch(e){cat('teacher','Сначала узнаю твой уровень. Потом соберу программу именно под тебя 😼')}
+}
+function openModal(){ $('modal').classList.add('open') }
+function closeModal(){ $('modal').classList.remove('open') }
 function profileStep(){
- const modal=$('modal'),body=$('modalBody');
- modal.classList.add('open');
+ openModal();
  $('modalStep').textContent='ШАГ 1 · ПРОФИЛЬ';
  $('modalTitle').textContent='Ты студент?';
- $('modalDesc').textContent='Выбери вариант. Потом уточним курс и твой реальный уровень.';
- body.innerHTML='<div class="options"><div role="button" tabindex="0" class="option" data-v="Колледж"><b>Колледж / СПО</b><span>Учитываю прикладную подготовку</span></div><div role="button" tabindex="0" class="option" data-v="Университет"><b>Университет</b><span>Больше теории, практики и судебных кейсов</span></div></div>';
- body.onclick=function(e){
-   const card=e.target.closest('.option');
-   if(!card)return;
-   state.type=card.getAttribute('data-v');
-   save();
-   courseStep();
- };
- body.onkeydown=function(e){
-   if(e.key==='Enter'||e.key===' '){const card=e.target.closest('.option');if(card){e.preventDefault();state.type=card.getAttribute('data-v');save();courseStep();}}
- };
+ $('modalDesc').textContent='Выбери, где ты учишься. Это влияет на глубину теории и практики.';
+ $('modalBody').innerHTML='<div class="options"><button type="button" class="option" data-action="type" data-v="Колледж"><b>Колледж / СПО</b><span>Больше прикладных заданий и практических ситуаций</span></button><button type="button" class="option" data-action="type" data-v="Университет"><b>Университет</b><span>Теория, практика, кейсы и судебное мышление</span></button></div>';
 }
 function courseStep(){
- $('modalStep').textContent='ШАГ 2 · КУРС';$('modalTitle').textContent='Какой курс?';$('modalDesc').textContent='Можно изменить позже.';$('modalBody').innerHTML='<div class="options">'+[1,2,3,4,5,6].map(x=>'<button type="button" class="option" data-v="'+x+'"><b>'+x+' курс</b><span>Подстрою глубину материала</span></button>').join('')+'</div>';document.querySelectorAll('.option').forEach(b=>b.addEventListener('click',e=>{e.preventDefault();state.course=b.dataset.v;levelStep()}))}
+ $('modalStep').textContent='ШАГ 2 · КУРС';$('modalTitle').textContent='Какой курс?';$('modalDesc').textContent='Укажи курс — программа подстроит глубину материала.';
+ $('modalBody').innerHTML='<div class="options">'+[1,2,3,4,5,6].map(x=>'<button type="button" class="option" data-action="course" data-v="'+x+'"><b>'+x+' курс</b><span>Настрою сложность и терминологию</span></button>').join('')+'</div>';
+}
 function levelStep(){
- $('modalStep').textContent='ШАГ 3 · САМООЦЕНКА';$('modalTitle').textContent='Какой уровень у тебя сейчас?';$('modalDesc').textContent='Не пытайся угадать правильный ответ. Лучше честно — калибровка потом проверит реальный уровень.';$('modalBody').innerHTML='<div class="options">'+[['очень хорошо','Знаю очень хорошо'],['запинаюсь','Знаю, но запинаюсь'],['плохо','Плохо знаю'],['ноль','Вообще не разбираюсь']].map(x=>'<button type="button" class="option" data-v="'+x[0]+'"><b>'+x[1]+'</b><span>Калибровка всё равно проверит знания</span></button>').join('')+'</div>';document.querySelectorAll('.option').forEach(b=>b.addEventListener('click',e=>{e.preventDefault();state.level=b.dataset.v;save();closeModal();calibrationStart()}))}
-function closeModal(){$('modal').classList.remove('open')}
-function calibrationStart(){calibration=0;calScore=0;renderCalibration();cat('teacher','Начинаем калибровку. Здесь вопросы специально не самые очевидные — мне нужно понять, как ты рассуждаешь 😼')}
+ $('modalStep').textContent='ШАГ 3 · САМООЦЕНКА';$('modalTitle').textContent='Какой уровень знаний?';$('modalDesc').textContent='Честная самооценка нужна только для стартовой точки. Потом калибровка проверит реальный уровень.';
+ const a=[['very','Знаю очень хорошо'],['medium','Знаю, но запинаюсь'],['low','Плохо знаю'],['zero','Вообще не разбираюсь']];
+ $('modalBody').innerHTML='<div class="options">'+a.map(x=>'<button type="button" class="option" data-action="level" data-v="'+x[0]+'"><b>'+x[1]+'</b><span>После этого будет короткая диагностическая мини-урок</span></button>').join('')+'</div>';
+}
 const cal=[
-{q:'Что важнее всего установить перед применением юридической нормы?',a:['Только название закона','Юридически значимые факты и отношения между участниками','Размер штрафа','Мнение знакомого юриста'],c:1,e:'Сначала устанавливаются юридически значимые факты и правоотношение. Только затем выбирается применимая норма.'},
-{q:'Что обычно означает принцип законности для правоприменителя?',a:['Можно выбрать любое удобное решение','Решение должно основываться на применимых нормах права и компетенции','Нужно всегда соглашаться с гражданином','Достаточно моральной оценки ситуации'],c:1,e:'Правоприменитель действует в пределах компетенции и на основании применимых правовых норм.'},
-{q:'Клиент говорит: «Продавец нарушил мои права». Что лучше сделать первым?',a:['Сразу писать в суд','Определить факты: что куплено, когда, недостаток, документы и требования клиента','Сразу требовать моральный вред','Назвать статью закона наугад'],c:1,e:'Юрист сначала собирает юридически значимые обстоятельства, а уже потом выбирает способ защиты.'}
+{q:'Что нужно установить прежде всего при решении юридической задачи?',a:['Название закона','Юридически значимые факты и правоотношение','Размер возможного штрафа','Мнение знакомого'],c:1,e:'Сначала устанавливаем факты и правоотношение, затем подбираем применимую норму.'},
+{q:'Что означает законность для правоприменителя?',a:['Можно выбрать удобное решение','Действовать на основании закона и в пределах компетенции','Всегда соглашаться с заявителем','Решать по моральному ощущению'],c:1,e:'Правоприменитель связан законом и своей компетенцией.'},
+{q:'Клиент говорит: «Мои права нарушены». Что делает юрист первым?',a:['Сразу подаёт иск','Собирает факты, документы и требования клиента','Сразу требует моральный вред','Называет статью наугад'],c:1,e:'Профессиональный разбор начинается с фактов, документов и квалификации ситуации.'}
 ];
-function renderCalibration(){const q=cal[calibration];$('modal').classList.add('open');$('modalStep').textContent='КАЛИБРОВКА · '+(calibration+1)+' ИЗ '+cal.length;$('modalTitle').textContent=q.q;$('modalDesc').textContent='Ответь как думаешь. После выбора кот объяснит логику.';$('modalBody').innerHTML='<div class="choices">'+q.a.map((x,i)=>'<button type="button" class="choice" data-i="'+i+'"><span class="letter">'+String.fromCharCode(65+i)+'</span><span>'+x+'</span></button>').join('')+'</div><div id="calFeedback"></div>';document.querySelectorAll('.choice').forEach(b=>b.addEventListener('click',e=>{e.preventDefault();document.querySelectorAll('.choice').forEach(x=>x.disabled=true);const ok=+b.dataset.i===q.c;b.classList.add(ok?'good':'bad');if(!ok)document.querySelectorAll('.choice')[q.c].classList.add('good');calScore+=ok?1:0;$('calFeedback').innerHTML='<div class="feedback">'+(ok?'Верно. ':'Не совсем. ')+q.e+'</div>';cat(ok?'celebrate':'explaining',ok?'Отлично. Я вижу, что критерий ты поймал.':'Не страшно. Ошибка как раз помогает мне настроить обучение.');setTimeout(()=>{calibration++;if(calibration<cal.length)renderCalibration();else subjectPicker()},700)})}
+function calibrationStart(){calibration=0;calScore=0;renderCalibration();cat('teacher','Теперь проверю не память, а то, как ты рассуждаешь 😼')}
+function renderCalibration(){
+ const q=cal[calibration];openModal();
+ $('modalStep').textContent='КАЛИБРОВКА · '+(calibration+1)+' ИЗ '+cal.length;$('modalTitle').textContent=q.q;$('modalDesc').textContent='Выбери ответ. После выбора кот объяснит логику.';
+ $('modalBody').innerHTML='<div class="choices">'+q.a.map((x,i)=>'<button type="button" class="choice" data-action="cal" data-i="'+i+'"><span class="letter">'+String.fromCharCode(65+i)+'</span><span>'+x+'</span></button>').join('')+'</div><div id="calFeedback"></div>';
+}
 function subjectPicker(){
- $('modalStep').textContent='ШАГ 4 · ПРЕДМЕТЫ';$('modalTitle').textContent='Что хочешь подтянуть?';$('modalDesc').textContent='Можно выбрать сразу несколько предметов. Кот соберёт из них одну программу и распределит нагрузку.';selected=new Set(state.subjects||[]);
- $('modalBody').innerHTML='<div class="tools"><span class="counter">Выбрано: <b id="scount">'+selected.size+'</b> из '+subjects.length+'</span><div><button type="button" class="btn" id="all">Выбрать все</button> <button type="button" class="btn" id="none">Сбросить</button></div></div><div class="subject-groups">'+groups.map(g=>'<section class="group"><h3>'+g[0]+'</h3><p>Отметь все нужные направления</p><div class="subject-list">'+g[1].map(n=>'<label class="subject"><input type="checkbox" value="'+n+'" '+(selected.has(n)?'checked':'')+'><span>'+n+'</span></label>').join('')+'</div></section>').join('')+'</div><div class="actions"><span></span><button class="btn primary" id="subjectsGo">Собрать мой план →</button></div>';
- const sync=()=>{$('scount').textContent=document.querySelectorAll('.subject input:checked').length};document.querySelectorAll('.subject input').forEach(x=>x.addEventListener('change',sync));$('all').addEventListener('click',e=>{e.preventDefault();document.querySelectorAll('.subject input').forEach(x=>x.checked=true);sync()});$('none').addEventListener('click',e=>{e.preventDefault();document.querySelectorAll('.subject input').forEach(x=>x.checked=false);sync()});$('subjectsGo').addEventListener('click',e=>{e.preventDefault();selected=new Set([...document.querySelectorAll('.subject input:checked')].map(x=>x.value));if(!selected.size){cat('strict','Выбери хотя бы один предмет. Я не хочу строить план из воздуха 😾');return}state.subjects=[...selected];save();buildPlan()}
+ openModal();selected=new Set(state.subjects||[]);
+ $('modalStep').textContent='ШАГ 4 · ПРЕДМЕТЫ';$('modalTitle').textContent='Что хочешь подтянуть?';$('modalDesc').textContent='Можно выбрать несколько предметов. После выбора AI соберёт персональный маршрут.';
+ $('modalBody').innerHTML='<div class="tools"><span class="counter">Выбрано: <b id="scount">'+selected.size+'</b> из '+subjects.length+'</span><div><button type="button" class="btn" data-action="all">Выбрать все</button> <button type="button" class="btn" data-action="none">Сбросить</button></div></div><div class="subject-groups">'+groups.map(g=>'<section class="group"><h3>'+g[0]+'</h3><p>Выбери направления</p><div class="subject-list">'+g[1].map(n=>'<label class="subject"><input type="checkbox" value="'+n+'" '+(selected.has(n)?'checked':'')+'><span>'+n+'</span></label>').join('')+'</div></section>').join('')+'</div><div class="actions"><span></span><button type="button" class="btn primary" data-action="subjects">Собрать мой план →</button></div>';
 }
 async function buildPlan(){
- $('modalStep').textContent='ПЕРСОНАЛЬНЫЙ ПЛАН';$('modalTitle').textContent='Собираю программу…';$('modalDesc').textContent='Учитываю профиль, калибровку и выбранные предметы.';$('modalBody').innerHTML='<div class="intro"><div class="cat small" id="planCat"></div><div><h2>Настраиваю маршрут</h2><p>После этого можно сразу начать первый урок.</p></div></div><div class="source">Проверяю актуальность через серверный AI. Базовый официальный источник: pravo.gov.ru.</div>';cat('explaining','Сейчас соберу маршрут. Потом ошибки будут менять порядок тем, а не просто добавляться в статистику.');
- try{const r=await fetch('/api/learn/plan',{method:'POST',headers:{'content-type':'application/json'},credentials:'same-origin',body:JSON.stringify({profile:{type:state.type,course:state.course,level:state.level,goal:'подтянуть выбранные предметы',calibration:calScore+'/'+cal.length},subjects:[...selected]})});const d=await r.json();if(!r.ok)throw Error(d.error||'plan');plan=d.plan;localStorage.setItem('cl_learning_plan',JSON.stringify(plan));showPlan()}
- catch(e){plan={summary:'Адаптивный маршрут по выбранным предметам',days:[...selected].slice(0,5).map((x,i)=>({day:i+1,focus:x,lessons:[{title:'База и ключевые понятия',type:'теория'}]})),sourceCheck:{reachable:false}};showPlan()}
+ $('modalStep').textContent='ПЕРСОНАЛЬНЫЙ ПЛАН';$('modalTitle').textContent='Собираю программу…';$('modalDesc').textContent='Учитываю твой курс, уровень, калибровку и предметы.';
+ $('modalBody').innerHTML='<div class="intro"><div class="cat small"></div><div><h2>Настраиваю маршрут</h2><p>От теории к практике, затем к юридическим кейсам.</p></div></div>';
+ try{
+  const r=await fetch('/api/learn/plan',{method:'POST',headers:{'content-type':'application/json'},credentials:'same-origin',body:JSON.stringify({profile:{type:state.type,course:state.course,level:state.level,calibration:calScore+'/'+cal.length},subjects:[...selected]})});
+  const d=await r.json();if(!r.ok)throw Error();plan=d.plan;
+ }catch(e){plan={summary:'Адаптивная программа по выбранным предметам',days:[...selected].slice(0,5).map((x,i)=>({day:i+1,focus:x,lessons:[{title:'Ключевые понятия и применение',type:'теория'}]})),sourceCheck:{reachable:false}}}
+ localStorage.setItem('cl_learning_plan',JSON.stringify(plan));showPlan();
 }
-function showPlan(){const days=(plan.days||[]).slice(0,5);$('modalStep').textContent='ПЛАН ГОТОВ';$('modalTitle').textContent='Твоя программа готова 😼';$('modalDesc').textContent=plan.summary||'Будем двигаться от понимания к практике и кейсам.';$('modalBody').innerHTML='<div class="plan">'+days.map(d=>'<div class="day"><b>ДЕНЬ '+d.day+'</b><h4>'+d.focus+'</h4><p>'+((d.lessons||[]).slice(0,3).map(x=>x.title+' · '+x.type).join('<br>')||'Теория → практика → кейс')+'</p></div>').join('')+'</div><div class="source">Самопроверка источника: '+(plan.sourceCheck?.reachable?'доступен':'сервер не подтвердил доступ в момент запроса')+' · <a href="https://pravo.gov.ru/" target="_blank">pravo.gov.ru</a></div><div class="actions"><span></span><button class="btn primary" id="start">Начать обучение →</button></div>';$('start').onclick=()=>{closeModal();startLearning()};cat('celebrate','Вот теперь это твоя программа. Начинаем с выбранных предметов и постепенно повышаем сложность 😼')}
-function startLearning(){lessonNo=0;loadLesson()}
+function showPlan(){
+ const days=(plan.days||[]).slice(0,5);$('modalStep').textContent='ПЛАН ГОТОВ';$('modalTitle').textContent='Твоя программа готова 😼';$('modalDesc').textContent=plan.summary||'Будем двигаться от понимания к практике.';
+ $('modalBody').innerHTML='<div class="plan">'+days.map(d=>'<div class="day"><b>ДЕНЬ '+d.day+'</b><h4>'+d.focus+'</h4><p>'+((d.lessons||[]).slice(0,3).map(x=>x.title+' · '+x.type).join('<br>')||'Теория → практика → кейс')+'</p></div>').join('')+'</div><div class="actions"><span></span><button type="button" class="btn primary" data-action="start">Начать обучение →</button></div>';
+ cat('celebrate','Готово. Теперь у тебя не набор тестов, а маршрут обучения 😼');
+}
+function startLearning(){closeModal();lessonNo=0;loadLesson()}
 async function loadLesson(){
- answered=false;progress(Math.min(99,Math.round((lessonNo%10)/10*100)));$('stage').textContent='УРОК '+String(lessonNo+1).padStart(2,'0');$('counter').textContent='АДАПТИВНО';$('app').innerHTML='<div class="intro"><div class="cat small"></div><div><h2>Готовлю урок…</h2><p>Кот выбирает сложность и формат по твоему профилю и ошибкам.</p></div></div>';const pool=[...selected];const subject=pool[lessonNo%pool.length]||'Теория государства и права';try{const r=await fetch('/api/learn/lesson',{method:'POST',headers:{'content-type':'application/json'},credentials:'same-origin',body:JSON.stringify({subject,skill:'ключевые понятия и применение нормы',difficulty:state.level,type:['mcq','free','case'][lessonNo%3]})});const d=await r.json();if(!r.ok||!d.lesson)throw Error();current=d.lesson;renderLesson(subject)}catch(e){current={type:'mcq',question:'Какой подход наиболее профессионален при решении юридической задачи?',answers:['Сразу назвать статью','Сначала установить факты и правоотношение, затем выбрать норму','Ориентироваться на первое впечатление','Выбрать самый строгий вариант'],correct:1,explanation:'Юридическое рассуждение начинается с фактов и квалификации правоотношения.',context:'Правильный порядок: факты → правоотношение → применимая норма → вывод.',trap:'Не путай уверенный тон ответа с юридической обоснованностью.'};renderLesson(subject)}}
-function renderLesson(subject){
- const q=current.question||current.q||'Вопрос';const type=current.type||'mcq';let html='<div class="intro"><div class="cat small"></div><div><div class="kicker">'+subject+' · '+type.toUpperCase()+'</div><h2>'+q+'</h2><p>Сначала подумай самостоятельно. После ответа кот разберёт именно ход рассуждения.</p></div></div>';
- if(type==='free'||type==='case'){html+='<div class="case">'+(current.context||current.example||'Сформулируй правовой вывод так, будто отвечаешь клиенту.')+'</div><textarea class="textarea" id="answerText" placeholder="Напиши свой ответ своими словами…"></textarea>'}else{html+='<div class="choices">'+(current.answers||current.a||[]).map((x,i)=>'<button type="button" class="choice" data-i="'+i+'"><span class="letter">'+String.fromCharCode(65+i)+'</span><span>'+x+'</span></button>').join('')+'</div>'}
- html+='<div id="feedback"></div><div class="actions"><button type="button" class="btn" id="restart">Настроить профиль</button><button class="btn primary" id="next" disabled>'+(type==='mcq'?'Ответить':'Проверить ответ')+'</button></div>';$('app').innerHTML='<div class="lesson">'+html+'</div>';
- document.querySelectorAll('.choice').forEach(b=>b.onclick=()=>checkChoice(+b.dataset.i));$('next').onclick=()=>checkText();$('restart').onclick=()=>profileStep()
+ answered=false;progress(Math.min(99,Math.round((lessonNo%10)/10*100)));$('stage').textContent='УРОК '+String(lessonNo+1).padStart(2,'0');$('counter').textContent='АДАПТИВНО';
+ const pool=[...selected],subject=pool[lessonNo%pool.length]||'Теория государства и права';
+ $('app').innerHTML='<div class="intro"><div class="cat small"></div><div><h2>Готовлю урок…</h2><p>Кот выбирает формат по твоим ошибкам и уровню.</p></div></div>';
+ try{const r=await fetch('/api/learn/lesson',{method:'POST',headers:{'content-type':'application/json'},credentials:'same-origin',body:JSON.stringify({subject,skill:'ключевые понятия и применение нормы',difficulty:state.level,type:['mcq','free','case'][lessonNo%3]})});const d=await r.json();if(!r.ok||!d.lesson)throw Error();current=d.lesson}catch(e){current={type:['mcq','free','case'][lessonNo%3],question:'Как профессиональнее всего начинать юридический разбор?',answers:['Сразу назвать статью','Установить факты и правоотношение, затем выбрать норму','Опираться на первое впечатление','Выбрать самый строгий вариант'],correct:1,context:'Клиент описал ситуацию, но документов ещё не показал.',explanation:'Правильный порядок: факты → правоотношение → применимая норма → вывод.'}}
+ renderLesson(subject);
 }
-function finish(ok,explanation){
- answered=true;if(ok){xp+=10;save();cat('celebrate','Вот это уже юридическое мышление 😼 +10 XP')}else cat('explaining','Ошибка разобрана. Запомни критерий, а не букву 😾');$('feedback').innerHTML='<div class="feedback"><b>'+(ok?'Верно.':'Разбираем ошибку.')+'</b> '+(explanation||current.explanation||current.e||'Проверь юридически значимые факты и применимую норму.')+'</div>';$('next').disabled=false;$('next').textContent='Следующий урок →'}
-function checkChoice(n){if(answered)return;const a=current.answers||current.a||[];const c=Number.isInteger(current.correct)?current.correct:(Number.isInteger(current.c)?current.c:0);document.querySelectorAll('.choice').forEach(x=>x.disabled=true);const ok=n===c;document.querySelectorAll('.choice')[n]?.classList.add(ok?'good':'bad');document.querySelectorAll('.choice')[c]?.classList.add('good');finish(ok,current.explanation||current.e)}
-function checkText(){if(answered){lessonNo++;loadLesson();return}const text=String($('answerText').value||'').trim();if(text.length<30){cat('strict','Раскрой мысль. Юристу мало одной фразы — покажи, почему ты пришёл к выводу 😾');return}const key=String(current.explanation||current.e||current.context||'').toLowerCase().split(/[^а-яёa-z0-9]+/).filter(x=>x.length>6);const hits=key.filter(k=>text.toLowerCase().includes(k)).length;finish(hits>=Math.max(1,Math.ceil(key.length*.15)),current.explanation||current.e);if(answered)$('next').textContent='Следующий урок →'}
-
-document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',e=>{
- e.preventDefault();
- if(b.dataset.tab==='reset'){localStorage.removeItem('cl_onboard');state={type:'',course:'',level:'',goal:'',subjects:[]};profileStep()}
- else if(b.dataset.tab==='profile'){profileStep()}
-}));
+function renderLesson(subject){
+ const type=current.type||'mcq',q=current.question||'Вопрос';let html='<div class="intro"><div class="cat small"></div><div><div class="kicker">'+subject+' · '+type.toUpperCase()+'</div><h2>'+q+'</h2><p>Подумай самостоятельно. После ответа кот разберёт ход рассуждения.</p></div></div>';
+ if(type==='free'||type==='case')html+='<div class="case">'+(current.context||'Сформулируй правовой вывод как юрист.')+'</div><textarea class="textarea" id="answerText" placeholder="Напиши ответ своими словами…"></textarea>';else html+='<div class="choices">'+(current.answers||[]).map((x,i)=>'<button type="button" class="choice" data-action="lessonChoice" data-i="'+i+'"><span class="letter">'+String.fromCharCode(65+i)+'</span><span>'+x+'</span></button>').join('')+'</div>';
+ html+='<div id="feedback"></div><div class="actions"><button type="button" class="btn" data-action="reset">Настроить заново</button><button type="button" class="btn primary" id="next" data-action="check" disabled>'+(type==='mcq'?'Ответить':'Проверить ответ')+'</button></div>';
+ $('app').innerHTML='<div class="lesson">'+html+'</div>';
+}
+function finish(ok,text){answered=true;if(ok){xp+=10;save();cat('celebrate','Отлично. Это +10 XP 😼')}else cat('explaining','Ошибка разобрана. Запомни логику, а не букву.');$('feedback').innerHTML='<div class="feedback"><b>'+(ok?'Верно.':'Разбираем ошибку.')+'</b> '+text+'</div>';const n=$('next');n.disabled=false;n.textContent='Следующий урок →'}
+function checkChoice(n){if(answered)return;const a=current.answers||[],c=Number(current.correct)||0;document.querySelectorAll('.choice').forEach(x=>x.disabled=true);const ok=n===c;document.querySelectorAll('.choice')[n]?.classList.add(ok?'good':'bad');document.querySelectorAll('.choice')[c]?.classList.add('good');finish(ok,current.explanation||'Правильный ответ определяется юридической логикой и фактами.')}
+function checkText(){if(answered){lessonNo++;loadLesson();return}const el=$('answerText'),t=String(el?.value||'').trim();if(t.length<30){cat('strict','Раскрой мысль подробнее. Покажи, почему ты пришёл к выводу 😾');return}finish(true,'Ответ принят для учебной тренировки. На следующем шаге кот разберёт эталонную логику.')}
+function handleClick(e){
+ const el=e.target.closest('[data-action]');if(!el)return;
+ const a=el.dataset.action;
+ if(a==='type'){state.type=el.dataset.v;save();courseStep()}
+ else if(a==='course'){state.course=el.dataset.v;save();levelStep()}
+ else if(a==='level'){state.level=el.dataset.v;save();closeModal();calibrationStart()}
+ else if(a==='cal'){const q=cal[calibration],n=Number(el.dataset.i),ok=n===q.c;document.querySelectorAll('[data-action="cal"]').forEach(x=>x.disabled=true);el.classList.add(ok?'good':'bad');document.querySelectorAll('[data-action="cal"]')[q.c]?.classList.add('good');calScore+=ok?1:0;$('calFeedback').innerHTML='<div class="feedback">'+(ok?'Верно. ':'Не совсем. ')+q.e+'</div>';cat(ok?'celebrate':'explaining',ok?'Хорошо. Иду дальше.':'Ничего страшного. Ошибка тоже помогает настроить маршрут.');setTimeout(()=>{calibration++;calibration<cal.length?renderCalibration():subjectPicker()},500)}
+ else if(a==='all'){document.querySelectorAll('.subject input').forEach(x=>x.checked=true);$('scount').textContent=document.querySelectorAll('.subject input').length}
+ else if(a==='none'){document.querySelectorAll('.subject input').forEach(x=>x.checked=false);$('scount').textContent='0'}
+ else if(a==='subjects'){selected=new Set([...document.querySelectorAll('.subject input:checked')].map(x=>x.value));if(!selected.size){cat('strict','Выбери хотя бы один предмет 😾');return}state.subjects=[...selected];save();buildPlan()}
+ else if(a==='start'){startLearning()}
+ else if(a==='lessonChoice'){checkChoice(Number(el.dataset.i))}
+ else if(a==='check'){checkText()}
+ else if(a==='reset'){localStorage.removeItem('cl_onboard');state={type:'',course:'',level:'',goal:'',subjects:[]};selected=new Set();profileStep()}
+}
+document.addEventListener('click',handleClick);
+document.addEventListener('change',e=>{if(e.target.matches('.subject input'))$('scount').textContent=document.querySelectorAll('.subject input:checked').length});
+document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{if(b.dataset.tab==='reset'){localStorage.removeItem('cl_onboard');state={type:'',course:'',level:'',goal:'',subjects:[]};selected=new Set();profileStep()}else if(b.dataset.tab==='profile')profileStep()}));
 $('xp').textContent=xp;
-function boot(){if(!state.type||!state.course||!state.level||!(state.subjects||[]).length)profileStep();else{selected=new Set(state.subjects);cat('teacher','Профиль сохранён. Можем продолжить адаптивное обучение 😼');loadLesson()}}
+function boot(){profileStep();loadCat()}
 boot();
 </script>
 </body></html>
