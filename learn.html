@@ -34,7 +34,7 @@ const subjects=[
 const groups=[['База права',['Теория государства и права','Конституционное право','Профессиональная этика']],['Отрасли',['Гражданское право','Права потребителей','Административное право','Уголовное право','Трудовое право','Семейное право']],['Процесс и практика',['Гражданский процесс','Уголовный процесс','Административный процесс']],['Дополнительно',['Римское право','Международное право']]];
 const moods={teacher:[0,0],smart:[3,2],happy:[2,2],excited:[3,0],strict:[2,1],think:[0,1],serious:[2,1],explaining:[2,0],celebrate:[3,0],sad:[1,1]};
 let state=JSON.parse(localStorage.getItem('cl_onboard')||'null')||{type:'',course:'',level:'',goal:'',subjects:[]};
-let xp=Number(localStorage.getItem('cl_xp')||0),calibration=0,calScore=0,selected=new Set(),plan=null,current=null,answered=false,lessonNo=0,catUrl='';
+let xp=Number(localStorage.getItem('cl_xp')||0),calibration=0,calScore=0,calResults=[],selected=new Set(),plan=null,current=null,currentSubject='',answered=false,lessonNo=0,catUrl='';
 
 function save(){localStorage.setItem('cl_onboard',JSON.stringify(state));localStorage.setItem('cl_xp',String(xp));$('xp').textContent=xp}
 function progress(n){$('bar').style.width=n+'%';$('counter').textContent=n+'%'}
@@ -90,31 +90,29 @@ const cal=[
 {type:'free',q:'Письменно ответь: чем отличается правовая квалификация фактов от простого поиска статьи закона и почему нельзя надёжно консультировать клиента только по ключевым словам из его рассказа?',a:[],c:null,e:'Нужно показать, что квалификация связывает установленные факты с юридическими признаками правоотношения и только затем позволяет выбрать применимые нормы.',context:'Клиент описал проблему словами «меня незаконно оштрафовали», но не сообщил, кто вынес постановление, за что и когда.'}
 ];
 function calibrationStart(){calibration=0;calScore=0;renderCalibration();cat('teacher','Теперь проверю не память, а то, как ты рассуждаешь 😼')}
+function shuffleOrder(n){const a=Array.from({length:n},(_,i)=>i);for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 function renderCalibration(){
  const q=cal[calibration];openModal();
  $('modalStep').textContent='КАЛИБРОВКА · '+(calibration+1)+' ИЗ '+cal.length;
  $('modalTitle').textContent=q.q;
- $('modalDesc').textContent=q.type==='free'?'Письменный ответ. Покажи ход юридического рассуждения, а не просто итог.':'Выбирай вариант по содержанию и юридической логике. Длина ответа не является подсказкой.';
+ $('modalDesc').textContent=q.type==='free'?'Письменный ответ. AI оценит содержание и ход рассуждения.':'Варианты перемешаны. Выбирай по юридической логике, а не по позиции ответа.';
  let body='';
  if(q.type==='free'){
-   body='<div class="case">'+(q.context||'')+'</div><label style="display:block;margin-top:14px;font-size:10px;font-weight:900;letter-spacing:.08em;color:#8b5f52">ТВОЙ ПИСЬМЕННЫЙ ОТВЕТ</label><textarea class="textarea" id="calText" placeholder="Напиши развёрнутый ответ своими словами…"></textarea><div id="calFeedback"></div><div class="actions"><span class="counter">Минимум 50 символов</span><button type="button" class="btn primary" id="calCheck" data-action="calText" disabled>Проверить ответ →</button></div>';
+  body='<div class="case">'+(q.context||'')+'</div><label style="display:block;margin-top:14px;font-size:10px;font-weight:900;letter-spacing:.08em;color:#8b5f52">ТВОЙ ПИСЬМЕННЫЙ ОТВЕТ</label><textarea class="textarea" id="calText" placeholder="Напиши развёрнутый ответ своими словами…"></textarea><div id="calFeedback"></div><div class="actions"><span class="counter">Минимум 50 символов</span><button type="button" class="btn primary" id="calCheck" data-action="calText" disabled>Проверить ответ →</button></div>';
  }else{
-   body='<div class="choices">'+q.a.map((x,i)=>'<button type="button" class="choice" data-action="cal" data-i="'+i+'"><span class="letter">'+String.fromCharCode(65+i)+'</span><span>'+x+'</span></button>').join('')+'</div><div id="calFeedback"></div>';
+  q._order=shuffleOrder(q.a.length);q._displayCorrect=q._order.indexOf(q.c);
+  body='<div class="choices">'+q._order.map((src,i)=>'<button type="button" class="choice" data-action="cal" data-i="'+i+'"><span class="letter">'+String.fromCharCode(65+i)+'</span><span>'+q.a[src]+'</span></button>').join('')+'</div><div id="calFeedback"></div>';
  }
  $('modalBody').innerHTML=body;
- if(q.type==='free'){
-   const input=$('calText'),btn=$('calCheck');
-   input.addEventListener('input',()=>{btn.disabled=input.value.trim().length<50});
-   input.focus();
- }
+ if(q.type==='free'){const input=$('calText'),btn=$('calCheck');input.addEventListener('input',()=>{btn.disabled=input.value.trim().length<50});input.focus()}
 }
-function finishCalibrationWritten(){
- const input=$('calText'),t=String(input?.value||'').trim();
+async function finishCalibrationWritten(){
+ const input=$('calText'),t=String(input?.value||'').trim(),q=cal[calibration];
  if(t.length<50){cat('strict','Раскрой ответ подробнее: мне нужен ход твоего рассуждения 😾');return}
- $('calFeedback').innerHTML='<div class="feedback"><b>Ответ записан.</b> Использую его как диагностический сигнал. '+cal[calibration].e+'</div>';
  document.querySelectorAll('[data-action="calText"]').forEach(x=>x.disabled=true);
- cat('think','Хорошо. Смотрю, как ты строишь юридическое рассуждение 😼');
- setTimeout(()=>{calibration++;calibration<cal.length?renderCalibration():subjectPicker()},1100);
+ $('calFeedback').innerHTML='<div class="feedback">AI анализирует твой ответ…</div>';
+ try{const r=await fetch('/api/learn/calibrate',{method:'POST',headers:{'content-type':'application/json'},credentials:'same-origin',body:JSON.stringify({question:q.q,context:q.context||'',answer:t,expected:q.e,mode:'written',index:calibration})});const d=await r.json();if(!r.ok||!d.analysis)throw Error();calResults.push(d.analysis);$('calFeedback').innerHTML='<div class="feedback"><b>'+d.analysis.score+'/100</b> · '+(d.analysis.feedback||q.e)+'</div>';cat(d.analysis.score>=75?'celebrate':'explaining',d.analysis.score>=75?'Сильный ответ. Учитываю это в плане 😼':'Вижу пробелы. Именно их поставлю в план 😼')}catch(e){calResults.push({score:50,level:'средний',strengths:[],weaknesses:['Не удалось оценить ответ автоматически'],feedback:q.e,skills:[q.q]});$('calFeedback').innerHTML='<div class="feedback"><b>Ответ сохранён.</b> '+q.e+'</div>'}
+ setTimeout(()=>{calibration++;calibration<cal.length?renderCalibration():subjectPicker()},1200);
 }
 function subjectPicker(){
  openModal();selected=new Set(state.subjects||[]);
@@ -127,7 +125,7 @@ async function buildPlan(){
  const fallback=()=>({summary:'Твой адаптивный маршрут: теория → применение → кейсы',days:[...selected].slice(0,5).map((x,i)=>({day:i+1,focus:x,lessons:[{title:'Ключевые понятия и применение',type:'теория'},{title:'Проверка понимания',type:'практика'},{title:'Юридический кейс',type:'кейс'}]})),sourceCheck:{reachable:false}});
  try{
   const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),7000);
-  const r=await fetch('/api/learn/plan',{method:'POST',headers:{'content-type':'application/json'},credentials:'same-origin',signal:controller.signal,body:JSON.stringify({profile:{type:state.type,course:state.course,level:state.level,calibration:calScore+'/'+cal.length},subjects:[...selected]})});
+  const r=await fetch('/api/learn/plan',{method:'POST',headers:{'content-type':'application/json'},credentials:'same-origin',signal:controller.signal,body:JSON.stringify({profile:{type:state.type,course:state.course,level:state.level,calibration:calScore+'/'+cal.length,diagnostics:calResults},subjects:[...selected]})});
   clearTimeout(timer);
   const d=await r.json();if(!r.ok||!d.plan)throw Error();
   plan=d.plan;
@@ -146,10 +144,10 @@ async function loadLesson(){
  $('app').innerHTML='<div class="intro"><div class="cat small"></div><div><h2>Готовлю урок…</h2><p>AI отвечает не дольше нескольких секунд. При задержке урок откроется из резервного набора.</p></div></div>';
  try{
   const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),7000);
-  const r=await fetch('/api/learn/lesson',{method:'POST',headers:{'content-type':'application/json'},credentials:'same-origin',signal:controller.signal,body:JSON.stringify({subject,skill:'ключевые понятия и применение нормы',difficulty:state.level,type})});
+  const r=await fetch('/api/learn/lesson',{method:'POST',headers:{'content-type':'application/json'},credentials:'same-origin',signal:controller.signal,body:JSON.stringify({subject,skill:'ключевые понятия и применение нормы',difficulty:state.level,type,diagnostics:calResults,plan,lessonNo})});
   clearTimeout(timer);const d=await r.json();if(!r.ok||!d.lesson)throw Error();current=d.lesson;
  }catch(e){current={type,question:type==='case'?'Клиент просит оценить ситуацию. Какие юридически значимые обстоятельства нужно установить до вывода?':type==='free'?'Объясни, почему юрист не должен начинать правовой анализ с случайно найденной статьи.':'Как профессиональнее всего начинать юридический разбор?',answers:['Сразу назвать статью','Установить факты и правоотношение, затем выбрать норму','Опираться на первое впечатление','Выбрать самый строгий вариант'],correct:1,context:'Клиент описал ситуацию, но документов ещё не показал.',explanation:'Правильный порядок: факты → правоотношение → применимая норма → вывод.'}}
- renderLesson(subject);
+ currentSubject=subject;renderLesson(subject);
 }
 function renderLesson(subject){
  const type=current.type||'mcq',q=current.question||'Вопрос';
@@ -171,10 +169,10 @@ function renderLesson(subject){
 }
 function finish(ok,text){answered=true;if(ok){xp+=10;save();cat('celebrate','Отлично. Это +10 XP 😼')}else cat('explaining','Ошибка разобрана. Запомни логику, а не букву.');$('feedback').innerHTML='<div class="feedback"><b>'+(ok?'Верно.':'Разбираем ошибку.')+'</b> '+text+'</div>';const n=$('next');n.disabled=false;n.textContent='Следующий урок →'}
 function checkChoice(n){if(answered)return;const a=current.answers||[],c=Number(current.correct)||0;document.querySelectorAll('.choice').forEach(x=>x.disabled=true);const ok=n===c;document.querySelectorAll('.choice')[n]?.classList.add(ok?'good':'bad');document.querySelectorAll('.choice')[c]?.classList.add('good');finish(ok,current.explanation||'Правильный ответ определяется юридической логикой и фактами.')}
-function checkText(){
+async function checkText(){
  if(answered){lessonNo++;loadLesson();return}
- const el=$('answerText'),t=String(el?.value||'').trim();
- if(t.length<30){cat('strict','Раскрой мысль подробнее. Покажи, почему ты пришёл к выводу.');return}
+ const el=$('answerText'),t=String(el?.value||'').trim();if(t.length<30){cat('strict','Раскрой мысль подробнее. Покажи, почему ты пришёл к выводу.');return}
+ if(current.type==='free'||current.type==='case'){const n=$('next');n.disabled=true;n.textContent='AI анализирует…';try{const r=await fetch('/api/learn/evaluate',{method:'POST',headers:{'content-type':'application/json'},credentials:'same-origin',body:JSON.stringify({lesson:current,answer:t,subject:currentSubject,lessonNo,diagnostics:calResults})});const d=await r.json();if(!r.ok||!d.analysis)throw Error();const a=d.analysis;finish(a.score>=60,a.feedback||current.explanation||'Разберём ответ по юридической логике.');cat(a.score>=60?'celebrate':'explaining',a.score>=60?'Хорошо. Я запомнил, что у тебя уже получается 😼':'Нашли слабое место. Следующие задания будут точнее бить в него 😼');return}catch(e){n.disabled=false;n.textContent='Проверить ответ'}}
  finish(true,'Ответ принят для учебной тренировки. Кот разберёт эталонную логику и покажет, что в ответе было юридически важно.');
 }
 function handleClick(e){
@@ -184,11 +182,11 @@ function handleClick(e){
  else if(a==='course'){state.course=el.dataset.v;save();levelStep()}
  else if(a==='level'){state.level=el.dataset.v;save();closeModal();calibrationStart()}
  else if(a==='cal'){
- const q=cal[calibration],n=Number(el.dataset.i),ok=n===q.c;
+ const q=cal[calibration],n=Number(el.dataset.i),ok=n===q._displayCorrect;
  document.querySelectorAll('[data-action="cal"]').forEach(x=>x.disabled=true);
- el.classList.add(ok?'good':'bad');document.querySelectorAll('[data-action="cal"]')[q.c]?.classList.add('good');
- calScore+=ok?1:0;$('calFeedback').innerHTML='<div class="feedback">'+(ok?'Верно. ':'Не совсем. ')+q.e+'</div>';
- cat(ok?'celebrate':'explaining',ok?'Хорошо. Иду дальше.':'Ничего страшного. Ошибка тоже помогает настроить маршрут.');
+ el.classList.add(ok?'good':'bad');document.querySelectorAll('[data-action="cal"]')[q._displayCorrect]?.classList.add('good');
+ calScore+=ok?1:0;calResults.push({score:ok?100:0,level:ok?'strong':'needs_review',strengths:ok?[q.q]:[],weaknesses:ok?[]:[q.q],feedback:q.e,skills:[q.q]});
+ $('calFeedback').innerHTML='<div class="feedback">'+(ok?'Верно. ':'Не совсем. ')+q.e+'</div>';cat(ok?'celebrate':'explaining',ok?'AI учтёт это в диагностике.':'Ошибка зафиксирована — AI учтёт её в маршруте.');
  setTimeout(()=>{calibration++;calibration<cal.length?renderCalibration():subjectPicker()},650)
 }
  else if(a==='calText'){finishCalibrationWritten()}
