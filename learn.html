@@ -99,12 +99,16 @@ function subjectPicker(){
  $('modalBody').innerHTML='<div class="tools"><span class="counter">Выбрано: <b id="scount">'+selected.size+'</b> из '+subjects.length+'</span><div><button type="button" class="btn" data-action="all">Выбрать все</button> <button type="button" class="btn" data-action="none">Сбросить</button></div></div><div class="subject-groups">'+groups.map(g=>'<section class="group"><h3>'+g[0]+'</h3><p>Выбери направления</p><div class="subject-list">'+g[1].map(n=>'<label class="subject"><input type="checkbox" value="'+n+'" '+(selected.has(n)?'checked':'')+'><span>'+n+'</span></label>').join('')+'</div></section>').join('')+'</div><div class="actions"><span></span><button type="button" class="btn primary" data-action="subjects">Собрать мой план →</button></div>';
 }
 async function buildPlan(){
- $('modalStep').textContent='ПЕРСОНАЛЬНЫЙ ПЛАН';$('modalTitle').textContent='Собираю программу…';$('modalDesc').textContent='Учитываю твой курс, уровень, калибровку и предметы.';
- $('modalBody').innerHTML='<div class="intro"><div class="cat small"></div><div><h2>Настраиваю маршрут</h2><p>От теории к практике, затем к юридическим кейсам.</p></div></div>';
+ $('modalStep').textContent='ПЕРСОНАЛЬНЫЙ ПЛАН';$('modalTitle').textContent='План почти готов';$('modalDesc').textContent='Собираю маршрут по твоему уровню и выбранным предметам.';
+ $('modalBody').innerHTML='<div class="intro"><div class="cat small"></div><div><h2>Формирую первые занятия…</h2><p>Это займёт несколько секунд. Если AI не ответит вовремя, продолжим сразу по резервному плану.</p></div></div>';
+ const fallback=()=>({summary:'Твой адаптивный маршрут: теория → применение → кейсы',days:[...selected].slice(0,5).map((x,i)=>({day:i+1,focus:x,lessons:[{title:'Ключевые понятия и применение',type:'теория'},{title:'Проверка понимания',type:'практика'},{title:'Юридический кейс',type:'кейс'}]})),sourceCheck:{reachable:false}});
  try{
-  const r=await fetch('/api/learn/plan',{method:'POST',headers:{'content-type':'application/json'},credentials:'same-origin',body:JSON.stringify({profile:{type:state.type,course:state.course,level:state.level,calibration:calScore+'/'+cal.length},subjects:[...selected]})});
-  const d=await r.json();if(!r.ok)throw Error();plan=d.plan;
- }catch(e){plan={summary:'Адаптивная программа по выбранным предметам',days:[...selected].slice(0,5).map((x,i)=>({day:i+1,focus:x,lessons:[{title:'Ключевые понятия и применение',type:'теория'}]})),sourceCheck:{reachable:false}}}
+  const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),7000);
+  const r=await fetch('/api/learn/plan',{method:'POST',headers:{'content-type':'application/json'},credentials:'same-origin',signal:controller.signal,body:JSON.stringify({profile:{type:state.type,course:state.course,level:state.level,calibration:calScore+'/'+cal.length},subjects:[...selected]})});
+  clearTimeout(timer);
+  const d=await r.json();if(!r.ok||!d.plan)throw Error();
+  plan=d.plan;
+ }catch(e){plan=fallback()}
  localStorage.setItem('cl_learning_plan',JSON.stringify(plan));showPlan();
 }
 function showPlan(){
@@ -115,9 +119,13 @@ function showPlan(){
 function startLearning(){closeModal();lessonNo=0;loadLesson()}
 async function loadLesson(){
  answered=false;progress(Math.min(99,Math.round((lessonNo%10)/10*100)));$('stage').textContent='УРОК '+String(lessonNo+1).padStart(2,'0');$('counter').textContent='АДАПТИВНО';
- const pool=[...selected],subject=pool[lessonNo%pool.length]||'Теория государства и права';
- $('app').innerHTML='<div class="intro"><div class="cat small"></div><div><h2>Готовлю урок…</h2><p>Кот выбирает формат по твоим ошибкам и уровню.</p></div></div>';
- try{const r=await fetch('/api/learn/lesson',{method:'POST',headers:{'content-type':'application/json'},credentials:'same-origin',body:JSON.stringify({subject,skill:'ключевые понятия и применение нормы',difficulty:state.level,type:['mcq','free','case'][lessonNo%3]})});const d=await r.json();if(!r.ok||!d.lesson)throw Error();current=d.lesson}catch(e){current={type:['mcq','free','case'][lessonNo%3],question:'Как профессиональнее всего начинать юридический разбор?',answers:['Сразу назвать статью','Установить факты и правоотношение, затем выбрать норму','Опираться на первое впечатление','Выбрать самый строгий вариант'],correct:1,context:'Клиент описал ситуацию, но документов ещё не показал.',explanation:'Правильный порядок: факты → правоотношение → применимая норма → вывод.'}}
+ const pool=[...selected],subject=pool[lessonNo%pool.length]||'Теория государства и права',type=['mcq','free','case'][lessonNo%3];
+ $('app').innerHTML='<div class="intro"><div class="cat small"></div><div><h2>Готовлю урок…</h2><p>AI отвечает не дольше нескольких секунд. При задержке урок откроется из резервного набора.</p></div></div>';
+ try{
+  const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),7000);
+  const r=await fetch('/api/learn/lesson',{method:'POST',headers:{'content-type':'application/json'},credentials:'same-origin',signal:controller.signal,body:JSON.stringify({subject,skill:'ключевые понятия и применение нормы',difficulty:state.level,type})});
+  clearTimeout(timer);const d=await r.json();if(!r.ok||!d.lesson)throw Error();current=d.lesson;
+ }catch(e){current={type,question:type==='case'?'Клиент просит оценить ситуацию. Какие юридически значимые обстоятельства нужно установить до вывода?':type==='free'?'Объясни, почему юрист не должен начинать правовой анализ с случайно найденной статьи.':'Как профессиональнее всего начинать юридический разбор?',answers:['Сразу назвать статью','Установить факты и правоотношение, затем выбрать норму','Опираться на первое впечатление','Выбрать самый строгий вариант'],correct:1,context:'Клиент описал ситуацию, но документов ещё не показал.',explanation:'Правильный порядок: факты → правоотношение → применимая норма → вывод.'}}
  renderLesson(subject);
 }
 function renderLesson(subject){
