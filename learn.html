@@ -125,7 +125,7 @@ const cal=[
 {type:'free',q:'Письменно объясни, что ты будешь делать в первую очередь, когда клиент рассказывает тебе о своей правовой проблеме. Назови несколько основных шагов.',a:[],c:null,e:'Хороший ответ должен показать последовательность: факты → правоотношение → применимые нормы и их действие → доказательства и исключения → правовой вывод и возможные способы защиты.',context:'Клиент рассказал ситуацию устно, но документы ещё не представлены.'},
 {type:'free',q:'Письменно объясни, почему юристу недостаточно просто найти статью по словам клиента. Что нужно выяснить перед выводом?',a:[],c:null,e:'Нужно показать, что квалификация связывает установленные факты с юридическими признаками правоотношения и только затем позволяет выбрать применимые нормы.',context:'Клиент описал проблему словами «меня незаконно оштрафовали», но не сообщил, кто вынес постановление, за что и когда.'}
 ];
-function calibrationStart(){calibration=0;calScore=0;wrongStreak=0;renderCalibration();cat('think','Теперь проверю не память, а то, как ты рассуждаешь 😼')}
+function calibrationStart(){calibration=0;calScore=0;wrongStreak=0;renderCalibration();cat('serious','Теперь проверю не память, а то, как ты рассуждаешь.')}
 function shuffleOrder(n){const a=Array.from({length:n},(_,i)=>i);for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 function renderCalibration(){
  const q=cal[calibration];openModal();
@@ -151,12 +151,12 @@ async function finishCalibrationWritten(){
  setTimeout(()=>{calibration++;calibration<cal.length?renderCalibration():subjectPicker()},1200);
 }
 function subjectPicker(){
- openModal();cat('think','Выбери предметы. Я думаю, какие направления лучше связать в одну траекторию 🤔');selected=new Set(state.subjects||[]);
+ openModal();cat('curious','Выбери предметы. Я смотрю, что тебе сейчас действительно интересно.');selected=new Set(state.subjects||[]);
  $('modalStep').textContent='ШАГ 4 · ПРЕДМЕТЫ';$('modalTitle').textContent='Что хочешь подтянуть?';$('modalDesc').textContent='Можно выбрать несколько предметов. После выбора AI соберёт персональный маршрут.';
  $('modalBody').innerHTML='<div class="tools"><span class="counter">Выбрано: <b id="scount">'+selected.size+'</b> из '+subjects.length+'</span><div><button type="button" class="btn" data-action="all">Выбрать все</button> <button type="button" class="btn" data-action="none">Сбросить</button></div></div><div class="subject-groups">'+groups.map(g=>'<section class="group"><h3>'+g[0]+'</h3><p>Выбери направления</p><div class="subject-list">'+g[1].map(n=>'<label class="subject"><input type="checkbox" value="'+n+'" '+(selected.has(n)?'checked':'')+'><span>'+n+'</span></label>').join('')+'</div></section>').join('')+'</div><div class="actions"><span></span><button type="button" class="btn primary" data-action="subjects">Собрать мой план →</button></div>';
 }
 async function buildPlan(){
- cat('think','Собираю тебе персональный маршрут. Сейчас думаю, где дать больше практики 🤔');$('modalStep').textContent='ПЕРСОНАЛЬНЫЙ ПЛАН';$('modalTitle').textContent='План почти готов';$('modalDesc').textContent='Собираю маршрут по твоему уровню и выбранным предметам.';
+ cat('smart','Собираю тебе персональный маршрут. Сейчас решаю, где дать больше практики.');$('modalStep').textContent='ПЕРСОНАЛЬНЫЙ ПЛАН';$('modalTitle').textContent='План почти готов';$('modalDesc').textContent='Собираю маршрут по твоему уровню и выбранным предметам.';
  $('modalBody').innerHTML='<div class="intro"><div class="cat small"><div class="cat-direct" role="img" aria-label="Кот-юрист"></div></div><div><h2>Формирую первые занятия…</h2><p>Это займёт несколько секунд. Если AI не ответит вовремя, продолжим сразу по резервному плану.</p></div></div>';
  const fallback=()=>({summary:'Твой адаптивный маршрут: теория → применение → кейсы',days:[...selected].slice(0,5).map((x,i)=>({day:i+1,focus:x,lessons:[{title:'Ключевые понятия и применение',type:'теория'},{title:'Проверка понимания',type:'практика'},{title:'Юридический кейс',type:'кейс'}]})),sourceCheck:{reachable:false}});
  try{
@@ -173,9 +173,9 @@ function showPlan(){
  $('modalBody').innerHTML='<div class="plan">'+days.map(d=>'<div class="day"><b>ДЕНЬ '+d.day+'</b><h4>'+d.focus+'</h4><p>'+((d.lessons||[]).slice(0,3).map(x=>x.title+' · '+x.type).join('<br>')||'Теория → практика → кейс')+'</p></div>').join('')+'</div><div class="actions"><span></span><button type="button" class="btn primary" data-action="start">Начать обучение →</button></div>';
  cat('celebrate','Готово. Теперь у тебя не набор тестов, а маршрут обучения 😼');
 }
-function startLearning(){closeModal();lessonNo=0;wrongStreak=0;cat('happy','Начинаем. Я буду рядом на каждом задании 😼');loadLesson()}
+function startLearning(){closeModal();lessonNo=0;wrongStreak=0;cat('excited','Начинаем. Я готов к первой задаче.');loadLesson()}
 async function loadLesson(){
- answered=false;cat('think','Готовлю следующее задание. Сначала думаю, что тебе сейчас полезнее 🤔');progress(Math.min(99,Math.round((lessonNo%10)/10*100)));$('stage').textContent='УРОК '+String(lessonNo+1).padStart(2,'0');$('counter').textContent='АДАПТИВНО';
+ answered=false;cat('smart','Готовлю следующее задание. Сначала выбираю, что тебе сейчас полезнее.');progress(Math.min(99,Math.round((lessonNo%10)/10*100)));$('stage').textContent='УРОК '+String(lessonNo+1).padStart(2,'0');$('counter').textContent='АДАПТИВНО';
  const pool=[...selected],subject=pool[lessonNo%pool.length]||'Теория государства и права',type=['mcq','free','case'][lessonNo%3];
  $('app').innerHTML='<div class="intro"><div class="cat small"><div class="cat-direct" role="img" aria-label="Кот-юрист"></div></div><div><h2>Готовлю урок…</h2><p>AI отвечает не дольше нескольких секунд. При задержке урок откроется из резервного набора.</p></div></div>';
  try{
@@ -201,7 +201,7 @@ function renderLesson(subject){
    html+='<div class="choices">'+(current._displayAnswers||current.answers||[]).map((x,i)=>'<button type="button" class="choice" data-action="lessonChoice" data-i="'+i+'"><span class="letter">'+String.fromCharCode(65+i)+'</span><span>'+x+'</span></button>').join('')+'</div>';
  }
  html+='<div id="feedback"></div><div class="actions"><button type="button" class="btn" data-action="reset">Настроить заново</button><button type="button" class="btn primary" id="next" data-action="check" '+(type==='mcq'?'disabled':'disabled')+'>'+(isWritten?'Напиши ответ':'Выбери вариант')+'</button></div>';
- $('app').innerHTML='<div class="lesson">'+html+'</div>';cat('teacher','Смотри на задачу спокойно. Сначала разберись в фактах, потом отвечай 😼');
+ $('app').innerHTML='<div class="lesson">'+html+'</div>';cat('calm','Смотри на задачу спокойно. Сначала разберись в фактах, потом отвечай.');
  if(isWritten){
    const input=$('answerText'),next=$('next');
    input.addEventListener('input',()=>{const ready=input.value.trim().length>=30;next.disabled=!ready;next.textContent=ready?'Проверить ответ':'Напиши ответ'});
@@ -219,9 +219,9 @@ async function checkText(){
 function handleClick(e){
  const el=e.target.closest('[data-action]');if(!el)return;
  const a=el.dataset.action;
- if(a==='type'){state.type=el.dataset.v;save();cat('think','Хм… смотрю, как лучше настроить обучение под твоё образование 🤔');courseStep()}
- else if(a==='course'){state.course=el.dataset.v;save();cat('think','Курс понял. Теперь подберу глубину и сложность заданий 🤔');levelStep()}
- else if(a==='level'){state.level=el.dataset.v;save();cat('think','Хорошо. Самооценку записал — теперь проверим её реальными заданиями 🤔');closeModal();calibrationStart()}
+ if(a==='type'){state.type=el.dataset.v;save();cat('curious','Хм… смотрю, как лучше настроить обучение под твоё образование.');courseStep()}
+ else if(a==='course'){state.course=el.dataset.v;save();cat('explaining','Курс понял. Теперь подберу глубину и сложность заданий.');levelStep()}
+ else if(a==='level'){state.level=el.dataset.v;save();cat('serious','Хорошо. Самооценку записал. Теперь проверим её реальными заданиями.');closeModal();calibrationStart()}
  else if(a==='cal'){
  const q=cal[calibration],n=Number(el.dataset.i),ok=n===q._displayCorrect;
  document.querySelectorAll('[data-action="cal"]').forEach(x=>x.disabled=true);
@@ -233,7 +233,7 @@ function handleClick(e){
  else if(a==='calText'){finishCalibrationWritten()}
  else if(a==='all'){document.querySelectorAll('.subject input').forEach(x=>x.checked=true);$('scount').textContent=document.querySelectorAll('.subject input').length}
  else if(a==='none'){document.querySelectorAll('.subject input').forEach(x=>x.checked=false);$('scount').textContent='0'}
- else if(a==='subjects'){selected=new Set([...document.querySelectorAll('.subject input:checked')].map(x=>x.value));if(!selected.size){cat('strict','Выбери хотя бы один предмет 😾');return}state.subjects=[...selected];save();buildPlan()}
+ else if(a==='subjects'){selected=new Set([...document.querySelectorAll('.subject input:checked')].map(x=>x.value));if(!selected.size){cat('surprised','Ой. Здесь нужен хотя бы один предмет.');return}state.subjects=[...selected];save();buildPlan()}
  else if(a==='start'){startLearning()}
  else if(a==='lessonChoice'){checkChoice(Number(el.dataset.i))}
  else if(a==='check'){checkText()}
