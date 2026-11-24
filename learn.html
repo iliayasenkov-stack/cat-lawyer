@@ -116,11 +116,11 @@ opacity:.85;pointer-events:none}
 <main class="learn-page"><div class="academy">
 <header class="hero"><div><span class="pill">CAT LAWYER · АКАДЕМИЯ</span><h1>Изучай язык права</h1><p>Не зубри определения. Кот объяснит тему, проверит понимание, даст кейс и будет перестраивать обучение по твоим ошибкам.</p></div><div class="xp"><b id="xp">0</b><span>XP · твой прогресс</span></div></header>
 <div class="workspace">
-<aside class="mentor"><div class="cat" id="mentorCat"><div class="cat-direct" role="img" aria-label="Кот-юрист"><div class="cat-base" aria-hidden="true"><img class="cat-real-image" alt="Кот-юрист"></div></div></div><div class="speech"><b id="mentorName">КОТ-НАСТАВНИК</b><span id="speech">Сначала узнаю твой уровень. Потом соберу программу именно под тебя 😼</span></div><div class="mood" id="mood">ГОТОВ УЧИТЬ</div></aside>
+<aside class="mentor"><div class="cat" id="mentorCat"><div class="cat-direct" role="img" aria-label="Кот-юрист"><div class="cat-base" aria-hidden="true"><img class="cat-real-image" src="/assets/cat-lawyer-judge.webp?v=10" alt="Кот-юрист"></div></div></div><div class="speech"><b id="mentorName">КОТ-НАСТАВНИК</b><span id="speech">Сначала узнаю твой уровень. Потом соберу программу именно под тебя 😼</span></div><div class="mood" id="mood">ГОТОВ УЧИТЬ</div></aside>
 <section class="main">
 <nav class="topbar"><button class="tab active" data-tab="learn">Обучение</button><button type="button" class="tab" data-tab="profile">Мой профиль</button><button type="button" class="tab" data-tab="reset">Настроить заново</button></nav>
 <div class="panel"><div class="panel-head"><b id="stage">НАСТРОЙКА</b><span id="counter">0%</span></div><div class="progress"><i id="bar"></i></div><div class="content" id="app"></div></div>
-</section></div></div></main><div class="overlay open" id="modal"><div class="modal"><div class="modal-top"><div class="cat modal-cat" id="modalCat"><img class="modal-cat-image" id="modalCatImage" alt="Кот-юрист"></div><small id="modalStep">ШАГ 1 · ПРОФИЛЬ</small><h2 id="modalTitle">Сначала познакомимся</h2><p id="modalDesc">Это нужно не ради галочки. От твоего профиля зависит сложность и темп заданий.</p></div><div class="modal-body" id="modalBody"><div class="options"><button type="button" class="option" data-action="type" data-v="Колледж"><b>Колледж / СПО</b><span>Практические задания и ситуации из работы юриста</span></button><button type="button" class="option" data-action="type" data-v="Университет"><b>Университет</b><span>Теория, практика, кейсы и юридическое мышление</span></button></div></div></div></div>
+</section></div></div></main><div class="overlay open" id="modal"><div class="modal"><div class="modal-top"><div class="cat modal-cat" id="modalCat"><img class="modal-cat-image" id="modalCatImage" src="/assets/cat-lawyer-judge.webp?v=10" alt="Кот-юрист"></div><small id="modalStep">ШАГ 1 · ПРОФИЛЬ</small><h2 id="modalTitle">Сначала познакомимся</h2><p id="modalDesc">Это нужно не ради галочки. От твоего профиля зависит сложность и темп заданий.</p></div><div class="modal-body" id="modalBody"><div class="options"><button type="button" class="option" data-action="type" data-v="Колледж"><b>Колледж / СПО</b><span>Практические задания и ситуации из работы юриста</span></button><button type="button" class="option" data-action="type" data-v="Университет"><b>Университет</b><span>Теория, практика, кейсы и юридическое мышление</span></button></div></div></div></div>
 <script>
 const $=id=>document.getElementById(id);
 const subjects=[
@@ -135,23 +135,22 @@ const catRealFiles={teacher:1,curious:1,calm:1,happy:1,celebrate:1,excited:1,sad
 const catRealCache={};
 async function loadRealCat(){
  if(catRealCache[1])return catRealCache[1];
- const r=await fetch('/assets/cat-mascot-real-1.b64?v=13',{cache:'no-store'});
- const b=(await r.text()).trim();
- if(!b.startsWith('UklGR')) throw new Error('Invalid mascot asset');
- catRealCache[1]='data:image/webp;base64,'+b;
- return catRealCache[1];
+ const src='/assets/cat-lawyer-judge.webp?v=10';
+ const img=new Image();
+ img.src=src;
+ await new Promise((resolve,reject)=>{img.onload=resolve;img.onerror=reject});
+ catRealCache[1]=src;
+ return src;
 }
 let xp=Number(localStorage.getItem('cl_xp')||0),calibration=0,calScore=0,calResults=[],selected=new Set(),plan=null,current=null,currentSubject='',answered=false,lessonNo=0,catUrl='',wrongStreak=0;
 
-(async()=>{try{const src=await loadRealCat();document.querySelectorAll('.cat-real-image').forEach(i=>i.src=src);const m=document.getElementById('modalCatImage');if(m)m.src=src;}catch(e){}})();
+(async()=>{const src='/assets/cat-lawyer-judge.webp?v=10';document.querySelectorAll('.cat-real-image').forEach(i=>{i.src=src;i.style.display='block';});const m=document.getElementById('modalCatImage');if(m){m.src=src;m.style.display='block';}})();
 function save(){localStorage.setItem('cl_onboard',JSON.stringify(state));localStorage.setItem('cl_xp',String(xp));$('xp').textContent=xp}
 function progress(n){$('bar').style.width=n+'%';$('counter').textContent=n+'%'}
 function setMentorMood(el,mood){
  if(!el)return;
  const img=el.querySelector('.cat-real-image');
- if(img)loadRealCat().then(src=>{img.src=src;img.style.display='block';}).catch(()=>{
-   img.removeAttribute('src');img.style.display='none';
- });
+ if(img){img.src='/assets/cat-lawyer-judge.webp?v=10';img.style.display='block';}
  el.dataset.face=mood||'teacher';
  el.classList.remove('emotion-happy','emotion-excited','emotion-sad','emotion-strict','emotion-think','emotion-celebrate');
  const cls={happy:'emotion-happy',excited:'emotion-excited',sad:'emotion-sad',strict:'emotion-strict',think:'emotion-think',celebrate:'emotion-celebrate'}[mood];
