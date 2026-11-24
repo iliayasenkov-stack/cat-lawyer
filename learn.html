@@ -16,7 +16,8 @@
 @media(max-width:850px){.workspace{grid-template-columns:1fr}.mentor{position:relative;top:auto;display:flex;gap:12px;align-items:center;text-align:left}.mentor .cat{margin:0;width:145px;height:145px;flex:0 0 145px}.speech{flex:1}.plan{grid-template-columns:repeat(2,1fr)}}@media(max-width:560px){.modal-top .modal-cat{float:none;margin:0 0 10px;width:140px;height:140px}.hero{display:block}.xp{margin-top:14px}.content{padding:15px}.intro{align-items:flex-start}.options,.subject-list{grid-template-columns:1fr}.plan{grid-template-columns:1fr}.lesson h2{font-size:26px}.mentor .cat{width:105px;height:105px;flex-basis:105px}}
 
 /* Real mascot face states: the approved 4x3 cat sheet controls the expression; motion below is only an extra effect. */
-.cat-direct{width:100%;height:100%;display:block;background-image:none;background-color:transparent;background-repeat:no-repeat;background-size:400% 300%;background-position:0 0;transform-origin:50% 85%;transition:transform .25s ease,filter .25s ease;will-change:transform;}
+.cat-direct{width:100%;height:100%;display:block;background:none!important;transform-origin:50% 85%;transition:transform .25s ease,filter .25s ease;will-change:transform;position:relative}
+.cat-direct .cat-base{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;display:block!important;opacity:1!important;visibility:visible!important;z-index:1}
 .cat-direct[role="img"]{cursor:default}
 .cat.emotion-happy .cat-direct{animation:catHappy .75s ease-in-out infinite alternate}
 .cat.emotion-excited .cat-direct{animation:catExcited .38s ease-in-out infinite alternate}
@@ -47,12 +48,12 @@
 <main class="learn-page"><div class="academy">
 <header class="hero"><div><span class="pill">CAT LAWYER · АКАДЕМИЯ</span><h1>Изучай язык права</h1><p>Не зубри определения. Кот объяснит тему, проверит понимание, даст кейс и будет перестраивать обучение по твоим ошибкам.</p></div><div class="xp"><b id="xp">0</b><span>XP · твой прогресс</span></div></header>
 <div class="workspace">
-<aside class="mentor"><div class="cat" id="mentorCat"><div class="cat-direct" role="img" aria-label="Кот-юрист"></div></div><div class="speech"><b id="mentorName">КОТ-НАСТАВНИК</b><span id="speech">Сначала узнаю твой уровень. Потом соберу программу именно под тебя 😼</span></div><div class="mood" id="mood">ГОТОВ УЧИТЬ</div></aside>
+<aside class="mentor"><div class="cat" id="mentorCat"><div class="cat-direct" role="img" aria-label="Кот-юрист"><img class="cat-base" src="/assets/cat-lawyer-judge.webp?v=7" alt=""></div></div><div class="speech"><b id="mentorName">КОТ-НАСТАВНИК</b><span id="speech">Сначала узнаю твой уровень. Потом соберу программу именно под тебя 😼</span></div><div class="mood" id="mood">ГОТОВ УЧИТЬ</div></aside>
 <section class="main">
 <nav class="topbar"><button class="tab active" data-tab="learn">Обучение</button><button type="button" class="tab" data-tab="profile">Мой профиль</button><button type="button" class="tab" data-tab="reset">Настроить заново</button></nav>
 <div class="panel"><div class="panel-head"><b id="stage">НАСТРОЙКА</b><span id="counter">0%</span></div><div class="progress"><i id="bar"></i></div><div class="content" id="app"></div></div>
 </section></div></div></main>
-<div class="overlay open" id="modal"><div class="modal"><div class="modal-top"><div class="cat modal-cat" id="modalCat"><div class="cat-direct" role="img" aria-label="Кот-юрист"></div></div><small id="modalStep">ШАГ 1 · ПРОФИЛЬ</small><h2 id="modalTitle">Сначала познакомимся</h2><p id="modalDesc">Это нужно не ради галочки. От твоего профиля зависит сложность и темп заданий.</p></div><div class="modal-body" id="modalBody"><div class="options"><button type="button" class="option" data-action="type" data-v="Колледж"><b>Колледж / СПО</b><span>Практические задания и ситуации из работы юриста</span></button><button type="button" class="option" data-action="type" data-v="Университет"><b>Университет</b><span>Теория, практика, кейсы и юридическое мышление</span></button></div></div></div></div>
+<div class="overlay open" id="modal"><div class="modal"><div class="modal-top"><div class="cat modal-cat" id="modalCat"><div class="cat-direct" role="img" aria-label="Кот-юрист"><img class="cat-base" src="/assets/cat-lawyer-judge.webp?v=7" alt=""></div></div><small id="modalStep">ШАГ 1 · ПРОФИЛЬ</small><h2 id="modalTitle">Сначала познакомимся</h2><p id="modalDesc">Это нужно не ради галочки. От твоего профиля зависит сложность и темп заданий.</p></div><div class="modal-body" id="modalBody"><div class="options"><button type="button" class="option" data-action="type" data-v="Колледж"><b>Колледж / СПО</b><span>Практические задания и ситуации из работы юриста</span></button><button type="button" class="option" data-action="type" data-v="Университет"><b>Университет</b><span>Теория, практика, кейсы и юридическое мышление</span></button></div></div></div></div>
 <script>
 const $=id=>document.getElementById(id);
 const subjects=[
@@ -63,17 +64,19 @@ const mentorSheet='url("data:image/webp;base64,UklGRkIOAABXRUJQVlA4IDYOAACQUwCdA
 const mentorMood={teacher:[0,0],confident:[1,0],explaining:[2,0],celebrate:[3,0],curious:[0,1],surprised:[1,1],strict:[2,1],calm:[3,1],sleepy:[0,2],tired:[1,2],happy:[2,2],smart:[3,2],think:[0,1],serious:[2,1],sad:[1,1],excited:[3,0]};
 
 let state=JSON.parse(localStorage.getItem('cl_onboard')||'null')||{type:'',course:'',level:'',goal:'',subjects:[]};
+const catEmotionSrc={teacher:'/assets/cat-lawyer-judge.webp?v=7'};
 let xp=Number(localStorage.getItem('cl_xp')||0),calibration=0,calScore=0,calResults=[],selected=new Set(),plan=null,current=null,currentSubject='',answered=false,lessonNo=0,catUrl='',wrongStreak=0;
 
 function save(){localStorage.setItem('cl_onboard',JSON.stringify(state));localStorage.setItem('cl_xp',String(xp));$('xp').textContent=xp}
 function progress(n){$('bar').style.width=n+'%';$('counter').textContent=n+'%'}
 function setMentorMood(el,mood){
  if(!el)return;
- const p=mentorMood[mood]||mentorMood.teacher,x=p[0],y=p[1];
- el.style.backgroundImage=mentorSheet;
- el.style.backgroundSize='400% 300%';
- el.style.backgroundRepeat='no-repeat';
- el.style.backgroundPosition=(x*100/3)+'% '+(y*100/2)+'%';
+ const p=mentorMood[mood]||mentorMood.teacher;
+ const img=el.querySelector('.cat-base');
+ if(img){
+   const src=catEmotionSrc[mood]||catEmotionSrc.teacher;
+   if(src) img.src=src;
+ }
  el.dataset.face=mood||'teacher';
  el.classList.remove('emotion-happy','emotion-excited','emotion-sad','emotion-strict','emotion-think','emotion-celebrate');
  const cls={happy:'emotion-happy',excited:'emotion-excited',sad:'emotion-sad',strict:'emotion-strict',think:'emotion-think',celebrate:'emotion-celebrate'}[mood];
@@ -90,52 +93,18 @@ function cat(mood,text){
  const labels={teacher:'ГОТОВ УЧИТЬ',confident:'УВЕРЕН',explaining:'ОБЪЯСНЯЕТ',celebrate:'ГОРДИТСЯ ТОБОЙ',curious:'ЛЮБОПЫТСТВУЕТ',surprised:'УДИВЛЁН',strict:'ЗЛИТСЯ',calm:'СПОКОЕН',sleepy:'СОННЫЙ',tired:'УСТАЛ',happy:'РАДУЕТСЯ',smart:'УМНИЧАЕТ',think:'РАЗМЫШЛЯЕТ',serious:'СЕРЬЁЗНЫЙ',sad:'СОПЕРЕЖИВАЕТ',excited:'ВОСХИЩЁН'};
  $('mood').textContent=labels[mood]||labels.teacher;
 }
-function loadCat(){
- cat('teacher','Привет! Я твой Кот-юрист 😼 Я буду разговаривать с тобой, поддерживать, спорить с ошибками и радоваться твоим успехам.');
-}
-
-function openModal(){ $('modal').classList.add('open') }
-function closeModal(){ $('modal').classList.remove('open') }
-function profileStep(){
- openModal();
- $('modalStep').textContent='ШАГ 1 · ПРОФИЛЬ';
- $('modalTitle').textContent='Ты студент?';
- $('modalDesc').textContent='Выбери, где ты учишься. Это влияет на глубину теории и практики.';
- $('modalBody').innerHTML='<div class="options"><button type="button" class="option" data-action="type" data-v="Колледж"><b>Колледж / СПО</b><span>Больше прикладных заданий и практических ситуаций</span></button><button type="button" class="option" data-action="type" data-v="Университет"><b>Университет</b><span>Теория, практика, кейсы и судебное мышление</span></button></div>';
-}
-function courseStep(){
- $('modalStep').textContent='ШАГ 2 · КУРС';$('modalTitle').textContent='Какой курс?';$('modalDesc').textContent='Укажи курс — программа подстроит глубину материала.';
- $('modalBody').innerHTML='<div class="options">'+[1,2,3,4,5,6].map(x=>'<button type="button" class="option" data-action="course" data-v="'+x+'"><b>'+x+' курс</b><span>Настрою сложность и терминологию</span></button>').join('')+'</div>';
-}
-function levelStep(){
- $('modalStep').textContent='ШАГ 3 · САМООЦЕНКА';$('modalTitle').textContent='Какой уровень знаний?';$('modalDesc').textContent='Честная самооценка нужна только для стартовой точки. Потом калибровка проверит реальный уровень.';
- const a=[['very','Знаю очень хорошо'],['medium','Знаю, но запинаюсь'],['low','Плохо знаю'],['zero','Вообще не разбираюсь']];
- $('modalBody').innerHTML='<div class="options">'+a.map(x=>'<button type="button" class="option" data-action="level" data-v="'+x[0]+'"><b>'+x[1]+'</b><span>После этого будет короткая диагностическая мини-урок</span></button>').join('')+'</div>';
-}
-const cal=[
-{type:'mcq',q:'Покупатель требует заменить товар с недостатком. Продавец утверждает, что сначала покупатель обязан обратиться в сервисный центр. Какой шаг наиболее уместен до вывода о правомерности позиции продавца?',a:['Проверить вид товара, характер недостатка, срок его обнаружения и заявленное покупателем требование','Установить, была ли у продавца ранее такая же претензия','Выяснить, какой сервисный центр указан в гарантийном талоне','Определить, согласен ли покупатель на ремонт вместо замены'],c:0,e:'Сначала нужно установить факты, относящиеся к возникшему требованию и применимым правилам. После этого оценивается позиция продавца.'},
-{type:'mcq',q:'Муниципальный орган отказал заявителю в предоставлении услуги, сославшись на отсутствие одного документа. Какой вопрос имеет приоритет при правовой оценке?',a:['Предусмотрено ли требование этого документа применимыми правилами и имел ли орган полномочия его предъявлять','Считает ли заявитель отказ несправедливым','Привлекался ли ранее сотрудник органа к ответственности','Можно ли подобрать судебную практику с похожими обстоятельствами'],c:0,e:'Нужно проверить правовое основание требования и компетенцию органа, а не начинать с оценки субъективной справедливости решения.'},
-{type:'mcq',q:'Документ назван сторонами «договором оказания услуг», однако по его условиям одна сторона передаёт другой вещь в собственность за плату. Что следует установить?',a:['Соответствует ли содержание договора признакам конкретного вида обязательства','Почему стороны выбрали именно такое название','Какая сторона первой предложила подписать договор','Можно ли сохранить название документа без дополнительного анализа'],c:0,e:'Для квалификации отношений имеет значение их содержание и юридически значимые условия, а не только название документа.'},
-{type:'mcq',q:'Работник оспаривает увольнение, но сообщает только дату увольнения и должность. Какой следующий шаг наиболее обоснован?',a:['Установить основание увольнения и запросить документы, отражающие соблюдение процедуры','Определить предполагаемый размер компенсации','Сразу сделать вывод о незаконности увольнения','Сразу выбрать орган, куда будет направлена жалоба'],c:0,e:'Без основания увольнения и документов о процедуре нельзя надёжно оценить его законность.'},
-{type:'mcq',q:'Лицо признаёт причинение вреда нападавшему и ссылается на необходимую оборону. Какое обстоятельство имеет непосредственное значение для квалификации?',a:['Соотношение характера и опасности нападения с характером и способом защиты','Наличие у обвиняемого положительной характеристики','Отношение родственников потерпевшего к обвиняемому','Готовность обвиняемого возместить причинённый вред'],c:0,e:'Для оценки необходимой обороны нужно установить обстоятельства нападения и пределы защитных действий.'},
-{type:'mcq',q:'Юрист нашёл норму, которая по общему правилу подходит к ситуации клиента. В другой части акта содержится специальное правило для этой категории лиц. Что нужно сделать?',a:['Проверить соотношение общей и специальной нормы и условия применения специального правила','Оставить общую норму, поскольку она сформулирована шире','Выбрать норму, которая приводит к более выгодному результату','Использовать обе нормы одновременно без определения их соотношения'],c:0,e:'Нужно определить применимую норму с учётом специального регулирования и условий его действия.'},
-{type:'mcq',q:'В материалах дела имеются два документа, содержащие разные сведения об одном обстоятельстве. Какой подход корректнее?',a:['Сопоставить документы с другими доказательствами и определить правила их оценки','Принять документ, составленный раньше по времени','Принять документ, который подтверждает позицию клиента','Исключить оба документа до получения новых материалов'],c:0,e:'Противоречие между доказательствами требует их сопоставления и оценки по установленным правилам.'},
-{type:'mcq',q:'Клиент считает, что срок для обращения за защитой права пропущен, и предлагает изменить дату документа. Как должен действовать юрист?',a:['Установить природу срока, момент его начала и предусмотренные законом последствия его пропуска','Изменить дату, если это не меняет содержание требования','Составить документ с максимально поздней датой','Отказаться от анализа вопроса до обращения клиента в суд'],c:0,e:'Сначала нужно установить юридически значимые обстоятельства течения срока. Изменение даты документа не заменяет правовой анализ.'},
-{type:'mcq',q:'Клиент просит назвать только номер статьи, не сообщая всех обстоятельств ситуации. Какой ответ наиболее профессионален?',a:['Сообщить, что применимая норма определяется после установления юридически значимых фактов','Назвать наиболее похожую статью и считать консультацию завершённой','Предложить выбрать статью из нескольких вариантов самостоятельно','Отказать в консультации до предоставления полного пакета документов'],c:0,e:'Нельзя надёжно выбрать норму без установления фактов и характера правоотношения.'},
-{type:'mcq',q:'В договоре предусмотрена неустойка, но контрагент предъявил требование без расчёта. Какой вопрос следует проверить прежде всего?',a:['Какие условия договора и фактические обстоятельства определяют основание и размер требования','Насколько убедительно сформулирована претензия','Согласен ли контрагент на уменьшение суммы','Есть ли у компании опыт аналогичных споров'],c:0,e:'Нужно установить основание ответственности и данные, от которых зависит расчёт требования.'},
-{type:'free',q:'Письменно объясни, что ты будешь делать в первую очередь, когда клиент рассказывает тебе о своей правовой проблеме. Назови несколько основных шагов.',a:[],c:null,e:'Хороший ответ должен показать последовательность: факты → правоотношение → применимые нормы и их действие → доказательства и исключения → правовой вывод и возможные способы защиты.',context:'Клиент рассказал ситуацию устно, но документы ещё не представлены.'},
-{type:'free',q:'Письменно объясни, почему юристу недостаточно просто найти статью по словам клиента. Что нужно выяснить перед выводом?',a:[],c:null,e:'Нужно показать, что квалификация связывает установленные факты с юридическими признаками правоотношения и только затем позволяет выбрать применимые нормы.',context:'Клиент описал проблему словами «меня незаконно оштрафовали», но не сообщил, кто вынес постановление, за что и когда.'}
-];
-function calibrationStart(){calibration=0;calScore=0;wrongStreak=0;renderCalibration();cat('serious','Теперь проверю не память, а то, как ты рассуждаешь.')}
-function shuffleOrder(n){const a=Array.from({length:n},(_,i)=>i);for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
-function renderCalibration(){
- const q=cal[calibration];openModal();
- $('modalStep').textContent='КАЛИБРОВКА · '+(calibration+1)+' ИЗ '+cal.length;
- $('modalTitle').textContent=q.q;
- $('modalDesc').textContent=q.type==='free'?'Письменный ответ. AI оценит содержание и ход рассуждения.':'Варианты перемешаны. Выбирай по юридической логике, а не по позиции ответа.';
- let body='';
- if(q.type==='free'){
-  body='<div class="case">'+(q.context||'')+'</div><label style="display:block;margin-top:14px;font-size:10px;font-weight:900;letter-spacing:.08em;color:#8b5f52">ТВОЙ ПИСЬМЕННЫЙ ОТВЕТ</label><textarea class="textarea" id="calText" placeholder="Напиши развёрнутый ответ своими словами…"></textarea><div id="calFeedback"></div><div class="actions"><span class="counter">Минимум 30 символов</span><button type="button" class="btn primary" id="calCheck" data-action="calText" disabled>Проверить ответ →</button></div>';
+async function loadCat(){
+ cat('teacher','Привет! Я твой Кот-юрист. Я буду разговаривать с тобой, поддерживать, спорить с ошибками и радоваться твоим успехам.');
+ const files={happy:'cat-mascot-real-2.b64',celebrate:'cat-mascot-real-2.b64',excited:'cat-mascot-real-3.b64',sad:'cat-mascot-real-4.b64',strict:'cat-mascot-real-5.b64',think:'cat-mascot-real-6.b64',serious:'cat-mascot-real-5.b64',calm:'cat-mascot-real-1.b64',teacher:'cat-mascot-real-1.b64',curious:'cat-mascot-real-1.b64',surprised:'cat-mascot-real-3.b64',smart:'cat-mascot-real-6.b64',explaining:'cat-mascot-real-6.b64',confident:'cat-mascot-real-2.b64'};
+ for(const [m,file] of Object.entries(files)){
+   try{
+     const r=await fetch('/assets/'+file+'?v=7',{cache:'force-cache'});
+     if(!r.ok)continue;
+     const b=(await r.text()).trim();
+     catEmotionSrc[m]='data:image/webp;base64,'+b;
+   }catch(e){}
+ }
+ cat('teacher','Привет! Я твой Кот-юрист. Теперь эмоции будут меняться настоящими изображениями кота.');
  }else{
   q._order=shuffleOrder(q.a.length);q._displayCorrect=q._order.indexOf(q.c);
   body='<div class="choices">'+q._order.map((src,i)=>'<button type="button" class="choice" data-action="cal" data-i="'+i+'"><span class="letter">'+String.fromCharCode(65+i)+'</span><span>'+q.a[src]+'</span></button>').join('')+'</div><div id="calFeedback"></div>';
@@ -158,7 +127,7 @@ function subjectPicker(){
 }
 async function buildPlan(){
  cat('smart','Собираю тебе персональный маршрут. Сейчас решаю, где дать больше практики.');$('modalStep').textContent='ПЕРСОНАЛЬНЫЙ ПЛАН';$('modalTitle').textContent='План почти готов';$('modalDesc').textContent='Собираю маршрут по твоему уровню и выбранным предметам.';
- $('modalBody').innerHTML='<div class="intro"><div class="cat small"><div class="cat-direct" role="img" aria-label="Кот-юрист"></div></div><div><h2>Формирую первые занятия…</h2><p>Это займёт несколько секунд. Если AI не ответит вовремя, продолжим сразу по резервному плану.</p></div></div>';
+ $('modalBody').innerHTML='<div class="intro"><div class="cat small"><div class="cat-direct" role="img" aria-label="Кот-юрист"><img class="cat-base" src="/assets/cat-lawyer-judge.webp?v=7" alt=""></div></div><div><h2>Формирую первые занятия…</h2><p>Это займёт несколько секунд. Если AI не ответит вовремя, продолжим сразу по резервному плану.</p></div></div>';
  const fallback=()=>({summary:'Твой адаптивный маршрут: теория → применение → кейсы',days:[...selected].slice(0,5).map((x,i)=>({day:i+1,focus:x,lessons:[{title:'Ключевые понятия и применение',type:'теория'},{title:'Проверка понимания',type:'практика'},{title:'Юридический кейс',type:'кейс'}]})),sourceCheck:{reachable:false}});
  try{
   const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),7000);
@@ -178,7 +147,7 @@ function startLearning(){closeModal();lessonNo=0;wrongStreak=0;cat('excited','Н
 async function loadLesson(){
  answered=false;cat('smart','Готовлю следующее задание. Сначала выбираю, что тебе сейчас полезнее.');progress(Math.min(99,Math.round((lessonNo%10)/10*100)));$('stage').textContent='УРОК '+String(lessonNo+1).padStart(2,'0');$('counter').textContent='АДАПТИВНО';
  const pool=[...selected],subject=pool[lessonNo%pool.length]||'Теория государства и права',type=['mcq','free','case'][lessonNo%3];
- $('app').innerHTML='<div class="intro"><div class="cat small"><div class="cat-direct" role="img" aria-label="Кот-юрист"></div></div><div><h2>Готовлю урок…</h2><p>AI отвечает не дольше нескольких секунд. При задержке урок откроется из резервного набора.</p></div></div>';
+ $('app').innerHTML='<div class="intro"><div class="cat small"><div class="cat-direct" role="img" aria-label="Кот-юрист"><img class="cat-base" src="/assets/cat-lawyer-judge.webp?v=7" alt=""></div></div><div><h2>Готовлю урок…</h2><p>AI отвечает не дольше нескольких секунд. При задержке урок откроется из резервного набора.</p></div></div>';
  try{
   const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),7000);
   const r=await fetch('/api/learn/lesson',{method:'POST',headers:{'content-type':'application/json'},credentials:'same-origin',signal:controller.signal,body:JSON.stringify({subject,skill:'ключевые понятия и применение нормы',difficulty:state.level,type,diagnostics:calResults,plan,lessonNo})});
@@ -193,7 +162,7 @@ function renderLesson(subject){
   current._displayAnswers=order.map(i=>current.answers[i]);
   current._displayCorrect=order.indexOf(Number(current.correct)||0);
  }
- let html='<div class="intro"><div class="cat small"><div class="cat-direct" role="img" aria-label="Кот-юрист"></div></div><div><div class="kicker">'+subject+' · '+type.toUpperCase()+'</div><h2>'+q+'</h2><p>Подумай самостоятельно. После ответа кот разберёт ход рассуждения.</p></div></div>';
+ let html='<div class="intro"><div class="cat small"><div class="cat-direct" role="img" aria-label="Кот-юрист"><img class="cat-base" src="/assets/cat-lawyer-judge.webp?v=7" alt=""></div></div><div><div class="kicker">'+subject+' · '+type.toUpperCase()+'</div><h2>'+q+'</h2><p>Подумай самостоятельно. После ответа кот разберёт ход рассуждения.</p></div></div>';
  if(isWritten){
    html+='<div class="case">'+(current.context||'Сформулируй правовой вывод как юрист.')+'</div>';
    html+='<label style="display:block;margin-top:14px;font-size:10px;font-weight:900;letter-spacing:.08em;color:#8b5f52">ТВОЙ ОТВЕТ</label>';
