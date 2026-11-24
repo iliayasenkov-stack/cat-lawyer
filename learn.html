@@ -85,6 +85,10 @@ opacity:.85;pointer-events:none}
 .sidebar-sign img{width:72px!important;height:72px!important;object-fit:contain!important;display:block!important}
 .sidebar-sign span{display:block!important}
 .mentor .cat-base{background-image:url("/assets/cat-emotions.webp?v=2"),url("/assets/cat-lawyer-judge.webp?v=9")!important;background-size:400% 300%,contain!important;background-position:0% 0%,50% 50%!important;background-repeat:no-repeat!important}
+</style><style id="calibration-cat-fix">
+.modal-top .modal-cat{display:block!important;position:relative!important;float:right!important;width:190px!important;height:190px!important;min-width:190px!important;min-height:190px!important;margin:-10px 0 4px 18px!important;overflow:visible!important;background:transparent!important}
+.modal-top .modal-cat-image{display:block!important;width:100%!important;height:100%!important;object-fit:contain!important;visibility:visible!important;opacity:1!important;position:relative!important;z-index:5!important;filter:drop-shadow(0 10px 12px rgba(82,46,34,.18))!important}
+@media(max-width:620px){.modal-top .modal-cat{width:130px!important;height:130px!important;min-width:130px!important;min-height:130px!important}}
 </style></head>
 <body>
 <header class="learn-header">
@@ -115,7 +119,7 @@ opacity:.85;pointer-events:none}
 <section class="main">
 <nav class="topbar"><button class="tab active" data-tab="learn">Обучение</button><button type="button" class="tab" data-tab="profile">Мой профиль</button><button type="button" class="tab" data-tab="reset">Настроить заново</button></nav>
 <div class="panel"><div class="panel-head"><b id="stage">НАСТРОЙКА</b><span id="counter">0%</span></div><div class="progress"><i id="bar"></i></div><div class="content" id="app"></div></div>
-</section></div></div></main><div class="overlay open" id="modal"><div class="modal"><div class="modal-top"><div class="cat modal-cat" id="modalCat"><div class="cat-direct" role="img" aria-label="Кот-юрист"><div class="cat-base" aria-hidden="true"></div></div></div><small id="modalStep">ШАГ 1 · ПРОФИЛЬ</small><h2 id="modalTitle">Сначала познакомимся</h2><p id="modalDesc">Это нужно не ради галочки. От твоего профиля зависит сложность и темп заданий.</p></div><div class="modal-body" id="modalBody"><div class="options"><button type="button" class="option" data-action="type" data-v="Колледж"><b>Колледж / СПО</b><span>Практические задания и ситуации из работы юриста</span></button><button type="button" class="option" data-action="type" data-v="Университет"><b>Университет</b><span>Теория, практика, кейсы и юридическое мышление</span></button></div></div></div></div>
+</section></div></div></main><div class="overlay open" id="modal"><div class="modal"><div class="modal-top"><div class="cat modal-cat" id="modalCat"><img class="modal-cat-image" src="/assets/cat-lawyer-judge.webp?v=9" alt="Кот-юрист"></div><small id="modalStep">ШАГ 1 · ПРОФИЛЬ</small><h2 id="modalTitle">Сначала познакомимся</h2><p id="modalDesc">Это нужно не ради галочки. От твоего профиля зависит сложность и темп заданий.</p></div><div class="modal-body" id="modalBody"><div class="options"><button type="button" class="option" data-action="type" data-v="Колледж"><b>Колледж / СПО</b><span>Практические задания и ситуации из работы юриста</span></button><button type="button" class="option" data-action="type" data-v="Университет"><b>Университет</b><span>Теория, практика, кейсы и юридическое мышление</span></button></div></div></div></div>
 <script>
 const $=id=>document.getElementById(id);
 const subjects=[
