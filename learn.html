@@ -89,16 +89,6 @@ function cat(mood,text){
 }
 function loadCat(){
  cat('teacher','Привет! Я твой Кот-юрист. Я буду разговаривать с тобой, поддерживать, спорить с ошибками и радоваться твоим успехам.');
- const files={happy:'cat-mascot-real-2.b64',celebrate:'cat-mascot-real-2.b64',excited:'cat-mascot-real-3.b64',sad:'cat-mascot-real-4.b64',strict:'cat-mascot-real-5.b64',think:'cat-mascot-real-6.b64',serious:'cat-mascot-real-5.b64',calm:'cat-mascot-real-1.b64',teacher:'cat-mascot-real-1.b64',curious:'cat-mascot-real-1.b64',surprised:'cat-mascot-real-3.b64',smart:'cat-mascot-real-6.b64',explaining:'cat-mascot-real-6.b64',confident:'cat-mascot-real-2.b64'};
- for(const [m,file] of Object.entries(files)){
-   try{
-     const r=await fetch('/assets/'+file+'?v=7',{cache:'force-cache'});
-     if(!r.ok)continue;
-     const b=(await r.text()).trim();
-     if(b)catEmotionSrc[m]='data:image/webp;base64,'+b;
-   }catch(e){}
- }
- cat('teacher','Привет! Я твой Кот-юрист. Теперь эмоции будут меняться настоящими изображениями кота.');
 }
 function openModal(){ $('modal').classList.add('open') }
 function closeModal(){ $('modal').classList.remove('open') }
