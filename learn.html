@@ -132,6 +132,23 @@ const cal=[
 {type:'free',q:'Письменно объясни, что ты будешь делать в первую очередь, когда клиент рассказывает тебе о своей правовой проблеме. Назови несколько основных шагов.',a:[],c:null,e:'Хороший ответ должен показать последовательность: факты → правоотношение → применимые нормы и их действие → доказательства и исключения → правовой вывод и возможные способы защиты.',context:'Клиент рассказал ситуацию устно, но документы ещё не представлены.'},
 {type:'free',q:'Письменно объясни, почему юристу недостаточно просто найти статью по словам клиента. Что нужно выяснить перед выводом?',a:[],c:null,e:'Нужно показать, что квалификация связывает установленные факты с юридическими признаками правоотношения и только затем позволяет выбрать применимые нормы.',context:'Клиент описал проблему словами «меня незаконно оштрафовали», но не сообщил, кто вынес постановление, за что и когда.'}
 ];
+function calibrationStart(){calibration=0;calScore=0;wrongStreak=0;renderCalibration();cat('serious','Теперь проверю не память, а то, как ты рассуждаешь.')}
+function shuffleOrder(n){const a=Array.from({length:n},(_,i)=>i);for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function renderCalibration(){
+ const q=cal[calibration];openModal();
+ $('modalStep').textContent='КАЛИБРОВКА · '+(calibration+1)+' ИЗ '+cal.length;
+ $('modalTitle').textContent=q.q;
+ $('modalDesc').textContent=q.type==='free'?'Письменный ответ. AI оценит содержание и ход рассуждения.':'Варианты перемешаны. Выбирай по юридической логике, а не по позиции ответа.';
+ let body='';
+ if(q.type==='free'){
+  body='<div class="case">'+(q.context||'')+'</div><label style="display:block;margin-top:14px;font-size:10px;font-weight:900;letter-spacing:.08em;color:#8b5f52">ТВОЙ ПИСЬМЕННЫЙ ОТВЕТ</label><textarea class="textarea" id="calText" placeholder="Напиши развёрнутый ответ своими словами…"></textarea><div id="calFeedback"></div><div class="actions"><span class="counter">Минимум 30 символов</span><button type="button" class="btn primary" id="calCheck" data-action="calText" disabled>Проверить ответ →</button></div>';
+ }else{
+  q._order=shuffleOrder(q.a.length);q._displayCorrect=q._order.indexOf(q.c);
+  body='<div class="choices">'+q._order.map((src,i)=>'<button type="button" class="choice" data-action="cal" data-i="'+i+'"><span class="letter">'+String.fromCharCode(65+i)+'</span><span>'+q.a[src]+'</span></button>').join('')+'</div><div id="calFeedback"></div>';
+ }
+ $('modalBody').innerHTML=body;
+ if(q.type==='free'){const input=$('calText'),btn=$('calCheck');input.addEventListener('input',()=>{btn.disabled=input.value.trim().length<30});input.focus()}
+}
 async function finishCalibrationWritten(){
  const input=$('calText'),t=String(input?.value||'').trim(),q=cal[calibration];
  if(t.length<30){cat('strict','Напиши хотя бы несколько предложений: что ты выяснишь и что будешь делать дальше 😾');return}
