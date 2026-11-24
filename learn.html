@@ -17,7 +17,8 @@
 
 /* Real mascot face states: the approved 4x3 cat sheet controls the expression; motion below is only an extra effect. */
 .cat-direct{width:100%;height:100%;display:block;background:none!important;transform-origin:50% 85%;transition:transform .25s ease,filter .25s ease;will-change:transform;position:relative}
-.cat-direct .cat-base{position:absolute;inset:0;width:100%;height:100%;display:block;background-repeat:no-repeat;background-color:transparent;background-image:url("/assets/cat-emotions.webp?v=2"),url("/assets/cat-lawyer-judge.webp?v=9");background-size:400% 300%,contain;background-position:0% 0%,50% 50%;z-index:1}
+.cat-direct .cat-base{position:absolute;inset:0;width:100%;height:100%;display:block;background:transparent!important;z-index:1}
+.cat-direct .cat-real-image{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;display:block;visibility:visible;opacity:1;filter:drop-shadow(0 10px 12px rgba(82,46,34,.18));image-rendering:auto}
 .cat-direct[role="img"]{cursor:default}
 .cat.emotion-happy .cat-direct{animation:catHappy .75s ease-in-out infinite alternate}
 .cat.emotion-excited .cat-direct{animation:catExcited .38s ease-in-out infinite alternate}
@@ -115,11 +116,11 @@ opacity:.85;pointer-events:none}
 <main class="learn-page"><div class="academy">
 <header class="hero"><div><span class="pill">CAT LAWYER · АКАДЕМИЯ</span><h1>Изучай язык права</h1><p>Не зубри определения. Кот объяснит тему, проверит понимание, даст кейс и будет перестраивать обучение по твоим ошибкам.</p></div><div class="xp"><b id="xp">0</b><span>XP · твой прогресс</span></div></header>
 <div class="workspace">
-<aside class="mentor"><div class="cat" id="mentorCat"><div class="cat-direct" role="img" aria-label="Кот-юрист"><div class="cat-base" aria-hidden="true"></div></div></div><div class="speech"><b id="mentorName">КОТ-НАСТАВНИК</b><span id="speech">Сначала узнаю твой уровень. Потом соберу программу именно под тебя 😼</span></div><div class="mood" id="mood">ГОТОВ УЧИТЬ</div></aside>
+<aside class="mentor"><div class="cat" id="mentorCat"><div class="cat-direct" role="img" aria-label="Кот-юрист"><div class="cat-base" aria-hidden="true"><img class="cat-real-image" alt="Кот-юрист"></div></div></div><div class="speech"><b id="mentorName">КОТ-НАСТАВНИК</b><span id="speech">Сначала узнаю твой уровень. Потом соберу программу именно под тебя 😼</span></div><div class="mood" id="mood">ГОТОВ УЧИТЬ</div></aside>
 <section class="main">
 <nav class="topbar"><button class="tab active" data-tab="learn">Обучение</button><button type="button" class="tab" data-tab="profile">Мой профиль</button><button type="button" class="tab" data-tab="reset">Настроить заново</button></nav>
 <div class="panel"><div class="panel-head"><b id="stage">НАСТРОЙКА</b><span id="counter">0%</span></div><div class="progress"><i id="bar"></i></div><div class="content" id="app"></div></div>
-</section></div></div></main><div class="overlay open" id="modal"><div class="modal"><div class="modal-top"><div class="cat modal-cat" id="modalCat"><img class="modal-cat-image" src="/assets/cat-lawyer-judge.webp?v=9" alt="Кот-юрист"></div><small id="modalStep">ШАГ 1 · ПРОФИЛЬ</small><h2 id="modalTitle">Сначала познакомимся</h2><p id="modalDesc">Это нужно не ради галочки. От твоего профиля зависит сложность и темп заданий.</p></div><div class="modal-body" id="modalBody"><div class="options"><button type="button" class="option" data-action="type" data-v="Колледж"><b>Колледж / СПО</b><span>Практические задания и ситуации из работы юриста</span></button><button type="button" class="option" data-action="type" data-v="Университет"><b>Университет</b><span>Теория, практика, кейсы и юридическое мышление</span></button></div></div></div></div>
+</section></div></div></main><div class="overlay open" id="modal"><div class="modal"><div class="modal-top"><div class="cat modal-cat" id="modalCat"><img class="modal-cat-image" id="modalCatImage" alt="Кот-юрист"></div><small id="modalStep">ШАГ 1 · ПРОФИЛЬ</small><h2 id="modalTitle">Сначала познакомимся</h2><p id="modalDesc">Это нужно не ради галочки. От твоего профиля зависит сложность и темп заданий.</p></div><div class="modal-body" id="modalBody"><div class="options"><button type="button" class="option" data-action="type" data-v="Колледж"><b>Колледж / СПО</b><span>Практические задания и ситуации из работы юриста</span></button><button type="button" class="option" data-action="type" data-v="Университет"><b>Университет</b><span>Теория, практика, кейсы и юридическое мышление</span></button></div></div></div></div>
 <script>
 const $=id=>document.getElementById(id);
 const subjects=[
@@ -130,28 +131,25 @@ const mentorSheet='url("data:image/webp;base64,UklGRkIOAABXRUJQVlA4IDYOAACQUwCdA
 const mentorMood={teacher:[0,0],confident:[1,0],explaining:[2,0],celebrate:[3,0],curious:[0,1],surprised:[1,1],strict:[2,1],calm:[3,1],sleepy:[0,2],tired:[1,2],happy:[2,2],smart:[3,2],think:[0,1],serious:[2,1],sad:[1,1],excited:[3,0]};
 
 let state=JSON.parse(localStorage.getItem('cl_onboard')||'null')||{type:'',course:'',level:'',goal:'',subjects:[]};
-const catEmotionSheet="/assets/cat-emotions.webp?v=1";
-const catEmotionPos={
- teacher:[0,0],confident:[1,0],explaining:[2,0],celebrate:[3,0],
- curious:[0,1],surprised:[1,1],sad:[2,1],calm:[3,1],
- tired:[0,2],sleepy:[1,2],happy:[2,2],smart:[1,0],
- think:[0,1],serious:[3,2],strict:[3,2],excited:[3,0]
-};
+const catRealFiles={teacher:1,curious:1,calm:1,happy:2,celebrate:2,excited:2,sad:3,tired:3,sleepy:3,surprised:4,think:4,strict:5,serious:5,smart:5,explaining:6,confident:6};
+const catRealCache={};
+async function loadRealCat(n){
+ if(catRealCache[n])return catRealCache[n];
+ const r=await fetch('/assets/cat-mascot-real-'+n+'.b64?v=12',{cache:'force-cache'});
+ const b=(await r.text()).trim();
+ catRealCache[n]='data:image/webp;base64,'+b;
+ return catRealCache[n];
+}
 let xp=Number(localStorage.getItem('cl_xp')||0),calibration=0,calScore=0,calResults=[],selected=new Set(),plan=null,current=null,currentSubject='',answered=false,lessonNo=0,catUrl='',wrongStreak=0;
 
+(async()=>{try{const src=await loadRealCat(1);document.querySelectorAll('.cat-real-image').forEach(i=>i.src=src);const m=document.getElementById('modalCatImage');if(m)m.src=src;}catch(e){}})();
 function save(){localStorage.setItem('cl_onboard',JSON.stringify(state));localStorage.setItem('cl_xp',String(xp));$('xp').textContent=xp}
 function progress(n){$('bar').style.width=n+'%';$('counter').textContent=n+'%'}
 function setMentorMood(el,mood){
  if(!el)return;
- const base=el.querySelector('.cat-base');
- const p=catEmotionPos[mood]||catEmotionPos.teacher;
- if(base){
-   base.style.backgroundImage="url('"+catEmotionSheet+"')";
-   base.style.backgroundSize="400% 300%";
-   base.style.backgroundRepeat="no-repeat";
-   base.style.backgroundPosition=(p[0]*100/3)+"% "+(p[1]*100/2)+"%";
-   base.style.backgroundColor="transparent";
- }
+ const key=catRealFiles[mood]||1;
+ const img=el.querySelector('.cat-real-image');
+ if(img)loadRealCat(key).then(src=>{img.src=src}).catch(()=>{});
  el.dataset.face=mood||'teacher';
  el.classList.remove('emotion-happy','emotion-excited','emotion-sad','emotion-strict','emotion-think','emotion-celebrate');
  const cls={happy:'emotion-happy',excited:'emotion-excited',sad:'emotion-sad',strict:'emotion-strict',think:'emotion-think',celebrate:'emotion-celebrate'}[mood];
