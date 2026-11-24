@@ -50,12 +50,12 @@
 <main class="learn-page"><div class="academy">
 <header class="hero"><div><span class="pill">CAT LAWYER · АКАДЕМИЯ</span><h1>Изучай язык права</h1><p>Не зубри определения. Кот объяснит тему, проверит понимание, даст кейс и будет перестраивать обучение по твоим ошибкам.</p></div><div class="xp"><b id="xp">0</b><span>XP · твой прогресс</span></div></header>
 <div class="workspace">
-<aside class="mentor"><div class="cat" id="mentorCat"><div class="cat-direct" role="img" aria-label="Кот-юрист"></div></div><div class="speech"><b id="mentorName">КОТ-НАСТАВНИК</b><span id="speech">Сначала узнаю твой уровень. Потом соберу программу именно под тебя 😼</span></div><div class="mood" id="mood">ГОТОВ УЧИТЬ</div></aside>
+<aside class="mentor"><div class="cat" id="mentorCat"><div class="cat-direct" role="img" aria-label="Кот-юрист"><img class="cat-base" src="/assets/cat-lawyer-judge.webp?v=6" alt=""><span class="cat-face" aria-hidden="true"></span></div></div><div class="speech"><b id="mentorName">КОТ-НАСТАВНИК</b><span id="speech">Сначала узнаю твой уровень. Потом соберу программу именно под тебя 😼</span></div><div class="mood" id="mood">ГОТОВ УЧИТЬ</div></aside>
 <section class="main">
 <nav class="topbar"><button class="tab active" data-tab="learn">Обучение</button><button type="button" class="tab" data-tab="profile">Мой профиль</button><button type="button" class="tab" data-tab="reset">Настроить заново</button></nav>
 <div class="panel"><div class="panel-head"><b id="stage">НАСТРОЙКА</b><span id="counter">0%</span></div><div class="progress"><i id="bar"></i></div><div class="content" id="app"></div></div>
 </section></div></div></main>
-<div class="overlay open" id="modal"><div class="modal"><div class="modal-top"><div class="cat modal-cat" id="modalCat"><div class="cat-direct" role="img" aria-label="Кот-юрист"></div></div><small id="modalStep">ШАГ 1 · ПРОФИЛЬ</small><h2 id="modalTitle">Сначала познакомимся</h2><p id="modalDesc">Это нужно не ради галочки. От твоего профиля зависит сложность и темп заданий.</p></div><div class="modal-body" id="modalBody"><div class="options"><button type="button" class="option" data-action="type" data-v="Колледж"><b>Колледж / СПО</b><span>Практические задания и ситуации из работы юриста</span></button><button type="button" class="option" data-action="type" data-v="Университет"><b>Университет</b><span>Теория, практика, кейсы и юридическое мышление</span></button></div></div></div></div>
+<div class="overlay open" id="modal"><div class="modal"><div class="modal-top"><div class="cat modal-cat" id="modalCat"><div class="cat-direct" role="img" aria-label="Кот-юрист"><img class="cat-base" src="/assets/cat-lawyer-judge.webp?v=6" alt=""><span class="cat-face" aria-hidden="true"></span></div></div><small id="modalStep">ШАГ 1 · ПРОФИЛЬ</small><h2 id="modalTitle">Сначала познакомимся</h2><p id="modalDesc">Это нужно не ради галочки. От твоего профиля зависит сложность и темп заданий.</p></div><div class="modal-body" id="modalBody"><div class="options"><button type="button" class="option" data-action="type" data-v="Колледж"><b>Колледж / СПО</b><span>Практические задания и ситуации из работы юриста</span></button><button type="button" class="option" data-action="type" data-v="Университет"><b>Университет</b><span>Теория, практика, кейсы и юридическое мышление</span></button></div></div></div></div>
 <script>
 const $=id=>document.getElementById(id);
 const subjects=[
@@ -72,12 +72,14 @@ function save(){localStorage.setItem('cl_onboard',JSON.stringify(state));localSt
 function progress(n){$('bar').style.width=n+'%';$('counter').textContent=n+'%'}
 function setMentorMood(el,mood){
  if(!el)return;
- const p=mentorMood[mood]||mentorMood.teacher;
- const x=p[0],y=p[1];
- el.style.backgroundImage=mentorSheet;
- el.style.backgroundSize='400% 300%';
- el.style.backgroundRepeat='no-repeat';
- el.style.backgroundPosition=(x*100/3)+'% '+(y*100/2)+'%';
+ const p=mentorMood[mood]||mentorMood.teacher,x=p[0],y=p[1];
+ const face=el.querySelector('.cat-face');
+ if(face){
+  face.style.backgroundImage=mentorSheet;
+  face.style.backgroundSize='400% 300%';
+  face.style.backgroundRepeat='no-repeat';
+  face.style.backgroundPosition=(x*100/3)+'% '+(y*100/2)+'%';
+ }
  el.dataset.face=mood||'teacher';
  el.classList.remove('emotion-happy','emotion-excited','emotion-sad','emotion-strict','emotion-think','emotion-celebrate');
  const cls={happy:'emotion-happy',excited:'emotion-excited',sad:'emotion-sad',strict:'emotion-strict',think:'emotion-think',celebrate:'emotion-celebrate'}[mood];
@@ -157,7 +159,7 @@ function subjectPicker(){
 }
 async function buildPlan(){
  cat('smart','Собираю тебе персональный маршрут. Сейчас решаю, где дать больше практики.');$('modalStep').textContent='ПЕРСОНАЛЬНЫЙ ПЛАН';$('modalTitle').textContent='План почти готов';$('modalDesc').textContent='Собираю маршрут по твоему уровню и выбранным предметам.';
- $('modalBody').innerHTML='<div class="intro"><div class="cat small"><div class="cat-direct" role="img" aria-label="Кот-юрист"></div></div><div><h2>Формирую первые занятия…</h2><p>Это займёт несколько секунд. Если AI не ответит вовремя, продолжим сразу по резервному плану.</p></div></div>';
+ $('modalBody').innerHTML='<div class="intro"><div class="cat small"><div class="cat-direct" role="img" aria-label="Кот-юрист"><img class="cat-base" src="/assets/cat-lawyer-judge.webp?v=6" alt=""><span class="cat-face" aria-hidden="true"></span></div></div><div><h2>Формирую первые занятия…</h2><p>Это займёт несколько секунд. Если AI не ответит вовремя, продолжим сразу по резервному плану.</p></div></div>';
  const fallback=()=>({summary:'Твой адаптивный маршрут: теория → применение → кейсы',days:[...selected].slice(0,5).map((x,i)=>({day:i+1,focus:x,lessons:[{title:'Ключевые понятия и применение',type:'теория'},{title:'Проверка понимания',type:'практика'},{title:'Юридический кейс',type:'кейс'}]})),sourceCheck:{reachable:false}});
  try{
   const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),7000);
@@ -177,7 +179,7 @@ function startLearning(){closeModal();lessonNo=0;wrongStreak=0;cat('excited','Н
 async function loadLesson(){
  answered=false;cat('smart','Готовлю следующее задание. Сначала выбираю, что тебе сейчас полезнее.');progress(Math.min(99,Math.round((lessonNo%10)/10*100)));$('stage').textContent='УРОК '+String(lessonNo+1).padStart(2,'0');$('counter').textContent='АДАПТИВНО';
  const pool=[...selected],subject=pool[lessonNo%pool.length]||'Теория государства и права',type=['mcq','free','case'][lessonNo%3];
- $('app').innerHTML='<div class="intro"><div class="cat small"><div class="cat-direct" role="img" aria-label="Кот-юрист"></div></div><div><h2>Готовлю урок…</h2><p>AI отвечает не дольше нескольких секунд. При задержке урок откроется из резервного набора.</p></div></div>';
+ $('app').innerHTML='<div class="intro"><div class="cat small"><div class="cat-direct" role="img" aria-label="Кот-юрист"><img class="cat-base" src="/assets/cat-lawyer-judge.webp?v=6" alt=""><span class="cat-face" aria-hidden="true"></span></div></div><div><h2>Готовлю урок…</h2><p>AI отвечает не дольше нескольких секунд. При задержке урок откроется из резервного набора.</p></div></div>';
  try{
   const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),7000);
   const r=await fetch('/api/learn/lesson',{method:'POST',headers:{'content-type':'application/json'},credentials:'same-origin',signal:controller.signal,body:JSON.stringify({subject,skill:'ключевые понятия и применение нормы',difficulty:state.level,type,diagnostics:calResults,plan,lessonNo})});
@@ -192,7 +194,7 @@ function renderLesson(subject){
   current._displayAnswers=order.map(i=>current.answers[i]);
   current._displayCorrect=order.indexOf(Number(current.correct)||0);
  }
- let html='<div class="intro"><div class="cat small"><div class="cat-direct" role="img" aria-label="Кот-юрист"></div></div><div><div class="kicker">'+subject+' · '+type.toUpperCase()+'</div><h2>'+q+'</h2><p>Подумай самостоятельно. После ответа кот разберёт ход рассуждения.</p></div></div>';
+ let html='<div class="intro"><div class="cat small"><div class="cat-direct" role="img" aria-label="Кот-юрист"><img class="cat-base" src="/assets/cat-lawyer-judge.webp?v=6" alt=""><span class="cat-face" aria-hidden="true"></span></div></div><div><div class="kicker">'+subject+' · '+type.toUpperCase()+'</div><h2>'+q+'</h2><p>Подумай самостоятельно. После ответа кот разберёт ход рассуждения.</p></div></div>';
  if(isWritten){
    html+='<div class="case">'+(current.context||'Сформулируй правовой вывод как юрист.')+'</div>';
    html+='<label style="display:block;margin-top:14px;font-size:10px;font-weight:900;letter-spacing:.08em;color:#8b5f52">ТВОЙ ОТВЕТ</label>';
