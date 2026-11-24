@@ -131,25 +131,27 @@ const mentorSheet='url("data:image/webp;base64,UklGRkIOAABXRUJQVlA4IDYOAACQUwCdA
 const mentorMood={teacher:[0,0],confident:[1,0],explaining:[2,0],celebrate:[3,0],curious:[0,1],surprised:[1,1],strict:[2,1],calm:[3,1],sleepy:[0,2],tired:[1,2],happy:[2,2],smart:[3,2],think:[0,1],serious:[2,1],sad:[1,1],excited:[3,0]};
 
 let state=JSON.parse(localStorage.getItem('cl_onboard')||'null')||{type:'',course:'',level:'',goal:'',subjects:[]};
-const catRealFiles={teacher:1,curious:1,calm:1,happy:2,celebrate:2,excited:2,sad:3,tired:3,sleepy:3,surprised:4,think:4,strict:5,serious:5,smart:5,explaining:6,confident:6};
+const catRealFiles={teacher:1,curious:1,calm:1,happy:1,celebrate:1,excited:1,sad:1,tired:1,sleepy:1,surprised:1,think:1,strict:1,serious:1,smart:1,explaining:1,confident:1};
 const catRealCache={};
-async function loadRealCat(n){
- if(catRealCache[n])return catRealCache[n];
- const r=await fetch('/assets/cat-mascot-real-'+n+'.b64?v=12',{cache:'force-cache'});
+async function loadRealCat(){
+ if(catRealCache[1])return catRealCache[1];
+ const r=await fetch('/assets/cat-mascot-real-1.b64?v=13',{cache:'no-store'});
  const b=(await r.text()).trim();
- catRealCache[n]='data:image/webp;base64,'+b;
- return catRealCache[n];
+ if(!b.startsWith('UklGR')) throw new Error('Invalid mascot asset');
+ catRealCache[1]='data:image/webp;base64,'+b;
+ return catRealCache[1];
 }
 let xp=Number(localStorage.getItem('cl_xp')||0),calibration=0,calScore=0,calResults=[],selected=new Set(),plan=null,current=null,currentSubject='',answered=false,lessonNo=0,catUrl='',wrongStreak=0;
 
-(async()=>{try{const src=await loadRealCat(1);document.querySelectorAll('.cat-real-image').forEach(i=>i.src=src);const m=document.getElementById('modalCatImage');if(m)m.src=src;}catch(e){}})();
+(async()=>{try{const src=await loadRealCat();document.querySelectorAll('.cat-real-image').forEach(i=>i.src=src);const m=document.getElementById('modalCatImage');if(m)m.src=src;}catch(e){}})();
 function save(){localStorage.setItem('cl_onboard',JSON.stringify(state));localStorage.setItem('cl_xp',String(xp));$('xp').textContent=xp}
 function progress(n){$('bar').style.width=n+'%';$('counter').textContent=n+'%'}
 function setMentorMood(el,mood){
  if(!el)return;
- const key=catRealFiles[mood]||1;
  const img=el.querySelector('.cat-real-image');
- if(img)loadRealCat(key).then(src=>{img.src=src}).catch(()=>{});
+ if(img)loadRealCat().then(src=>{img.src=src;img.style.display='block';}).catch(()=>{
+   img.removeAttribute('src');img.style.display='none';
+ });
  el.dataset.face=mood||'teacher';
  el.classList.remove('emotion-happy','emotion-excited','emotion-sad','emotion-strict','emotion-think','emotion-celebrate');
  const cls={happy:'emotion-happy',excited:'emotion-excited',sad:'emotion-sad',strict:'emotion-strict',think:'emotion-think',celebrate:'emotion-celebrate'}[mood];
