@@ -341,7 +341,7 @@ async function api(r,e){
         analysis.feedback=String(analysis.feedback||"").slice(0,1600);
         analysis.reasoning=String(analysis.reasoning||lesson.explanation||"").slice(0,1800);
       }catch(err){
-        analysis={score:50,correct:false,feedback:"Не удалось автоматически оценить ответ. Попробуй проверить ещё раз.",strengths:[],weaknesses:["Автоматическая проверка временно недоступна"],missing:[],criterionScores:{},reasoning:lesson.explanation||"",nextSkill:"Повторить тему задания."};
+        analysis={score:0,correct:false,feedback:"Автоматическая проверка сейчас недоступна. Баллы за этот ответ не начислены.",strengths:[],weaknesses:["AI-проверка временно недоступна"],missing:[],criterionScores:{facts:0,qualification:0,norm:0,reasoning:0,evidence:0,conclusion:0},reasoning:lesson.explanation||"",nextSkill:"Повтори попытку проверки позже."};
       }
       return json({analysis});
     }
