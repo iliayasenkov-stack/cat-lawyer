@@ -10,7 +10,7 @@
 *{box-sizing:border-box}.learn-page{min-height:calc(100vh - 78px);background:radial-gradient(circle at 10% 0,#fff8f1 0,#f6e9df 38%,#ead9cc 100%);padding:34px 18px 70px;color:var(--ink)}button{font:inherit}
 .academy{max-width:1180px;margin:auto}.hero{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;margin-bottom:22px}.hero h1{font:clamp(34px,5vw,62px);font-family:Georgia,serif;letter-spacing:-2px;margin:8px 0}.hero p{margin:0;color:var(--muted);max-width:680px;line-height:1.6}.pill{display:inline-block;border:1px solid #d8b8a8;background:#fffaf6;border-radius:999px;padding:8px 13px;color:var(--wine);font-size:10px;font-weight:900;letter-spacing:.1em}.xp{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px 18px;min-width:130px;text-align:center;box-shadow:0 12px 30px #6b3b2912}.xp b{display:block;font:25px Georgia;color:var(--wine)}.xp span{font-size:9px;color:var(--muted)}
 .workspace{display:grid;grid-template-columns:310px minmax(0,1fr);gap:20px}.mentor{background:var(--card);border:1px solid var(--line);border-radius:26px;padding:18px;box-shadow:0 20px 50px #6b3b2915;position:sticky;top:20px;height:max-content;text-align:center}.cat{width:250px;height:250px;margin:2px auto 14px;background:transparent;transition:.18s;filter:drop-shadow(0 12px 18px #6b3b2922);border-radius:24px;overflow:visible;position:relative;isolation:isolate}.cat img{image-rendering:auto;filter:saturate(1.04) contrast(1.03) blur(.12px)}.cat img{will-change:transform;transform-origin:50% 58%}.cat[data-mood="happy"] img{filter:saturate(1.18) brightness(1.03)}.cat[data-mood="sad"] img{filter:saturate(.78) brightness(.94)}.cat[data-mood="strict"] img{filter:saturate(.9) contrast(1.08)}.cat[data-mood="think"] img{filter:saturate(.98) brightness(1.01)}.cat.emotion-happy img{animation:catHappy .8s ease}.cat.emotion-excited img{animation:catExcited .62s ease}.cat.emotion-sad img{animation:catSad .9s ease}.cat.emotion-strict img{animation:catStrict .5s ease}.cat.emotion-think img{animation:catThink 1.2s ease}.cat.emotion-celebrate img{animation:catCelebrate .9s ease}@keyframes catHappy{0%,100%{transform:translateY(0)}35%{transform:translateY(-5px) rotate(-1deg)}70%{transform:translateY(0) rotate(1deg)}}@keyframes catExcited{0%,100%{transform:scale(1) rotate(0)}25%{transform:scale(1.035) rotate(-2deg)}50%{transform:scale(1.06) rotate(2deg)}75%{transform:scale(1.025)}}@keyframes catSad{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(7px) rotate(1.5deg)}}@keyframes catStrict{0%,100%{transform:translateX(0)}35%{transform:translateX(-3px)}70%{transform:translateX(3px)}}@keyframes catThink{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-3px) rotate(-2deg)}}@keyframes catCelebrate{0%,100%{transform:translateY(0) rotate(0)}30%{transform:translateY(-9px) rotate(-3deg)}60%{transform:translateY(-3px) rotate(3deg)}}.cat img{will-change:transform;transform-origin:50% 58%}.cat.emotion-happy img{animation:catHappy .8s ease}.cat.emotion-excited img{animation:catExcited .62s ease}.cat.emotion-sad img{animation:catSad .9s ease}.cat.emotion-strict img{animation:catStrict .5s ease}.cat.emotion-think img{animation:catThink 1.2s ease}.cat.emotion-celebrate img{animation:catCelebrate .9s ease}@keyframes catHappy{0%,100%{transform:translateY(0)}35%{transform:translateY(-4px) rotate(-1deg)}70%{transform:translateY(0) rotate(1deg)}}@keyframes catExcited{0%,100%{transform:scale(1) rotate(0)}25%{transform:scale(1.035) rotate(-2deg)}50%{transform:scale(1.06) rotate(2deg)}75%{transform:scale(1.025)}}@keyframes catSad{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(5px) rotate(1.5deg)}}@keyframes catStrict{0%,100%{transform:translateX(0)}35%{transform:translateX(-2px)}70%{transform:translateX(2px)}}@keyframes catThink{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-3px) rotate(-1deg)}}@keyframes catCelebrate{0%,100%{transform:translateY(0) rotate(0)}30%{transform:translateY(-7px) rotate(-3deg)}60%{transform:translateY(-2px) rotate(3deg)}}@keyframes thoughtBlink{0%,38%,100%{opacity:0}43%,48%{opacity:.9}}.cat.small{width:110px;height:110px;margin:0;flex:0 0 110px}.cat img{width:100%;height:100%;object-fit:contain;display:block}.cat-sprite{width:100%;height:100%;background-repeat:no-repeat;background-size:400% 300%;background-position:0 0;background-color:transparent}.cat-direct{object-position:center}.speech{background:#fff;border:1px solid var(--line);border-radius:18px;padding:13px;text-align:left;color:#5c4942;font-size:12px;line-height:1.55}.speech b{display:block;color:var(--wine);font-size:10px;margin-bottom:4px}.mood{margin-top:12px;color:#a07868;font-size:9px;font-weight:800;letter-spacing:.08em}
-.main{min-width:0}.topbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.tab{border:1px solid var(--line);background:#fffaf6;color:var(--wine);padding:10px 14px;border-radius:999px;font-size:10px;font-weight:900;cursor:pointer}.tab.active{background:var(--wine);color:white;border-color:var(--wine)}.panel{background:var(--card);border:1px solid var(--line);border-radius:28px;box-shadow:0 22px 65px #6b3b2915;overflow:hidden}.panel-head{padding:18px 22px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:15px;align-items:center}.panel-head b{font-size:10px;letter-spacing:.1em;color:#9a7062}.progress{height:5px;background:#eadbd1}.progress i{display:block;height:100%;background:var(--wine);width:0;transition:.3s}.content{padding:26px}.intro{display:flex;gap:16px;align-items:center;background:linear-gradient(135deg,#fffaf5,#f6e7dc);border:1px solid var(--line);border-radius:22px;padding:18px;margin-bottom:18px}.intro h2{font:27px Georgia;margin:0 0 5px}.intro p{margin:0;color:var(--muted);font-size:12px;line-height:1.55}.lesson{border:1px solid var(--line);border-radius:20px;padding:20px;background:#fffdfb}.kicker{font-size:9px;color:#9b6756;font-weight:900;letter-spacing:.12em}.lesson h2{font:32px/1.15 Georgia;margin:9px 0;color:#30211e}.theory{display:grid;gap:10px;margin:16px 0}.theory div{padding:14px;border-radius:14px;border:1px solid #eaded7;background:#fff}.theory b{display:block;color:var(--wine);font-size:10px;margin-bottom:5px}.theory span{font-size:12px;line-height:1.6;color:#584740;white-space:pre-line}.choices{display:grid;gap:9px;margin-top:16px}.choice{display:flex;gap:11px;align-items:center;text-align:left;width:100%;min-height:68px;padding:14px;border:1px solid var(--line);border-radius:15px;background:#fff;cursor:pointer;color:#4a332d;font-weight:700;font-size:12px}.choice>span:last-child{flex:1;line-height:1.45}.choice:hover{transform:translateY(-1px);border-color:#a35d4d}.letter{width:31px;height:31px;border-radius:10px;background:var(--soft);display:grid;place-items:center;color:var(--wine);font-family:Georgia;flex:0 0 31px}.choice.good{background:var(--green);border-color:#87a47f}.choice.bad{background:#fae8e3;border-color:#bd7466}.choice:disabled{cursor:default}.feedback{margin-top:14px;padding:13px;border-radius:14px;background:#f7eee8;color:#654e46;font-size:11px;line-height:1.6}.actions{display:flex;justify-content:space-between;gap:10px;margin-top:18px}.btn{border:1px solid var(--line);background:white;color:var(--wine);padding:12px 18px;border-radius:999px;font-size:10px;font-weight:900;cursor:pointer}.btn.primary{background:var(--wine);color:white;border-color:var(--wine)}.btn:disabled{opacity:.45;cursor:default}
+.main{min-width:0}.topbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.tab{border:1px solid var(--line);background:#fffaf6;color:var(--wine);padding:10px 14px;border-radius:999px;font-size:10px;font-weight:900;cursor:pointer}.tab.active{background:var(--wine);color:white;border-color:var(--wine)}.panel{background:var(--card);border:1px solid var(--line);border-radius:28px;box-shadow:0 22px 65px #6b3b2915;overflow:hidden}.panel-head{padding:18px 22px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:15px;align-items:center}.panel-head b{font-size:10px;letter-spacing:.1em;color:#9a7062}.progress{height:5px;background:#eadbd1}.progress i{display:block;height:100%;background:var(--wine);width:0;transition:.3s}.content{padding:26px}.intro{display:flex;gap:16px;align-items:center;background:linear-gradient(135deg,#fffaf5,#f6e7dc);border:1px solid var(--line);border-radius:22px;padding:18px;margin-bottom:18px}.intro h2{font:27px Georgia;margin:0 0 5px}.intro p{margin:0;color:var(--muted);font-size:12px;line-height:1.55}.lesson{border:1px solid var(--line);border-radius:20px;padding:20px;background:#fffdfb}.kicker{font-size:9px;color:#9b6756;font-weight:900;letter-spacing:.12em}.lesson h2{font:32px/1.15 Georgia;margin:9px 0;color:#30211e}.theory{display:grid;gap:10px;margin:16px 0}.theory div{padding:14px;border-radius:14px;border:1px solid #eaded7;background:#fff}.theory b{display:block;color:var(--wine);font-size:10px;margin-bottom:5px}.theory span{font-size:12px;line-height:1.6;color:#584740;white-space:pre-line}.choices{display:grid;gap:9px;margin-top:16px}.choice{display:flex;gap:11px;align-items:center;text-align:left;width:100%;min-height:68px;padding:14px;border:1px solid var(--line);border-radius:15px;background:#fff;cursor:pointer;color:#4a332d;font-weight:700;font-size:12px}.choice>span:last-child{flex:1;line-height:1.45}.choice:hover{transform:translateY(-1px);border-color:#a35d4d}.letter{width:31px;height:31px;border-radius:10px;background:var(--soft);display:grid;place-items:center;color:var(--wine);font-family:Georgia;flex:0 0 31px}.choice.good{background:var(--green);border-color:#87a47f}.choice.bad{background:#fae8e3;border-color:#bd7466}.choice:disabled{cursor:default}.feedback{margin-top:14px;padding:13px;border-radius:14px;background:#f7eee8;color:#654e46;font-size:11px;line-height:1.6}.feedback ul{margin:8px 0 0 18px;padding:0}.reasoning-box{margin-top:12px;border:1px solid var(--line);border-radius:14px;background:#fff8f1;padding:12px;color:#5d4941}.reasoning-box summary{cursor:pointer;font-weight:900;color:var(--wine);font-size:11px}.reasoning-box p{margin:8px 0;line-height:1.6}.actions{display:flex;justify-content:space-between;gap:10px;margin-top:18px}.btn{border:1px solid var(--line);background:white;color:var(--wine);padding:12px 18px;border-radius:999px;font-size:10px;font-weight:900;cursor:pointer}.btn.primary{background:var(--wine);color:white;border-color:var(--wine)}.btn:disabled{opacity:.45;cursor:default}
 .textarea{width:100%;min-height:130px;border:1px solid var(--line);border-radius:15px;padding:13px;font:13px/1.55 Arial;background:white;color:var(--ink);resize:vertical}.case{margin-top:14px;padding:15px;border-radius:16px;background:#fff7f1;border:1px solid var(--line);font-size:12px;line-height:1.6}
 .overlay{position:fixed;inset:0;background:#2a1c198c;backdrop-filter:blur(7px);z-index:50;display:none;align-items:center;justify-content:center;padding:16px}.overlay.open{display:flex}.modal{width:min(900px,100%);max-height:92vh;overflow:auto;background:var(--card);border:1px solid #d8b8a8;border-radius:30px;box-shadow:0 35px 100px #21120e55}.modal-top{padding:22px 24px;border-bottom:1px solid var(--line)}.modal-top .modal-cat{float:right;width:170px;height:170px;margin:-10px 0 4px 18px;border-radius:18px;overflow:hidden;position:relative}.modal-cat-image{display:block!important;position:absolute!important;left:0;top:0;width:400%!important;height:300%!important;max-width:none!important;object-fit:fill!important}/* modal cat is rendered as a clipped single cell */.modal-top small{color:#9a6c5d;font-size:9px;font-weight:900;letter-spacing:.1em}.modal-top h2{font:32px Georgia;margin:8px 0}.modal-top p{color:var(--muted);font-size:12px;line-height:1.55}.modal-body{padding:22px}.options{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.option{padding:15px;border:1px solid var(--line);border-radius:17px;background:#fff;cursor:pointer;text-align:left}.option:hover,.option.selected{border-color:var(--wine);box-shadow:0 0 0 3px #6d292214;background:#fff7f1}.option b{display:block;color:#4b2a23;margin-bottom:4px}.option span{font-size:10px;color:var(--muted)}.subject-groups{display:grid;gap:16px}.group h3{font:19px Georgia;margin:0 0 4px}.group p{font-size:10px;color:var(--muted);margin:0 0 9px}.subject-list{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.subject{display:flex;align-items:center;gap:10px;padding:12px;border:1px solid var(--line);border-radius:14px;background:white;cursor:pointer}.subject input{accent-color:var(--wine)}.subject span{font-size:11px;font-weight:800}.tools{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:14px}.counter{font-size:11px;color:var(--muted)}.counter b{color:var(--wine)}.plan{display:grid;grid-template-columns:repeat(5,1fr);gap:9px}.day{padding:13px;border:1px solid var(--line);border-radius:16px;background:#fff}.day b{font-size:9px;color:var(--wine)}.day h4{font:17px Georgia;margin:8px 0}.day p{font-size:9px;line-height:1.55;color:var(--muted)}.source{margin-top:14px;padding:12px;border-radius:13px;background:#f6eee8;font-size:10px;color:#6b554c}.source a{color:var(--wine)}
 @media(max-width:850px){.workspace{grid-template-columns:1fr}.mentor{position:relative;top:auto;display:flex;gap:12px;align-items:center;text-align:left}.mentor .cat{margin:0;width:145px;height:145px;flex:0 0 145px}.speech{flex:1}.plan{grid-template-columns:repeat(2,1fr)}}@media(max-width:560px){.modal-top .modal-cat{float:none;margin:0 0 10px;width:140px;height:140px}.hero{display:block}.xp{margin-top:14px}.content{padding:15px}.intro{align-items:flex-start}.options,.subject-list{grid-template-columns:1fr}.plan{grid-template-columns:1fr}.lesson h2{font-size:26px}.mentor .cat{width:105px;height:105px;flex-basis:105px}}
@@ -159,7 +159,7 @@ opacity:.85;pointer-events:none}
 .learn-brand-mark{overflow:hidden!important;background:#fff8f1!important;padding:3px}
 .learn-brand-mark img{width:100%!important;height:100%!important;display:block!important;object-fit:contain!important}
 .sidebar-sign{display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:6px}
-.sidebar-sign img{width:72px!important;height:72px!important;object-fit:contain!important;display:block!important}
+.sidebar-sign img{width:94px!important;height:94px!important;object-fit:contain!important;display:block!important;filter:drop-shadow(0 8px 14px rgba(82,46,34,.12))}
 .sidebar-sign span{display:block!important}
 .mentor .cat-base{background:none!important;overflow:hidden!important}
 </style><style id="calibration-cat-fix">
@@ -187,7 +187,7 @@ opacity:.85;pointer-events:none}
   <a href="/profile.html">☆ <span>Мои достижения</span></a>
   <a href="/profile.html">▥ <span>Рейтинг</span></a>
   <a href="/premium.html">♛ <span>Премиум</span></a>
-  <div class="sidebar-sign"><img src="/assets/cat-emotions-hd-final.webp?v=final1" alt=""><span>С любовью<br>от Cat Lawyer ♡</span></div>
+  <div class="sidebar-sign"><img src="/assets/cat-lawyer-logo.svg?v=4" alt="Cat Lawyer"><span>С любовью<br>от Cat Lawyer ♡</span></div>
 </aside>
 <main class="learn-page"><div class="academy">
 <header class="hero"><div><span class="pill">CAT LAWYER · АКАДЕМИЯ</span><h1>Изучай язык права</h1><p>Не зубри определения. Кот объяснит тему, проверит понимание, даст кейс и будет перестраивать обучение по твоим ошибкам.</p></div><div class="xp"><b id="xp">0</b><span>XP · твой прогресс</span></div></header>
@@ -229,15 +229,21 @@ function save(){
 }
 async function restoreProgress(){
  try{
+  const localState=JSON.parse(localStorage.getItem('cl_onboard')||'null')||{};
   const me=await fetch('/api/auth/me',{credentials:'same-origin'}).then(r=>r.ok?r.json():null);
   if(!me?.user)return;
   const r=await fetch('/api/learn/progress',{credentials:'same-origin'});
   if(!r.ok)return;
   const d=await r.json();
-  if(d.state&&typeof d.state==='object')state={...state,...d.state};
+  const serverState=d.state&&typeof d.state==='object'?d.state:{};
+  state={...state,...serverState};
+  if(localState.calibrated===true)state.calibrated=true;
+  if(localState.started===true)state.started=true;
+  if(Array.isArray(localState.subjects)&&localState.subjects.length)state.subjects=[...localState.subjects];
+  if(localState.aiProfile&&typeof localState.aiProfile==='object'&&!state.aiProfile)state.aiProfile=localState.aiProfile;
   if(Array.isArray(state.subjects))selected=new Set(state.subjects);
   if(d.plan)plan=d.plan;
-  if(Number.isFinite(Number(d.lessonNo)))lessonNo=Math.max(0,Number(d.lessonNo));
+  if(Number.isFinite(Number(d.lessonNo)))lessonNo=Math.max(lessonNo,Number(d.lessonNo));
   if(Number.isFinite(Number(d.xp)))xp=Math.max(xp,Number(d.xp));
   if(d.state?.calResults&&Array.isArray(d.state.calResults))calResults=d.state.calResults;
   if(d.state?.aiProfile&&typeof d.state.aiProfile==='object')state.aiProfile=d.state.aiProfile;
@@ -377,7 +383,7 @@ async function finishCalibrationWritten(){
  document.querySelectorAll('[data-action="calText"]').forEach(x=>x.disabled=true);
  $('calFeedback').innerHTML='<div class="feedback">AI анализирует твой ответ…</div>';
  try{const r=await fetch('/api/learn/calibrate',{method:'POST',headers:{'content-type':'application/json'},credentials:'same-origin',body:JSON.stringify({question:q.q,context:q.context||'',answer:t,expected:q.e,mode:'written',index:calibration})});const d=await r.json();if(!r.ok||!d.analysis)throw Error();calResults.push(d.analysis);if(d.analysis.score>=75){wrongStreak=0}else{wrongStreak++}$('calFeedback').innerHTML='<div class="feedback"><b>'+d.analysis.score+'/100</b> · '+(d.analysis.feedback||q.e)+'</div>';cat(d.analysis.score>=75?'happy':(wrongStreak>=2?'strict':'sad'),d.analysis.score>=75?'Сильный ответ. Учитываю это в плане 😼':(wrongStreak>=2?'Две ошибки подряд. Стоп. Сейчас разберём, где именно сбился 😾':'Вижу пробел. Разберём его и продолжим 😿'))}catch(e){calResults.push({score:50,level:'средний',strengths:[],weaknesses:['Не удалось оценить ответ автоматически'],feedback:q.e,skills:[q.q]});$('calFeedback').innerHTML='<div class="feedback"><b>Ответ сохранён.</b> '+q.e+'</div>'}
- setTimeout(()=>{calibration++;if(calibration<cal.length){renderCalibration();}else{state.calibrated=true;save();subjectPicker();}},1200);
+ setTimeout(async()=>{calibration++;if(calibration<cal.length){renderCalibration();}else{state.calibrated=true;save();await buildKnowledgeProfile();subjectPicker();}},1200);
 }
 async function buildKnowledgeProfile(){
  $('modalStep').textContent='AI · КАРТА ЗНАНИЙ';$('modalTitle').textContent='AI анализирует твой уровень';$('modalDesc').textContent='Сопоставляю ошибки, сильные стороны и типы юридического мышления.';
@@ -424,8 +430,12 @@ function startLearning(){
  closeModal();
  state.started=true;
  saveLocal();
- if(!state.type||!state.course||!state.level||!state.subjects?.length){
+ if(!state.type||!state.course||!state.level){
    profileStep();
+   return;
+ }
+ if(!state.subjects?.length){
+   subjectPicker();
    return;
  }
  wrongStreak=0;
@@ -434,12 +444,19 @@ function startLearning(){
  persistProgress();
 }
 function getAdaptiveDifficulty(){
- const course=Number(state.course)||1;
- const uni=state.type==='Университет';
- const base=uni?(course>=5?'продвинутая':course>=3?'сложная':'средняя'):(course>=3?'средняя':course<=1?'базовая':'средняя');
- return base;
+ const p=state.aiProfile||{};
+ const level=String(p.level||'').toLowerCase();
+ const ceiling=String(p.difficultyCeiling||'').toLowerCase();
+ if(level.includes('началь'))return 'базовая';
+ if(level.includes('продвин')||ceiling.includes('продвин'))return 'продвинутая';
+ if(level.includes('сред')||ceiling.includes('слож'))return 'сложная';
+ const course=Number(state.course)||1,uni=state.type==='Университет';
+ return uni?(course>=5?'продвинутая':course>=3?'сложная':'средняя'):(course>=3?'средняя':course<=1?'базовая':'средняя');
 }
 function getAdaptiveSkill(subject){
+ const p=state.aiProfile||{};
+ const weak=Array.isArray(p.weakSkills)?p.weakSkills.filter(Boolean):[];
+ if(weak.length)return String(weak[lessonNo%weak.length]).slice(0,180);
  const n=lessonNo;
  const course=Number(state.course)||1;
  const uni=state.type==='Университет';
@@ -452,19 +469,40 @@ function getAdaptiveSkill(subject){
    :['базовые понятия','распознавание правоотношения','простое применение нормы','юридическая терминология','практическая ситуация'];
  return skills[n%skills.length];
 }
+function getAdaptiveLessonType(){
+ const p=state.aiProfile||{},mix=p.lessonMix||{};
+ const weak=(p.weakSkills||[]).length;
+ const ceiling=String(p.difficultyCeiling||'').toLowerCase();
+ if(weak>=4)return ['free','case','mcq','case','free'][lessonNo%5];
+ if(mix&&typeof mix==='object'){
+   const counts={mcq:Number(mix.mcq)||0,free:Number(mix.free)||0,case:Number(mix.case)||0};
+   const total=counts.mcq+counts.free+counts.case;
+   if(total>0){
+     const slot=lessonNo%total;
+     if(slot<counts.mcq)return 'mcq';
+     if(slot<counts.mcq+counts.free)return 'free';
+     return 'case';
+   }
+ }
+ if(ceiling.includes('продвин')||ceiling.includes('слож'))return ['case','free','mcq','case'][lessonNo%4];
+ return ['mcq','free','case'][lessonNo%3];
+}
 async function loadLesson(){
  answered=false;cat('smart','Готовлю следующее задание. Сначала выбираю, что тебе сейчас полезнее.');
  progress(learningPercent());
  $('stage').textContent='УРОК '+String(lessonNo+1).padStart(2,'0');
  $('counter').textContent=learningPercent()+'%';
- const pool=[...selected],subject=pool[lessonNo%pool.length]||'Теория государства и права',type=['mcq','free','case'][lessonNo%3];
- $('app').innerHTML='<div class="intro"><div class="cat small"><div class="cat-direct" role="img" aria-label="Кот-юрист"><div class="cat-base" aria-hidden="true"></div></div></div><div><h2>Готовлю урок…</h2><p>AI отвечает не дольше нескольких секунд. При задержке урок откроется из резервного набора.</p></div></div>';
+ const pool=[...selected],subject=pool[lessonNo%pool.length]||'Теория государства и права';
+ const type=getAdaptiveLessonType();
+ const adaptiveSkill=getAdaptiveSkill(subject);
+ const difficulty=getAdaptiveDifficulty();
+ $('app').innerHTML='<div class="intro"><div class="cat small"><div class="cat-direct" role="img" aria-label="Кот-юрист"><div class="cat-base" aria-hidden="true"></div></div></div><div><h2>Готовлю урок…</h2><p>AI сопоставляет твой профиль, ошибки и уже пройденные задания.</p></div></div>';
  try{
   const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),7000);
   const r=await fetch('/api/learn/lesson',{method:'POST',headers:{'content-type':'application/json'},credentials:'same-origin',signal:controller.signal,body:JSON.stringify({
   subject,
-  skill:getAdaptiveSkill(subject),
-  difficulty:getAdaptiveDifficulty(),
+  skill:adaptiveSkill,
+  difficulty,
   type,
   diagnostics:calResults,
   plan,
@@ -500,18 +538,60 @@ function renderLesson(subject){
  if(!isWritten&&Array.isArray(current.answers)){
   const order=shuffleOrder(current.answers.length);current._displayAnswers=order.map(i=>current.answers[i]);current._displayCorrect=order.indexOf(Number(current.correct)||0);
  }
- let html='<div class="intro"><div class="cat small"><div class="cat-direct" role="img" aria-label="Кот-юрист"><div class="cat-base" aria-hidden="true"></div></div></div><div><div class="kicker">'+subject+' · '+type.toUpperCase()+'</div><h2>'+q+'</h2><p>Подумай самостоятельно. После ответа кот разберёт ход рассуждения.</p></div></div>';
- if(isWritten){html+='<div class="case">'+(current.context||'Сформулируй правовой вывод как юрист.')+'</div><label style="display:block;margin-top:14px;font-size:10px;font-weight:900;letter-spacing:.08em;color:#8b5f52">ТВОЙ ОТВЕТ</label><textarea class="textarea" id="answerText" placeholder="Напиши ответ своими словами…"></textarea>'}else{html+='<div class="choices">'+(current._displayAnswers||current.answers||[]).map((x,i)=>'<button type="button" class="choice" data-action="lessonChoice" data-i="'+i+'"><span class="letter">'+String.fromCharCode(65+i)+'</span><span>'+x+'</span></button>').join('')+'</div>'}
- html+='<div id="feedback"></div><div class="actions"><button type="button" class="btn" data-action="reset">Настроить заново</button><button type="button" class="btn primary" id="next" data-action="check" '+(type==='mcq'?'disabled':'')+'>Проверить ответ →</button></div>';
+ let html='<div class="intro"><div class="cat small"><div class="cat-direct" role="img" aria-label="Кот-юрист"><div class="cat-base" aria-hidden="true"></div></div></div><div><div class="kicker">'+subject+' · '+type.toUpperCase()+'</div><h2>'+q+'</h2><p>Подумай самостоятельно. После ответа я покажу не только результат, но и юридическое обоснование.</p></div></div>';
+ if(isWritten){
+  html+='<div class="case">'+(current.context||'Сформулируй правовой вывод как юрист.')+'</div><label style="display:block;margin-top:14px;font-size:10px;font-weight:900;letter-spacing:.08em;color:#8b5f52">ТВОЙ ОТВЕТ</label><textarea class="textarea" id="answerText" placeholder="Укажи факты, правоотношение, применимое правило, доказательства и вывод…"></textarea>'
+ }else{
+  html+='<div class="choices">'+(current._displayAnswers||current.answers||[]).map((x,i)=>'<button type="button" class="choice" data-action="lessonChoice" data-i="'+i+'"><span class="letter">'+String.fromCharCode(65+i)+'</span><span>'+x+'</span></button>').join('')+'</div>'
+ }
+ html+='<div id="feedback"></div><div class="actions"><button type="button" class="btn" data-action="reset">Настроить заново</button><button class="btn primary" id="next" data-action="'+(type==='mcq'?'next':'check')+'" '+(type==='mcq'?'disabled':'')+'>'+((type==='mcq')?'Перейти дальше →':'Проверить ответ →')+'</button></div>';
  $('app').innerHTML='<div class="lesson">'+html+'</div>';setMentorMood(document.querySelector('.cat-direct'),'smart');
  if(type!=='mcq'){const t=$('answerText');if(t)t.addEventListener('input',()=>{$('next').disabled=t.value.trim().length<30})}
 }
-function checkChoice(n){if(answered)return;const c=Number(current._displayCorrect??current.correct)||0;document.querySelectorAll('.choice').forEach(x=>x.disabled=true);const ok=n===c;document.querySelectorAll('.choice')[n]?.classList.add(ok?'good':'bad');document.querySelectorAll('.choice')[c]?.classList.add('good');finish(ok,current.explanation||'Правильный ответ определяется юридической логикой и фактами.')}
+function escapeHtml(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function finish(ok,feedback,analysis){
+ answered=true;
+ const a=analysis||{};
+ const score=Number.isFinite(Number(a.score))?Math.max(0,Math.min(100,Number(a.score))):(ok?100:0);
+ xp+=Math.max(4,Math.round(score/10));
+ save();
+ const strengths=Array.isArray(a.strengths)?a.strengths.slice(0,4):[];
+ const weaknesses=Array.isArray(a.weaknesses)?a.weaknesses.slice(0,4):[];
+ const reason=a.reasoning||current.explanation||'Правильное решение строится на юридически значимых фактах, применимом правиле и связи этих элементов с выводом.';
+ let html='<div class="feedback"><b>'+score+'/100</b> · '+escapeHtml(feedback||'Ответ проверен.')+'</div>';
+ if(strengths.length)html+='<div class="feedback"><b>Что получилось</b><ul>'+strengths.map(x=>'<li>'+escapeHtml(x)+'</li>').join('')+'</ul></div>';
+ if(weaknesses.length)html+='<div class="feedback"><b>Что улучшить</b><ul>'+weaknesses.map(x=>'<li>'+escapeHtml(x)+'</li>').join('')+'</ul></div>';
+ html+='<details class="reasoning-box" open><summary>Обоснование решения</summary><div><b>Как рассуждать</b><p>'+escapeHtml(reason)+'</p>';
+ if(current.trap)html+='<p><b>Ловушка:</b> '+escapeHtml(current.trap)+'</p>';
+ if(a.nextSkill)html+='<p><b>Следующий фокус:</b> '+escapeHtml(a.nextSkill)+'</p>';
+ html+='</div></details>';
+ const fb=$('feedback');if(fb)fb.innerHTML=html;
+ const n=$('next');if(n){n.disabled=false;n.dataset.action='next';n.textContent='Перейти дальше →';}
+ cat(ok?'happy':'sad',ok?'Хорошо. Теперь посмотри обоснование и переходи дальше 😼':'Разбор важнее самой ошибки. Посмотри обоснование и попробуй следующий кейс 😼');
+}
+function checkChoice(n){
+ if(answered)return;
+ const c=Number(current._displayCorrect??current.correct)||0;
+ document.querySelectorAll('.choice').forEach(x=>x.disabled=true);
+ const ok=n===c;
+ document.querySelectorAll('.choice')[n]?.classList.add(ok?'good':'bad');
+ document.querySelectorAll('.choice')[c]?.classList.add('good');
+ finish(ok,ok?'Верный выбор.':'Выбранный вариант не выдерживает полного юридического анализа.',{score:ok?100:0,correct:ok,feedback:ok?'Вариант соответствует логике задания.':'Нужно сопоставить факты с юридическими признаками, а не выбирать ответ по формулировке.',reasoning:current.explanation||'Сначала выдели юридически значимые факты, затем определи правоотношение и только после этого выбирай норму и вывод.',strengths:ok?['Выбран юридически обоснованный вариант']:[],weaknesses:ok?[]:['Проверь связь фактов, нормы и вывода.']});
+}
 async function checkText(){
  if(answered){lessonNo++;save();loadLesson();return}
- const el=$('answerText'),t=String(el?.value||'').trim();if(t.length<30){cat('strict','Раскрой мысль подробнее. Покажи, почему ты пришёл к выводу.');return}
- if(current.type==='free'||current.type==='case'||!Array.isArray(current.answers)||current.answers.length===0){const n=$('next');n.disabled=true;n.textContent='AI анализирует…';try{const r=await fetch('/api/learn/evaluate',{method:'POST',headers:{'content-type':'application/json'},credentials:'same-origin',body:JSON.stringify({lesson:current,answer:t,subject:currentSubject,lessonNo,diagnostics:calResults})});const d=await r.json();if(!r.ok||!d.analysis)throw Error();const a=d.analysis;finish(a.score>=60,a.feedback||current.explanation||'Разберём ответ по юридической логике.');return}catch(e){n.disabled=false;n.textContent='Проверить ответ'}}
- finish(true,'Ответ принят для учебной тренировки. Кот разберёт эталонную логику и покажет, что в ответе было юридически важно.');
+ const el=$('answerText'),t=String(el?.value||'').trim();
+ if(t.length<30){cat('strict','Раскрой мысль подробнее. Покажи, какие факты и правовые основания привели тебя к выводу.');return}
+ const n=$('next');n.disabled=true;n.textContent='AI анализирует ответ…';
+ try{
+  const r=await fetch('/api/learn/evaluate',{method:'POST',headers:{'content-type':'application/json'},credentials:'same-origin',body:JSON.stringify({lesson:current,answer:t,subject:currentSubject,lessonNo,diagnostics:calResults,aiProfile:state.aiProfile||null})});
+  const d=await r.json();if(!r.ok||!d.analysis)throw Error();
+  const a=d.analysis;
+  finish(Boolean(a.correct),a.feedback||current.explanation||'Ответ разобран по юридической логике.',a);
+ }catch(e){
+  n.disabled=false;n.textContent='Проверить ответ →';
+  cat('strict','Не получилось получить AI-разбор. Ответ не потерян — попробуй проверку ещё раз.');
+ }
 }
 function handleClick(e){
  const el=e.target.closest('[data-action]');if(!el)return;
@@ -534,6 +614,7 @@ function handleClick(e){
  else if(a==='subjects'){selected=new Set([...document.querySelectorAll('.subject input:checked')].map(x=>x.value));if(!selected.size){cat('surprised','Ой. Здесь нужен хотя бы один предмет.');return}state.subjects=[...selected];save();buildPlan()}
  else if(a==='start'){startLearning()}
  else if(a==='lessonChoice'){checkChoice(Number(el.dataset.i))}
+ else if(a==='next'){if(answered){lessonNo++;save();loadLesson();}}
  else if(a==='acceptClient'){document.getElementById('clientQuestion')?.classList.remove('hidden');el.remove();cat('explaining','Клиент передал документы. Теперь внимательно изучи вопрос и материалы дела.')}
  else if(a==='documents'){renderDocuments()}
  else if(a==='closeDocuments'){el.closest('.doc-overlay')?.remove()}
