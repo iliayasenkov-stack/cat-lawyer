@@ -298,7 +298,7 @@ function renderWelcome(){
    $('stage').textContent='ДИАГНОСТИКА';
    $('counter').textContent='0%';$('bar').style.width='0%';
    $('app').innerHTML='<section class="welcome-screen"><div class="welcome-card"><div class="pill">CAT LAWYER · ДИАГНОСТИКА</div><h2>Сначала определим твой уровень</h2><p>20 вопросов проверят не только память, но и юридическое мышление. После диагностики AI построит карту знаний, а Кот-юрист уже здесь: после диагностики он перестроит обучение под твой уровень.</p><div class="welcome-start-wrap"><button type="button" class="welcome-start" data-action="profile">Пройти диагностику →</button></div></div></section>';
-   $('mentorPanel')?.classList.add('mentor-pending');
+   $('mentorPanel')?.classList.remove('mentor-pending');
    return;
  }
  $('mentorPanel')?.classList.remove('mentor-pending');
