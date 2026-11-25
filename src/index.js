@@ -158,9 +158,13 @@ async function ensureSchema(db){
   await add("conversations","created_at","TEXT DEFAULT ''");
   await safeIndex("CREATE INDEX IF NOT EXISTS conversations_user_created_idx ON conversations(user_id,created_at DESC)");
 
-  await db.prepare("CREATE TABLE IF NOT EXISTS learn_progress (user_id TEXT PRIMARY KEY,completed INTEGER DEFAULT 0,score INTEGER DEFAULT 0,created_at TEXT DEFAULT CURRENT_TIMESTAMP,updated_at TEXT DEFAULT CURRENT_TIMESTAMP)").run();
+  await db.prepare("CREATE TABLE IF NOT EXISTS learn_progress (user_id TEXT PRIMARY KEY,completed INTEGER DEFAULT 0,score INTEGER DEFAULT 0,lesson_no INTEGER DEFAULT 0,xp INTEGER DEFAULT 0,state_json TEXT DEFAULT '',plan_json TEXT DEFAULT '',created_at TEXT DEFAULT CURRENT_TIMESTAMP,updated_at TEXT DEFAULT CURRENT_TIMESTAMP)").run();
   await add("learn_progress","completed","INTEGER DEFAULT 0");
   await add("learn_progress","score","INTEGER DEFAULT 0");
+  await add("learn_progress","lesson_no","INTEGER DEFAULT 0");
+  await add("learn_progress","xp","INTEGER DEFAULT 0");
+  await add("learn_progress","state_json","TEXT DEFAULT ''");
+  await add("learn_progress","plan_json","TEXT DEFAULT ''");
   await add("learn_progress","created_at","TEXT DEFAULT ''");
   await add("learn_progress","updated_at","TEXT DEFAULT ''");
 
@@ -340,13 +344,28 @@ async function api(r,e){
     }
     if(p==="/api/learn/progress"&&r.method==="GET"){
       const u=await userFor(r,e);if(!u)return json({error:"Требуется вход."},401);
-      const row=await e.DB.prepare("SELECT completed,score FROM learn_progress WHERE user_id=?").bind(u.id).first();return json({completed:row?.completed||0,score:row?.score||0});
+      const row=await e.DB.prepare("SELECT completed,score,lesson_no,xp,state_json,plan_json,updated_at FROM learn_progress WHERE user_id=?").bind(u.id).first();
+      return json({
+        completed:row?.completed||0,
+        score:row?.score||0,
+        lessonNo:row?.lesson_no||0,
+        xp:row?.xp||0,
+        state:row?.state_json?JSON.parse(row.state_json):null,
+        plan:row?.plan_json?JSON.parse(row.plan_json):null,
+        updatedAt:row?.updated_at||null
+      });
     }
     if(p==="/api/learn/progress"&&r.method==="POST"){
       const u=await userFor(r,e);if(!u)return json({error:"Требуется вход."},401);
-      const b=await r.json(),completed=Math.max(0,Math.min(100,Number(b.completed)||0)),score=Math.max(0,Math.min(100,Number(b.score)||0));
-      await e.DB.prepare("INSERT INTO learn_progress(user_id,completed,score) VALUES(?,?,?) ON CONFLICT(user_id) DO UPDATE SET completed=excluded.completed,score=excluded.score,updated_at=CURRENT_TIMESTAMP").bind(u.id,completed,score).run();
-      return json({completed,score});
+      const b=await r.json();
+      const completed=Math.max(0,Math.min(100,Number(b.completed)||0));
+      const score=Math.max(0,Math.min(100,Number(b.score)||0));
+      const lessonNo=Math.max(0,Math.min(10000,Number(b.lessonNo)||0));
+      const xp=Math.max(0,Math.min(1000000,Number(b.xp)||0));
+      const stateJson=JSON.stringify(b.state&&typeof b.state==="object"?b.state:{});
+      const planJson=JSON.stringify(b.plan&&typeof b.plan==="object"?b.plan:null);
+      await e.DB.prepare("INSERT INTO learn_progress(user_id,completed,score,lesson_no,xp,state_json,plan_json) VALUES(?,?,?,?,?,?,?) ON CONFLICT(user_id) DO UPDATE SET completed=excluded.completed,score=excluded.score,lesson_no=excluded.lesson_no,xp=excluded.xp,state_json=excluded.state_json,plan_json=excluded.plan_json,updated_at=CURRENT_TIMESTAMP").bind(u.id,completed,score,lessonNo,xp,stateJson,planJson).run();
+      return json({completed,score,lessonNo,xp});
     }
     if(p==="/api/admin/login"&&r.method==="POST"){
       if(limited(r,"admin-login:"+requestIP(r),10,60000))return json({error:"Слишком много попыток входа."},429);
