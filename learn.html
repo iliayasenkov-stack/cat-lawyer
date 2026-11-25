@@ -391,7 +391,7 @@ function buildCalibration(){
  return selected;
 }
 let cal=[];
-function calibrationStart(){cal=buildCalibration();calibration=0;calScore=0;wrongStreak=0;renderCalibration();cat('serious','Теперь проверю не память, а то, как ты рассуждаешь. Вопросы будут зависеть от твоего курса.')}
+function calibrationStart(){calResults=[];state.aiProfile=null;state.calibrated=false;cal=buildCalibration();calibration=0;calScore=0;wrongStreak=0;renderCalibration();cat('serious','Теперь проверю не память, а то, как ты рассуждаешь. Вопросы будут зависеть от твоего курса.')}
 function shuffleOrder(n){const a=Array.from({length:n},(_,i)=>i);for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 function balanceCalibrationOptions(q){
  if(!q||q.type!=='mcq'||!Array.isArray(q.a)||q.a.length!==4)return;
@@ -661,8 +661,8 @@ async function checkText(){
 function handleClick(e){
  const el=e.target.closest('[data-action]');if(!el)return;
  const a=el.dataset.action;
- if(a==='type'){state.type=el.dataset.v;save();cat('curious','Хм… смотрю, как лучше настроить обучение под твоё образование.');courseStep()}
- else if(a==='course'){state.course=el.dataset.v;save();cat('explaining','Курс понял. Теперь подберу глубину и сложность заданий.');levelStep()}
+ if(a==='type'){state.type=el.dataset.v;state.aiProfile=null;state.calibrated=false;calResults=[];save();cat('curious','Хм… смотрю, как лучше настроить обучение под твоё образование.');courseStep()}
+ else if(a==='course'){state.course=el.dataset.v;state.aiProfile=null;state.calibrated=false;calResults=[];save();cat('explaining','Курс понял. Теперь подберу глубину и сложность заданий.');levelStep()}
  else if(a==='level'){state.level=el.dataset.v;save();cat('serious','Хорошо. Самооценку записал. Теперь проверим её реальными заданиями.');closeModal();calibrationStart()}
  else if(a==='profile'){profileStep()}
  else if(a==='cal'){
