@@ -424,17 +424,9 @@ function calibrationStart(){calResults=[];state.aiProfile=null;state.calibrated=
 function shuffleOrder(n){const a=Array.from({length:n},(_,i)=>i);for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 function balanceCalibrationOptions(q){
  if(!q||q.type!=='mcq'||!Array.isArray(q.a)||q.a.length!==4)return;
- const target=Math.max(...q.a.map(x=>String(x).trim().split(/\s+/).filter(Boolean).length));
- const pads=['по делу','в этой ситуации','с учётом обстоятельств','по имеющимся данным','в рамках спора','с учётом фактов'];
- q.a=q.a.map((raw,idx)=>{
-  let words=String(raw||'').trim().split(/\s+/).filter(Boolean);
-  let p=0;
-  while(words.length<target){
-   words.push(pads[(idx+p)%pads.length]);
-   p++;
-  }
-  return words.join(' ');
- });
+ // Не добавляем искусственные «хвосты»: они делали варианты неестественными.
+ // Если варианты заметно различаются по длине, показываем их как есть — юридическая логика важнее косметики.
+ q.a=q.a.map(x=>String(x||'').trim());
 }
 function renderCalibration(){
  const q=cal[calibration];balanceCalibrationOptions(q);openModal();
