@@ -349,13 +349,13 @@ const calibrationBase=[
 ];
 function buildCalibration(){
  const isUni=state.type==='Университет',course=Number(state.course)||1,level=String(state.level||'medium');
- const pool=[...calibrationBase];
+ const pool=calibrationBase.map((q,i)=>({...q,difficulty:i<6?'easy':i<14?'medium':'hard'}));
  if(isUni&&course>=3)pool.push(
-  {type:'mcq',q:'При конкуренции правовых норм на уровне квалификации необходимо прежде всего определить:',a:['Предмет регулирования и условия действия каждой нормы по делу','Проверить дату публикации и название акта по делу','Уточнить позицию стороны и желаемый результат по делу','Сопоставить формулировки норм и выбрать более строгую'],c:0,e:'Для выбора нормы нужно установить её предмет, юридическую силу и условия действия.'},
+  {type:'mcq',difficulty:'hard',q:'При конкуренции правовых норм на уровне квалификации необходимо прежде всего определить:',a:['Предмет регулирования и условия действия каждой нормы по делу','Проверить дату публикации и название акта по делу','Уточнить позицию стороны и желаемый результат по делу','Сопоставить формулировки норм и выбрать более строгую'],c:0,e:'Для выбора нормы нужно установить её предмет, юридическую силу и условия действия.'},
   {type:'mcq',q:'В сложном кейсе правовой вывод нельзя считать достаточным, если:',a:['Не показана связь фактов и юридических признаков конкретного дела','В нём мало юридических терминов и сложных формулировок','Он не содержит отдельного мнения клиента о спорном вопросе','Он занимает меньше одной страницы текста в письменном виде'],c:0,e:'Вывод должен быть обоснован связью фактов с правовыми признаками.'}
  );
  if(isUni&&course>=5)pool.push(
-  {type:'free',q:'Разбери правовую позицию как исследователь: какие альтернативные квалификации и контраргументы ты проверишь до окончательного вывода?',a:[],c:null,e:'Сильный ответ должен включать альтернативную квалификацию, контраргументы, условия применения норм, доказательственные риски и пределы вывода.',context:'Факты допускают две юридические квалификации, и клиент просит выбрать наиболее устойчивую.'}
+  {type:'free',difficulty:'hard',q:'Разбери правовую позицию как исследователь: какие альтернативные квалификации и контраргументы ты проверишь до окончательного вывода?',a:[],c:null,e:'Сильный ответ должен включать альтернативную квалификацию, контраргументы, условия применения норм, доказательственные риски и пределы вывода.',context:'Факты допускают две юридические квалификации, и клиент просит выбрать наиболее устойчивую.'}
  );
  if(!isUni&&course<=2)pool.unshift(
   {type:'mcq',q:'Что обычно нужно установить перед тем, как объяснять клиенту его право?',a:['Факты ситуации и правоотношение по существу конкретного дела','Название закона и его общую сферу регулирования по делу','Желаемый клиентом результат и удобный способ его получить','Размер возможной выплаты и предполагаемые расходы по делу'],c:0,e:'Базовый юридический анализ начинается с фактов и правоотношения.'}
@@ -364,7 +364,9 @@ function buildCalibration(){
  // Уровень самооценки теперь реально меняет состав диагностики:
  // zero/low получают больше фундаментальных задач, medium — смешанный профиль,
  // very — больше сложных задач с квалификацией, доказательствами и альтернативами.
- const easy=pool.slice(0,12),mid=pool.slice(12,18),hard=pool.slice(18);
+ const easy=pool.filter(q=>q.difficulty==='easy');
+ const mid=pool.filter(q=>q.difficulty==='medium');
+ const hard=pool.filter(q=>q.difficulty==='hard');
  const quotas={
   zero:[12,6,2],
   low:[9,8,3],
@@ -427,7 +429,7 @@ async function finishCalibrationWritten(){
  if(t.length<30){cat('strict','Напиши хотя бы несколько предложений: что ты выяснишь и что будешь делать дальше 😾');return}
  document.querySelectorAll('[data-action="calText"]').forEach(x=>x.disabled=true);
  $('calFeedback').innerHTML='<div class="feedback">AI анализирует твой ответ…</div>';
- try{const r=await fetch('/api/learn/calibrate',{method:'POST',headers:{'content-type':'application/json'},credentials:'same-origin',body:JSON.stringify({question:q.q,context:q.context||'',answer:t,expected:q.e,mode:'written',index:calibration})});const d=await r.json();if(!r.ok||!d.analysis)throw Error();calResults.push(d.analysis);if(d.analysis.score>=75){wrongStreak=0}else{wrongStreak++}$('calFeedback').innerHTML='<div class="feedback"><b>'+d.analysis.score+'/100</b> · '+(d.analysis.feedback||q.e)+'</div>';cat(d.analysis.score>=75?'happy':(wrongStreak>=2?'strict':'sad'),d.analysis.score>=75?'Сильный ответ. Учитываю это в плане 😼':(wrongStreak>=2?'Две ошибки подряд. Стоп. Сейчас разберём, где именно сбился 😾':'Вижу пробел. Разберём его и продолжим 😿'))}catch(e){calResults.push({score:50,level:'средний',strengths:[],weaknesses:['Не удалось оценить ответ автоматически'],feedback:q.e,skills:[q.q]});$('calFeedback').innerHTML='<div class="feedback"><b>Ответ сохранён.</b> '+q.e+'</div>'}
+ try{const r=await fetch('/api/learn/calibrate',{method:'POST',headers:{'content-type':'application/json'},credentials:'same-origin',body:JSON.stringify({question:q.q,context:q.context||'',answer:t,expected:q.e,mode:'written',index:calibration})});const d=await r.json();if(!r.ok||!d.analysis)throw Error();calResults.push(d.analysis);if(d.analysis.score>=75){wrongStreak=0}else{wrongStreak++}$('calFeedback').innerHTML='<div class="feedback"><b>'+d.analysis.score+'/100</b> · '+(d.analysis.feedback||q.e)+'</div>';cat(d.analysis.score>=75?'happy':(wrongStreak>=2?'strict':'sad'),d.analysis.score>=75?'Сильный ответ. Учитываю это в плане 😼':(wrongStreak>=2?'Две ошибки подряд. Стоп. Сейчас разберём, где именно сбился 😾':'Вижу пробел. Разберём его и продолжим 😿'))}catch(e){calResults.push({score:0,level:'не определён',strengths:[],weaknesses:['AI-проверка временно недоступна'],feedback:'Баллы не начислены: автоматическая проверка недоступна.',skills:[q.q]});$('calFeedback').innerHTML='<div class="feedback"><b>Ответ сохранён без оценки.</b> '+q.e+'</div>'}
  setTimeout(async()=>{calibration++;if(calibration<cal.length){renderCalibration();}else{state.calibrated=true;save();await buildKnowledgeProfile();subjectPicker();}},1200);
 }
 async function buildKnowledgeProfile(){
