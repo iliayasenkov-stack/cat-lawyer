@@ -469,13 +469,14 @@ function handleClick(e){
  if(a==='type'){state.type=el.dataset.v;save();cat('curious','Хм… смотрю, как лучше настроить обучение под твоё образование.');courseStep()}
  else if(a==='course'){state.course=el.dataset.v;save();cat('explaining','Курс понял. Теперь подберу глубину и сложность заданий.');levelStep()}
  else if(a==='level'){state.level=el.dataset.v;save();cat('serious','Хорошо. Самооценку записал. Теперь проверим её реальными заданиями.');closeModal();calibrationStart()}
+ else if(a==='profile'){profileStep()}
  else if(a==='cal'){
  const q=cal[calibration],n=Number(el.dataset.i),ok=n===q._displayCorrect;
  document.querySelectorAll('[data-action="cal"]').forEach(x=>x.disabled=true);
  el.classList.add(ok?'good':'bad');document.querySelectorAll('[data-action="cal"]')[q._displayCorrect]?.classList.add('good');
  calScore+=ok?1:0;calResults.push({score:ok?100:0,level:ok?'strong':'needs_review',strengths:ok?[q.q]:[],weaknesses:ok?[]:[q.q],feedback:q.e,skills:[q.q]});if(ok){wrongStreak=0}else{wrongStreak++}
  $('calFeedback').innerHTML='<div class="feedback">'+(ok?'Верно. ':'Не совсем. ')+q.e+'</div>';cat(ok?'happy':(wrongStreak>=2?'strict':'sad'),ok?'Отлично. Двигаемся дальше 😼':(wrongStreak>=2?'Две ошибки подряд. Соберись и читай условие внимательнее 😾':'Ничего страшного. Разберём ошибку и пойдём дальше 😿'));
- setTimeout(()=>{calibration++;calibration<cal.length?renderCalibration():subjectPicker()},650)
+ setTimeout(()=>{calibration++;if(calibration<cal.length){renderCalibration();}else{state.calibrated=true;save();subjectPicker();}},650)
 }
  else if(a==='calText'){finishCalibrationWritten()}
  else if(a==='all'){document.querySelectorAll('.subject input').forEach(x=>x.checked=true);$('scount').textContent=document.querySelectorAll('.subject input').length}
