@@ -307,7 +307,7 @@ async function api(r,e){
         const raw=await aiText(e,[{role:"system",content:"Ты методист юридической академии. Анализируй реальные ответы, а не самооценку. Возвращай только JSON."},{role:"user",content:prompt}],1000);
         out=JSON.parse(raw.replace(/^\s*```json\s*/,"").replace(/\s*```\s*$/,""));
       }catch(err){
-        out={level:"средний",confidence:35,summary:"AI-анализ профиля временно неполный.",mastery:{},weakSkills:results.flatMap(x=>x.weaknesses||[]).slice(0,10),strongSkills:results.flatMap(x=>x.strengths||[]).slice(0,10),errorPatterns:[],nextFocus:"Повторить навыки, где были ошибки.",difficultyCeiling:"средняя",lessonMix:{mcq:8,free:6,case:6}};
+        out={level:String(profile.level||"не определён"),confidence:20,summary:"AI-анализ профиля временно неполный; уровень не подменён произвольным средним значением.",mastery:{},weakSkills:results.flatMap(x=>x.weaknesses||[]).slice(0,10),strongSkills:results.flatMap(x=>x.strengths||[]).slice(0,10),errorPatterns:[],nextFocus:"Повторить навыки, где были ошибки.",difficultyCeiling:String(profile.level||"средняя"),lessonMix:{mcq:8,free:6,case:6}};
       }
       out.updatedAt=new Date().toISOString();
       if(u){try{await e.DB.prepare("CREATE TABLE IF NOT EXISTS learn_profiles (user_id TEXT PRIMARY KEY,profile_json TEXT NOT NULL,updated_at TEXT DEFAULT CURRENT_TIMESTAMP)").run();await e.DB.prepare("INSERT INTO learn_profiles(user_id,profile_json) VALUES(?,?) ON CONFLICT(user_id) DO UPDATE SET profile_json=excluded.profile_json,updated_at=CURRENT_TIMESTAMP").bind(u.id,JSON.stringify(out)).run()}catch(err){console.error("Learn profile save failed",err)}}
