@@ -286,6 +286,24 @@ async function api(r,e){
       }catch(err){analysis={score:50,level:"средний",strengths:[],weaknesses:["AI-анализ временно недоступен"],skills:[question],feedback:expected,nextFocus:"Повторить ключевую логику темы."}}
       return json({analysis});
     }
+    if(p==="/api/learn/profile"&&r.method==="POST"){
+      if(limited(r,"learn-profile:"+requestIP(r),6,60000))return json({error:"Слишком много анализов профиля. Подожди немного."},429);
+      const u=await userFor(r,e);
+      const b=await r.json(),profile=b.profile||{},results=Array.isArray(b.results)?b.results.slice(0,30):[];
+      if(!results.length)return json({error:"Нет результатов диагностики."},400);
+      const education=String(profile.type||"").slice(0,40),course=Math.max(1,Math.min(6,Number(profile.course)||1));
+      const prompt="Построй индивидуальную карту юридических знаний студента. Профиль: "+education+", курс "+course+", самооценка "+String(profile.level||"")+" . Результаты диагностики: "+JSON.stringify(results)+". Проанализируй фактический уровень, освоенные навыки, пробелы, повторяющиеся ошибки, нужную глубину и уверенность вывода. Не делай уровень только по номеру курса. Для письменных ответов учитывай качество юридического рассуждения; для MCQ — паттерн правильных и неправильных ответов. Верни только JSON: {level,confidence,summary,mastery,weakSkills,strongSkills,errorPatterns,nextFocus,difficultyCeiling,lessonMix}. "
+      let out;
+      try{
+        const raw=await aiText(e,[{role:"system",content:"Ты методист юридической академии. Анализируй реальные ответы, а не самооценку. Возвращай только JSON."},{role:"user",content:prompt}],1000);
+        out=JSON.parse(raw.replace(/^\s*```json\s*/,"").replace(/\s*```\s*$/,""));
+      }catch(err){
+        out={level:"средний",confidence:35,summary:"AI-анализ профиля временно неполный.",mastery:{},weakSkills:results.flatMap(x=>x.weaknesses||[]).slice(0,10),strongSkills:results.flatMap(x=>x.strengths||[]).slice(0,10),errorPatterns:[],nextFocus:"Повторить навыки, где были ошибки.",difficultyCeiling:"средняя",lessonMix:{mcq:8,free:6,case:6}};
+      }
+      out.updatedAt=new Date().toISOString();
+      if(u){try{await e.DB.prepare("CREATE TABLE IF NOT EXISTS learn_profiles (user_id TEXT PRIMARY KEY,profile_json TEXT NOT NULL,updated_at TEXT DEFAULT CURRENT_TIMESTAMP)").run();await e.DB.prepare("INSERT INTO learn_profiles(user_id,profile_json) VALUES(?,?) ON CONFLICT(user_id) DO UPDATE SET profile_json=excluded.profile_json,updated_at=CURRENT_TIMESTAMP").bind(u.id,JSON.stringify(out)).run()}catch(err){console.error("Learn profile save failed",err)}}
+      return json({profile:out});
+    }
     if(p==="/api/learn/evaluate"&&r.method==="POST"){
       if(limited(r,"learn-evaluate:"+requestIP(r),20,60000))return json({error:"Слишком много проверок."},429);
       const b=await r.json(),lesson=b.lesson||{},answer=String(b.answer||"").slice(0,10000),subject=String(b.subject||lesson.subject||"").slice(0,120);
