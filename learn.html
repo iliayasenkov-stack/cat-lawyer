@@ -403,7 +403,7 @@ document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{
  else if(b.dataset.tab==='profile')profileStep()
 }));
 $('xp').textContent=xp;
-async function boot(){await restoreProgress();renderWelcome();loadCat()}
+async function boot(){await restoreProgress();loadCat();renderWelcome()}
 boot();
 </script>
 </body></html>
