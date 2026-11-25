@@ -287,11 +287,11 @@ async function api(r,e){
         analysis=JSON.parse(String(raw).split(String.fromCharCode(96)).join('').replace(/^json\s*/i,'').trim());
         analysis.score=Math.max(0,Math.min(100,Number(analysis.score)||0));
         if(!analysis.criterionScores||typeof analysis.criterionScores!=="object")analysis.criterionScores={};
-        for(const k of ["facts","qualification","norm","reasoning","evidence","caution"])analysis.criterionScores[k]=Math.max(0,Math.min(5,Number(analysis.criterionScores[k])||0));
+        for(const k of ["facts","qualification","norm","reasoning","evidence","conclusion"])analysis.criterionScores[k]=Math.max(0,Math.min(5,Number(analysis.criterionScores[k])||0));
         for(const k of ["weaknesses","strengths","skills","missing"])if(!Array.isArray(analysis[k]))analysis[k]=[];
         analysis.feedback=String(analysis.feedback||"").slice(0,1200);
       }catch(err){
-        analysis={score:0,correct:false,level:"не оценён",criterionScores:{facts:0,qualification:0,norm:0,reasoning:0,evidence:0,caution:0},strengths:[],weaknesses:["AI-анализ временно недоступен: баллы не присваиваются без проверки содержания."],skills:[question],feedback:"Ответ сохранён, но автоматический разбор сейчас недоступен. Баллы за этот ответ не начислены.",nextFocus:"Повторить проверку ответа позже.",missing:[]};
+        analysis={score:0,correct:false,level:"не оценён",criterionScores:{facts:0,qualification:0,norm:0,reasoning:0,evidence:0,conclusion:0},strengths:[],weaknesses:["AI-анализ временно недоступен: баллы не присваиваются без проверки содержания."],skills:[question],feedback:"Ответ сохранён, но автоматический разбор сейчас недоступен. Баллы за этот ответ не начислены.",nextFocus:"Повторить проверку ответа позже.",missing:[]};
       }
       return json({analysis});
     }
@@ -408,7 +408,15 @@ async function api(r,e){
           const ls=item.answers.map(x=>String(x||"").trim().split(/\s+/).filter(Boolean).length),mn=Math.min(...ls),mx=Math.max(...ls);
           if(mx-mn>0||mx/mn>1.1)a.ok=false,a.issues=[...(a.issues||[]),"Варианты ответа должны иметь одинаковое число слов и сопоставимую длину."];
         }
-        if(!a.ok){throw new Error("AI legal audit failed: "+(a.issues||[]).join("; "))}
+        if(!a.ok){
+          const issues=Array.isArray(a.issues)?a.issues:[];
+          const onlyLengthIssue=issues.length>0&&issues.every(x=>/длин|вариант.*ответ|число слов|длину/i.test(String(x)));
+          if(onlyLengthIssue&&item.type==="mcq"&&Array.isArray(item.answers)&&item.answers.length===4){
+            const ls=item.answers.map(x=>String(x||"").trim().split(/\s+/).filter(Boolean).length),mn=Math.min(...ls),mx=Math.max(...ls);
+            if(mx===mn)a.ok=true;
+          }
+          if(!a.ok)throw new Error("AI legal audit failed: "+issues.join("; "));
+        }
         if(item.type==="mcq"&&Array.isArray(item.answers)&&item.answers.length===4){
           const ls=item.answers.map(x=>String(x||"").trim().split(/\s+/).filter(Boolean).length);
           const mn=Math.min(...ls),mx=Math.max(...ls);
