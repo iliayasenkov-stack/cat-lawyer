@@ -246,7 +246,7 @@ async function restoreProgress(){
  }catch(e){}
 }
 function progress(n){$('bar').style.width=n+'%';$('counter').textContent=n+'%'}
-function learningPercent(){return Math.min(100,Math.round((lessonNo/20)*100))}
+function learningPercent(){return Math.min(100,Math.round((lessonNo/100)*100))}
 async function persistProgress(){
  if(!serverReady)return;
  try{
@@ -395,6 +395,7 @@ async function buildKnowledgeProfile(){
  }
 }
 function subjectPicker(){
+ $("mentorPanel")?.classList.remove("mentor-pending");
  openModal();cat('curious','Выбери предметы. Я смотрю, что тебе сейчас действительно интересно.');selected=new Set(state.subjects||[]);
  $('modalStep').textContent='ШАГ 4 · ПРЕДМЕТЫ';$('modalTitle').textContent='Что хочешь подтянуть?';$('modalDesc').textContent='Можно выбрать несколько предметов. После выбора AI соберёт персональный маршрут.';
  $('modalBody').innerHTML='<div class="tools"><span class="counter">Выбрано: <b id="scount">'+selected.size+'</b> из '+subjects.length+'</span><div><button type="button" class="btn" data-action="all">Выбрать все</button> <button type="button" class="btn" data-action="none">Сбросить</button></div></div><div class="subject-groups">'+groups.map(g=>'<section class="group"><h3>'+g[0]+'</h3><p>Выбери направления</p><div class="subject-list">'+g[1].map(n=>'<label class="subject"><input type="checkbox" value="'+n+'" '+(selected.has(n)?'checked':'')+'><span>'+n+'</span></label>').join('')+'</div></section>').join('')+'</div><div class="actions"><span></span><button type="button" class="btn primary" data-action="subjects">Собрать мой план →</button></div>';
