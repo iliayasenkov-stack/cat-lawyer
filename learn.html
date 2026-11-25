@@ -47,8 +47,24 @@
 
 <style id="mentor-layout-fix">
 .mentor{position:relative!important;overflow:visible!important;min-height:390px!important;padding-bottom:86px!important}
-.mentor-pending{visibility:hidden;pointer-events:none}
-.mentor:not(.mentor-pending){visibility:visible;pointer-events:auto}
+.mentor-pending{display:none!important;visibility:hidden;pointer-events:none}
+.mentor:not(.mentor-pending){display:block!important;visibility:visible;pointer-events:auto}
+.workspace:has(.mentor-pending) .main{grid-column:1/-1}
+.workspace:has(.mentor-pending){grid-template-columns:minmax(0,1fr)!important}
+.welcome-screen{min-height:390px!important;align-items:stretch!important;padding:0!important}
+.welcome-card{width:100%!important;min-height:390px!important;display:flex!important;flex-direction:column!important;justify-content:center!important;align-items:center!important;padding:34px 34px 42px!important}
+.welcome-card h2{max-width:760px}
+.welcome-start-wrap{margin-top:24px;position:relative;display:inline-flex;justify-content:center}
+.welcome-start{min-width:340px!important;min-height:86px!important;border-radius:22px!important;font-size:20px!important;box-shadow:0 18px 34px rgba(118,44,43,.28),inset 0 -5px 0 rgba(45,18,16,.18)!important}
+.welcome-start:after{content:"";position:absolute;left:12%;right:12%;bottom:-12px;height:18px;border-radius:50%;background:rgba(55,29,23,.18);filter:blur(7px);z-index:-1}
+.welcome-cat-real{position:absolute;left:50%;bottom:78px;width:250px;height:235px;transform:translateX(70%);z-index:4;pointer-events:none}
+.welcome-cat-real .cat-real-image{position:absolute;inset:0;width:400%!important;height:300%!important;max-width:none!important;object-fit:fill!important;display:block!important}
+.welcome-cat-real .cat-base{position:absolute;inset:0;overflow:hidden}
+@media(max-width:700px){
+ .welcome-card{min-height:430px!important;padding:28px 16px 34px!important}
+ .welcome-start{min-width:280px!important;min-height:78px!important}
+ .welcome-cat-real{width:185px;height:180px;transform:translateX(10%);bottom:78px}
+}
 .mentor .cat{position:absolute!important;left:50%!important;bottom:72px!important;width:210px!important;height:240px!important;transform:translateX(-50%)!important;z-index:3!important}
 .mentor .cat-direct{width:100%!important;height:100%!important}
 .mentor .speech{position:relative!important;z-index:5!important}
@@ -81,7 +97,30 @@
 @media(max-width:850px){.welcome-screen{min-height:430px;padding:24px 14px}.welcome-card{padding:34px 22px 38px}.welcome-card h2{font-size:31px}.welcome-cat{right:8px;bottom:22px;width:145px;height:145px}.welcome-start{min-width:230px}}
 @media(max-width:560px){.welcome-screen{padding:16px 4px;min-height:430px}.welcome-card{padding:30px 16px 34px}.welcome-card h2{font-size:27px}.welcome-cat{right:-8px;bottom:24px;width:120px;height:120px;transform:rotate(-5deg)}.welcome-start{min-width:210px;font-size:14px}}
 </style>
-
+<style id="client-case-learning">
+.client-case{background:#fffdfb;border:1px solid var(--line);border-radius:22px;padding:18px}
+.client-scene{border:1px solid var(--line);border-radius:20px;background:linear-gradient(135deg,#fffaf5,#f3e2d7);overflow:hidden}
+.client-svg{display:block;width:100%;height:auto;max-height:330px}
+.client-caption{display:flex;gap:8px;align-items:center;padding:12px 16px;border-top:1px solid var(--line);background:#fff}
+.client-caption b{color:var(--wine)}
+.client-caption span{font-size:11px;color:var(--muted)}
+.client-actions{display:flex;justify-content:center;padding:16px 0 4px}
+.client-question{margin-top:16px;padding:18px;border:1px solid var(--line);border-radius:18px;background:#fff}
+.client-question.hidden{display:none}
+.client-question h2{font:30px Georgia;margin:7px 0}
+.client-question p{font-size:14px;line-height:1.7;color:#4e3b34}
+.client-doc-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:14px 0;color:var(--muted);font-size:11px}
+.doc-overlay{position:fixed;inset:0;background:#2a1c198c;backdrop-filter:blur(8px);z-index:100;display:flex;align-items:center;justify-content:center;padding:16px}
+.doc-modal{width:min(900px,100%);max-height:90vh;overflow:auto;background:var(--card);border:1px solid #d8b8a8;border-radius:24px;box-shadow:0 35px 100px #21120e55}
+.doc-modal-head{position:sticky;top:0;background:var(--card);display:flex;justify-content:space-between;align-items:center;padding:16px 18px;border-bottom:1px solid var(--line);z-index:2}
+.doc-modal-head b{color:var(--wine);font-size:11px;letter-spacing:.08em}
+.doc-modal-body{padding:18px;display:grid;gap:12px}
+.doc-card{border:1px solid var(--line);border-radius:16px;background:#fff;padding:14px}
+.doc-head{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid #eee0d7;padding-bottom:9px;margin-bottom:9px}
+.doc-head b{font-size:12px;color:#4b2a23}.doc-head span{font-size:9px;color:#9b7468}
+.doc-card pre{white-space:pre-wrap;font:12px/1.65 Arial;color:#4d3c35;margin:0}
+@media(max-width:600px){.client-caption{display:block}.client-caption span{display:block;margin-top:4px}.client-question h2{font-size:25px}}
+</style>
 <style id="reference-learning-theme">
 /* Reference-inspired learning workspace: warm library, large emotional mentor, compact lesson card. */
 html,body{background:#f7eee6!important}
@@ -201,6 +240,7 @@ async function restoreProgress(){
   if(Number.isFinite(Number(d.lessonNo)))lessonNo=Math.max(0,Number(d.lessonNo));
   if(Number.isFinite(Number(d.xp)))xp=Math.max(xp,Number(d.xp));
   if(d.state?.calResults&&Array.isArray(d.state.calResults))calResults=d.state.calResults;
+  if(d.state?.aiProfile&&typeof d.state.aiProfile==='object')state.aiProfile=d.state.aiProfile;
   serverReady=true;
   saveLocal();
  }catch(e){}
@@ -221,17 +261,16 @@ function renderWelcome(){
  if(!calibrated&&!hasProgress){
    $('stage').textContent='ДИАГНОСТИКА';
    $('counter').textContent='0%';$('bar').style.width='0%';
-   $('app').innerHTML='<section class="welcome-screen"><div class="welcome-card"><div class="pill">CAT LAWYER · ДИАГНОСТИКА</div><h2>Сначала определим твой уровень</h2><p>Короткий тест покажет, что ты действительно знаешь. После него Кот-юрист появится с кнопкой «Начать обучение» и соберёт программу именно под тебя.</p><div class="welcome-start-wrap"><button type="button" class="welcome-start" data-action="profile">Пройти диагностику →</button></div></div></section>';
+   $('app').innerHTML='<section class="welcome-screen"><div class="welcome-card"><div class="pill">CAT LAWYER · ДИАГНОСТИКА</div><h2>Сначала определим твой уровень</h2><p>20 вопросов проверят не только память, но и юридическое мышление. После диагностики AI построит карту знаний, а Кот-юрист появится только после теста.</p><div class="welcome-start-wrap"><button type="button" class="welcome-start" data-action="profile">Пройти диагностику →</button></div></div></section>';
    $('mentorPanel')?.classList.add('mentor-pending');
    return;
  }
  $('mentorPanel')?.classList.remove('mentor-pending');
  const pct=learningPercent();
  $('stage').textContent=hasProgress?'ПРОДОЛЖЕНИЕ ОБУЧЕНИЯ':'ОБУЧЕНИЕ';
- $('counter').textContent=pct+'%';
- $('bar').style.width=pct+'%';
- $('app').innerHTML='<section class="welcome-screen"><div class="welcome-card"><div class="pill">CAT LAWYER · АКАДЕМИЯ</div><h2>'+(hasProgress?'Продолжим с того места, где ты остановился':'Добро пожаловать в обучение')+'</h2><p>'+(hasProgress?'Твой прогресс сохранён. Следующий урок откроется с того места, где ты закончил.':'Никаких окон поверх страницы. Нажми кнопку, когда будешь готов, и Кот-юрист начнёт обучение.')+'</p>'+(hasProgress?'<div class="welcome-progress">Пройдено: <b>'+pct+'%</b> · Урок '+(lessonNo+1)+'</div>':'')+'<div class="welcome-start-wrap"><button type="button" class="welcome-start" data-action="start">'+(hasProgress?'Продолжить обучение':'Начать обучение')+'</button></div></div></section>';
- cat(hasProgress?'calm':'teacher',hasProgress?'Привет. Я сохранил твой прогресс — продолжим?':'Ну что, начнём? Я уже приготовил всё для тебя.');
+ $('counter').textContent=pct+'%';$('bar').style.width=pct+'%';
+ $('app').innerHTML='<section class="welcome-screen"><div class="welcome-card"><div class="pill">CAT LAWYER · АКАДЕМИЯ</div><h2>'+(hasProgress?'Продолжим обучение':'Твой уровень определён')+'</h2><p>'+(hasProgress?'Прогресс и карта знаний сохранены в аккаунте. Следующий урок будет рассчитан по твоим ошибкам и сильным сторонам.':'AI закончил диагностику и собрал персональный маршрут. Теперь Кот-юрист ждёт тебя за рабочим столом.')+'</p>'+(hasProgress?'<div class="welcome-progress">Пройдено: <b>'+pct+'%</b> · Урок '+(lessonNo+1)+'</div>':'')+'<div class="welcome-start-wrap"><button type="button" class="welcome-start" data-action="start">'+(hasProgress?'Продолжить обучение':'Начать обучение')+'</button></div></div></section>';
+ cat(hasProgress?'calm':'teacher',hasProgress?'Прогресс сохранён. Я уже знаю, где у тебя пробелы.':'Я закончил диагностику. Теперь работаем по твоему уровню.');
 }
 function setMentorMood(el,mood){
  if(!el)return;
@@ -340,6 +379,21 @@ async function finishCalibrationWritten(){
  try{const r=await fetch('/api/learn/calibrate',{method:'POST',headers:{'content-type':'application/json'},credentials:'same-origin',body:JSON.stringify({question:q.q,context:q.context||'',answer:t,expected:q.e,mode:'written',index:calibration})});const d=await r.json();if(!r.ok||!d.analysis)throw Error();calResults.push(d.analysis);if(d.analysis.score>=75){wrongStreak=0}else{wrongStreak++}$('calFeedback').innerHTML='<div class="feedback"><b>'+d.analysis.score+'/100</b> · '+(d.analysis.feedback||q.e)+'</div>';cat(d.analysis.score>=75?'happy':(wrongStreak>=2?'strict':'sad'),d.analysis.score>=75?'Сильный ответ. Учитываю это в плане 😼':(wrongStreak>=2?'Две ошибки подряд. Стоп. Сейчас разберём, где именно сбился 😾':'Вижу пробел. Разберём его и продолжим 😿'))}catch(e){calResults.push({score:50,level:'средний',strengths:[],weaknesses:['Не удалось оценить ответ автоматически'],feedback:q.e,skills:[q.q]});$('calFeedback').innerHTML='<div class="feedback"><b>Ответ сохранён.</b> '+q.e+'</div>'}
  setTimeout(()=>{calibration++;if(calibration<cal.length){renderCalibration();}else{state.calibrated=true;save();subjectPicker();}},1200);
 }
+async function buildKnowledgeProfile(){
+ $('modalStep').textContent='AI · КАРТА ЗНАНИЙ';$('modalTitle').textContent='AI анализирует твой уровень';$('modalDesc').textContent='Сопоставляю ошибки, сильные стороны и типы юридического мышления.';
+ $('modalBody').innerHTML='<div class="feedback">AI строит индивидуальную карту знаний…</div>';
+ try{
+  const r=await fetch('/api/learn/profile',{method:'POST',headers:{'content-type':'application/json'},credentials:'same-origin',body:JSON.stringify({
+   profile:{type:state.type,course:Number(state.course)||1,level:state.level},
+   results:calResults
+  })});
+  const d=await r.json();if(!r.ok||!d.profile)throw Error();
+  state.aiProfile=d.profile;save();
+ }catch(e){
+  state.aiProfile={level:'средний',confidence:0,mastery:{},weakSkills:calResults.flatMap(x=>x.weaknesses||[]).slice(0,12),strongSkills:calResults.flatMap(x=>x.strengths||[]).slice(0,12),nextFocus:'Повторить слабые навыки диагностики.'};
+  save();
+ }
+}
 function subjectPicker(){
  openModal();cat('curious','Выбери предметы. Я смотрю, что тебе сейчас действительно интересно.');selected=new Set(state.subjects||[]);
  $('modalStep').textContent='ШАГ 4 · ПРЕДМЕТЫ';$('modalTitle').textContent='Что хочешь подтянуть?';$('modalDesc').textContent='Можно выбрать несколько предметов. После выбора AI соберёт персональный маршрут.';
@@ -351,7 +405,7 @@ async function buildPlan(){
  const fallback=()=>({summary:'Твой адаптивный маршрут: теория → применение → кейсы',days:[...selected].slice(0,5).map((x,i)=>({day:i+1,focus:x,lessons:[{title:'Ключевые понятия и применение',type:'теория'},{title:'Проверка понимания',type:'практика'},{title:'Юридический кейс',type:'кейс'}]})),sourceCheck:{reachable:false}});
  try{
   const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),7000);
-  const r=await fetch('/api/learn/plan',{method:'POST',headers:{'content-type':'application/json'},credentials:'same-origin',signal:controller.signal,body:JSON.stringify({profile:{type:state.type,course:state.course,level:state.level,calibration:calScore+'/'+cal.length,diagnostics:calResults},subjects:[...selected]})});
+  const r=await fetch('/api/learn/plan',{method:'POST',headers:{'content-type':'application/json'},credentials:'same-origin',signal:controller.signal,body:JSON.stringify({profile:{type:state.type,course:state.course,level:state.level,calibration:calScore+'/'+cal.length,diagnostics:calResults,aiProfile:state.aiProfile||null},subjects:[...selected]})});
   clearTimeout(timer);
   const d=await r.json();if(!r.ok||!d.plan)throw Error();
   plan=d.plan;
@@ -414,7 +468,7 @@ async function loadLesson(){
   diagnostics:calResults,
   plan,
   lessonNo,
-  profile:{type:state.type,course:Number(state.course)||1,level:state.level},
+  profile:{type:state.type,course:Number(state.course)||1,level:state.level,aiProfile:state.aiProfile||null},
   recentQuestions:(state.lessonHistory||[]).slice(-18)
 })});
   clearTimeout(timer);const d=await r.json();if(!r.ok||!d.lesson)throw Error();current=d.lesson;
@@ -425,36 +479,31 @@ async function loadLesson(){
  }catch(e){current={type,question:type==='case'?'Клиент просит оценить ситуацию. Какие юридически значимые обстоятельства нужно установить до вывода?':type==='free'?'Объясни, почему юрист не должен начинать правовой анализ с случайно найденной статьи.':'Как профессиональнее всего начинать юридический разбор?',answers:['Сразу назвать статью','Установить факты и правоотношение, затем выбрать норму','Опираться на первое впечатление','Выбрать самый строгий вариант'],correct:1,context:'Клиент описал ситуацию, но документов ещё не показал.',explanation:'Правильный порядок: факты → правоотношение → применимая норма → вывод.'}}
  currentSubject=subject;renderLesson(subject);
 }
+function clientIllustration(){
+ return '<svg class="client-svg" viewBox="0 0 520 300" role="img" aria-label="Клиент в кабинете юриста"><rect x="10" y="20" width="500" height="260" rx="28" fill="#fff8f1" stroke="#e2cdbf"/><rect x="40" y="42" width="190" height="110" rx="18" fill="#f0dfd3"/><rect x="62" y="64" width="145" height="72" rx="10" fill="#d8b9a8"/><circle cx="315" cy="92" r="48" fill="#f1c9ad"/><path d="M270 88c3-48 89-55 98 4-17-17-28-24-49-20-18 3-30 13-49 16z" fill="#6d4a3e"/><circle cx="300" cy="96" r="6" fill="#2d211e"/><circle cx="330" cy="96" r="6" fill="#2d211e"/><path d="M307 117q12 10 25 0" fill="none" stroke="#8d4d45" stroke-width="4" stroke-linecap="round"/><path d="M267 150q50-28 100 0l28 96H238z" fill="#b8795f"/><path d="M247 180q-18 40 12 66" fill="none" stroke="#b8795f" stroke-width="24" stroke-linecap="round"/><path d="M355 178q28 24 62 50" fill="none" stroke="#b8795f" stroke-width="24" stroke-linecap="round"/><rect x="375" y="198" width="80" height="55" rx="7" fill="#fff" stroke="#c8a998" transform="rotate(9 375 198)"/><line x1="388" y1="214" x2="443" y2="223" stroke="#b78f7c" stroke-width="4"/><line x1="388" y1="226" x2="434" y2="233" stroke="#d1b3a4" stroke-width="4"/><rect x="74" y="214" width="170" height="38" rx="10" fill="#6d2922"/><rect x="86" y="224" width="145" height="7" rx="3.5" fill="#fff0e6" opacity=".85"/><text x="159" y="247" text-anchor="middle" font-family="Georgia" font-size="15" fill="#fff">КАБИНЕТ ЮРИСТА</text></svg>';
+}
+function renderClientCase(){
+ const c=current.client||{};
+ const docs=Array.isArray(c.documents)?c.documents:[];
+ const q=String(current.question||c.question||'').replace(/</g,'&lt;');
+ $('app').innerHTML='<section class="client-case" id="clientCase"><div class="client-scene">'+clientIllustration()+'<div class="client-caption"><b>'+String(c.name||'Клиент').replace(/</g,'&lt;')+'</b><span>входит в кабинет и передаёт тебе документы</span></div></div><div class="client-actions"><button type="button" class="btn primary" data-action="acceptClient">Принять клиента и документы →</button></div><div id="clientQuestion" class="client-question hidden"><div class="kicker">'+String(current.subject||currentSubject)+'</div><h2>Вопрос клиента</h2><p>'+q+'</p><div class="client-doc-row"><button type="button" class="btn" data-action="documents">Посмотреть документы</button><span>'+docs.length+' документ(а) по делу</span></div><div class="case"><b>Твоя задача:</b> '+String(c.task||current.context||'Проанализируй ситуацию и сформулируй юридически обоснованный вывод.')+'</div><label style="display:block;margin-top:14px;font-size:10px;font-weight:900;letter-spacing:.08em;color:#8b5f52">ТВОЙ ОТВЕТ</label><textarea class="textarea" id="answerText" placeholder="Сначала изучи документы, затем напиши юридический ответ…"></textarea><div id="feedback"></div><div class="actions"><button type="button" class="btn" data-action="reset">Настроить заново</button><button type="button" class="btn primary" id="next" data-action="check">Проверить ответ →</button></div></div></section>';
+}
+function renderDocuments(){
+ const docs=Array.isArray(current?.client?.documents)?current.client.documents:[];
+ const html=docs.map((d,i)=>'<article class="doc-card"><div class="doc-head"><b>'+String(d.name||('Документ '+(i+1))).replace(/</g,'&lt;')+'</b><span>'+String(d.type||'Документ').replace(/</g,'&lt;')+'</span></div><pre>'+String(d.text||'').replace(/</g,'&lt;')+'</pre></article>').join('');
+ const ov=document.createElement('div');ov.className='doc-overlay';ov.innerHTML='<div class="doc-modal"><div class="doc-modal-head"><b>ДОКУМЕНТЫ ПО ДЕЛУ</b><button type="button" class="btn" data-action="closeDocuments">Закрыть</button></div><div class="doc-modal-body">'+html+'</div></div>';document.body.appendChild(ov);
+}
 function renderLesson(subject){
  const type=current.type||'mcq',q=current.question||'Вопрос',isWritten=type==='free'||type==='case'||!Array.isArray(current.answers)||current.answers.length===0;
+ if(type==='case'&&current.client){renderClientCase();return;}
  if(!isWritten&&Array.isArray(current.answers)){
-  const order=shuffleOrder(current.answers.length);
-  current._displayAnswers=order.map(i=>current.answers[i]);
-  current._displayCorrect=order.indexOf(Number(current.correct)||0);
+  const order=shuffleOrder(current.answers.length);current._displayAnswers=order.map(i=>current.answers[i]);current._displayCorrect=order.indexOf(Number(current.correct)||0);
  }
  let html='<div class="intro"><div class="cat small"><div class="cat-direct" role="img" aria-label="Кот-юрист"><div class="cat-base" aria-hidden="true"></div></div></div><div><div class="kicker">'+subject+' · '+type.toUpperCase()+'</div><h2>'+q+'</h2><p>Подумай самостоятельно. После ответа кот разберёт ход рассуждения.</p></div></div>';
- if(isWritten){
-   html+='<div class="case">'+(current.context||'Сформулируй правовой вывод как юрист.')+'</div>';
-   html+='<label style="display:block;margin-top:14px;font-size:10px;font-weight:900;letter-spacing:.08em;color:#8b5f52">ТВОЙ ОТВЕТ</label>';
-   html+='<textarea class="textarea" id="answerText" placeholder="Напиши ответ своими словами…"></textarea>';
- }else{
-   html+='<div class="choices">'+(current._displayAnswers||current.answers||[]).map((x,i)=>'<button type="button" class="choice" data-action="lessonChoice" data-i="'+i+'"><span class="letter">'+String.fromCharCode(65+i)+'</span><span>'+x+'</span></button>').join('')+'</div>';
- }
- html+='<div id="feedback"></div><div class="actions"><button type="button" class="btn" data-action="reset">Настроить заново</button><button type="button" class="btn primary" id="next" data-action="check" '+(type==='mcq'?'disabled':'disabled')+'>'+(isWritten?'Напиши ответ':'Выбери вариант')+'</button></div>';
- $('app').innerHTML='<div class="lesson">'+html+'</div>';cat('calm','Смотри на задачу спокойно. Сначала разберись в фактах, потом отвечай.');
- if(isWritten){
-   const input=$('answerText'),next=$('next');
-   input.addEventListener('input',()=>{const ready=input.value.trim().length>=30;next.disabled=!ready;next.textContent=ready?'Проверить ответ':'Напиши ответ'});
-   input.focus();
- }
-}
-function finish(ok,text){
- answered=true;
- if(ok){wrongStreak=0;xp+=10;cat('happy','Да! Именно так 😼 +10 XP')}
- else{wrongStreak++;cat(wrongStreak>=2?'strict':'sad',wrongStreak>=2?'Две ошибки подряд. Я уже злюсь 😾 Теперь внимательно разберём логику.':'Не угадал. Ничего, разберём ошибку и попробуем ещё 😿')}
- $('feedback').innerHTML='<div class="feedback"><b>'+(ok?'Верно.':'Разбираем ошибку.')+'</b> '+text+'</div>';
- const n=$('next');n.disabled=false;n.textContent='Следующий урок →';
- save();
+ if(isWritten){html+='<div class="case">'+(current.context||'Сформулируй правовой вывод как юрист.')+'</div><label style="display:block;margin-top:14px;font-size:10px;font-weight:900;letter-spacing:.08em;color:#8b5f52">ТВОЙ ОТВЕТ</label><textarea class="textarea" id="answerText" placeholder="Напиши ответ своими словами…"></textarea>'}else{html+='<div class="choices">'+(current._displayAnswers||current.answers||[]).map((x,i)=>'<button type="button" class="choice" data-action="lessonChoice" data-i="'+i+'"><span class="letter">'+String.fromCharCode(65+i)+'</span><span>'+x+'</span></button>').join('')+'</div>'}
+ html+='<div id="feedback"></div><div class="actions"><button type="button" class="btn" data-action="reset">Настроить заново</button><button type="button" class="btn primary" id="next" data-action="check" '+(type==='mcq'?'disabled':'')+'>Проверить ответ →</button></div>';
+ $('app').innerHTML='<div class="lesson">'+html+'</div>';setMentorMood(document.querySelector('.cat-direct'),'smart');
+ if(type!=='mcq'){const t=$('answerText');if(t)t.addEventListener('input',()=>{$('next').disabled=t.value.trim().length<30})}
 }
 function checkChoice(n){if(answered)return;const c=Number(current._displayCorrect??current.correct)||0;document.querySelectorAll('.choice').forEach(x=>x.disabled=true);const ok=n===c;document.querySelectorAll('.choice')[n]?.classList.add(ok?'good':'bad');document.querySelectorAll('.choice')[c]?.classList.add('good');finish(ok,current.explanation||'Правильный ответ определяется юридической логикой и фактами.')}
 async function checkText(){
@@ -474,9 +523,9 @@ function handleClick(e){
  const q=cal[calibration],n=Number(el.dataset.i),ok=n===q._displayCorrect;
  document.querySelectorAll('[data-action="cal"]').forEach(x=>x.disabled=true);
  el.classList.add(ok?'good':'bad');document.querySelectorAll('[data-action="cal"]')[q._displayCorrect]?.classList.add('good');
- calScore+=ok?1:0;calResults.push({score:ok?100:0,level:ok?'strong':'needs_review',strengths:ok?[q.q]:[],weaknesses:ok?[]:[q.q],feedback:q.e,skills:[q.q]});if(ok){wrongStreak=0}else{wrongStreak++}
+ calScore+=ok?1:0;calResults.push({question:q.q,type:'mcq',score:ok?100:0,level:ok?'strong':'needs_review',correct:ok,selected:q.a[q._order[n]],expected:q.a[q.c],strengths:ok?[q.q]:[],weaknesses:ok?[]:[q.q],feedback:q.e,skills:[q.q]});if(ok){wrongStreak=0}else{wrongStreak++}
  $('calFeedback').innerHTML='<div class="feedback">'+(ok?'Верно. ':'Не совсем. ')+q.e+'</div>';cat(ok?'happy':(wrongStreak>=2?'strict':'sad'),ok?'Отлично. Двигаемся дальше 😼':(wrongStreak>=2?'Две ошибки подряд. Соберись и читай условие внимательнее 😾':'Ничего страшного. Разберём ошибку и пойдём дальше 😿'));
- setTimeout(()=>{calibration++;if(calibration<cal.length){renderCalibration();}else{state.calibrated=true;save();subjectPicker();}},650)
+ setTimeout(async()=>{calibration++;if(calibration<cal.length){renderCalibration();}else{state.calibrated=true;save();await buildKnowledgeProfile();subjectPicker();}},650)
 }
  else if(a==='calText'){finishCalibrationWritten()}
  else if(a==='all'){document.querySelectorAll('.subject input').forEach(x=>x.checked=true);$('scount').textContent=document.querySelectorAll('.subject input').length}
@@ -484,13 +533,16 @@ function handleClick(e){
  else if(a==='subjects'){selected=new Set([...document.querySelectorAll('.subject input:checked')].map(x=>x.value));if(!selected.size){cat('surprised','Ой. Здесь нужен хотя бы один предмет.');return}state.subjects=[...selected];save();buildPlan()}
  else if(a==='start'){startLearning()}
  else if(a==='lessonChoice'){checkChoice(Number(el.dataset.i))}
+ else if(a==='acceptClient'){document.getElementById('clientQuestion')?.classList.remove('hidden');el.remove();cat('explaining','Клиент передал документы. Теперь внимательно изучи вопрос и материалы дела.')}
+ else if(a==='documents'){renderDocuments()}
+ else if(a==='closeDocuments'){el.closest('.doc-overlay')?.remove()}
  else if(a==='check'){checkText()}
  else if(a==='reset'){localStorage.removeItem('cl_onboard');localStorage.removeItem('cl_learning_plan');localStorage.removeItem('cl_lesson_no');localStorage.removeItem('cl_xp');state={type:'',course:'',level:'',goal:'',subjects:[],started:false,calibrated:false,lessonHistory:[]};selected=new Set();plan=null;lessonNo=0;xp=0;saveLocal();renderWelcome();cat('teacher','Готово. Настройки сброшены. Теперь можно начать обучение заново.');}
 }
 document.addEventListener('click',handleClick);
 document.addEventListener('change',e=>{if(e.target.matches('.subject input'))$('scount').textContent=document.querySelectorAll('.subject input:checked').length});
 document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{
- if(b.dataset.tab==='reset'){localStorage.removeItem('cl_onboard');localStorage.removeItem('cl_learning_plan');localStorage.removeItem('cl_lesson_no');localStorage.removeItem('cl_xp');state={type:'',course:'',level:'',goal:'',subjects:[],started:false};selected=new Set();plan=null;lessonNo=0;xp=0;saveLocal();renderWelcome();cat('teacher','Готово. Настройки сброшены. Теперь можно начать обучение заново.')}
+ if(b.dataset.tab==='reset'){localStorage.removeItem('cl_onboard');localStorage.removeItem('cl_learning_plan');localStorage.removeItem('cl_lesson_no');localStorage.removeItem('cl_xp');state={type:'',course:'',level:'',goal:'',subjects:[],started:false,calibrated:false,lessonHistory:[]};selected=new Set();plan=null;lessonNo=0;xp=0;saveLocal();renderWelcome();cat('teacher','Готово. Настройки сброшены. Теперь можно начать обучение заново.')}
  else if(b.dataset.tab==='profile')profileStep()
 }));
 $('xp').textContent=xp;
