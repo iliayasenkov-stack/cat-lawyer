@@ -348,30 +348,67 @@ const calibrationBase=[
 {type:'free',q:'Составь краткий план проверки позиции клиента перед подготовкой жалобы или иска.',a:[],c:null,e:'Нужны факты, требования, правовая квалификация, доказательства, сроки, компетентный орган или суд, риски и возможные способы защиты.',context:'Клиент просит написать документ сразу, но исходные материалы ещё не проверены.'}
 ];
 function buildCalibration(){
- const isUni=state.type==='Университет',course=Number(state.course)||1;
- const offset=isUni?Math.min(6,course):Math.min(3,course);
+ const isUni=state.type==='Университет',course=Number(state.course)||1,level=String(state.level||'medium');
  const pool=[...calibrationBase];
- // Higher courses receive more analytical items and fewer introductory ones.
  if(isUni&&course>=3)pool.push(
-  {type:'mcq',q:'При конкуренции правовых норм на уровне квалификации необходимо прежде всего определить:',a:['Предмет регулирования, юридическую силу и условия действия каждой нормы','Только дату публикации нормы','Только название нормативного акта','Только позицию стороны по спору'],c:0,e:'Для выбора нормы нужно установить её предмет, юридическую силу и условия действия.'},
-  {type:'mcq',q:'В сложном кейсе правовой вывод нельзя считать достаточным, если:',a:['Не показана связь между установленными фактами и юридическими признаками','В нём нет большого количества терминов','Он не содержит мнение клиента','Он занимает меньше одной страницы'],c:0,e:'Вывод должен быть обоснован связью фактов с правовыми признаками.'}
+  {type:'mcq',q:'При конкуренции правовых норм на уровне квалификации необходимо прежде всего определить:',a:['Предмет регулирования и условия действия каждой нормы по делу','Проверить дату публикации и название акта по делу','Уточнить позицию стороны и желаемый результат по делу','Сопоставить формулировки норм и выбрать более строгую'],c:0,e:'Для выбора нормы нужно установить её предмет, юридическую силу и условия действия.'},
+  {type:'mcq',q:'В сложном кейсе правовой вывод нельзя считать достаточным, если:',a:['Не показана связь фактов и юридических признаков конкретного дела','В нём мало юридических терминов и сложных формулировок','Он не содержит отдельного мнения клиента о спорном вопросе','Он занимает меньше одной страницы текста в письменном виде'],c:0,e:'Вывод должен быть обоснован связью фактов с правовыми признаками.'}
  );
  if(isUni&&course>=5)pool.push(
   {type:'free',q:'Разбери правовую позицию как исследователь: какие альтернативные квалификации и контраргументы ты проверишь до окончательного вывода?',a:[],c:null,e:'Сильный ответ должен включать альтернативную квалификацию, контраргументы, условия применения норм, доказательственные риски и пределы вывода.',context:'Факты допускают две юридические квалификации, и клиент просит выбрать наиболее устойчивую.'}
  );
  if(!isUni&&course<=2)pool.unshift(
-  {type:'mcq',q:'Что обычно нужно установить перед тем, как объяснять клиенту его право?',a:['Факты ситуации и какое правоотношение возникло','Только название закона','Только желаемый клиентом результат','Только размер возможной выплаты'],c:0,e:'Базовый юридический анализ начинается с фактов и правоотношения.'}
+  {type:'mcq',q:'Что обычно нужно установить перед тем, как объяснять клиенту его право?',a:['Факты ситуации и правоотношение по существу конкретного дела','Название закона и его общую сферу регулирования по делу','Желаемый клиентом результат и удобный способ его получить','Размер возможной выплаты и предполагаемые расходы по делу'],c:0,e:'Базовый юридический анализ начинается с фактов и правоотношения.'}
  );
- // Exactly 20 questions, deterministically shifted by course so profiles do not see the same set.
- const start=(offset*3)%pool.length;
- const rotated=pool.slice(start).concat(pool.slice(0,start));
- return rotated.slice(0,20);
+
+ // Уровень самооценки теперь реально меняет состав диагностики:
+ // zero/low получают больше фундаментальных задач, medium — смешанный профиль,
+ // very — больше сложных задач с квалификацией, доказательствами и альтернативами.
+ const easy=pool.slice(0,12),mid=pool.slice(12,18),hard=pool.slice(18);
+ const quotas={
+  zero:[12,6,2],
+  low:[9,8,3],
+  medium:[6,8,6],
+  very:[3,7,10]
+ }[level]||[6,8,6];
+ const take=(arr,n)=>arr.slice(0,n);
+ let selected=[...take(easy,quotas[0]),...take(mid,quotas[1]),...take(hard,quotas[2])];
+ const used=new Set(selected);
+ if(selected.length<20){
+  for(const q of pool){if(selected.length>=20)break;if(!used.has(q)){selected.push(q);used.add(q)}}
+ }
+ // Для разных курсов тоже меняем порядок и набор, а не только текст подписи.
+ const shift=(course*2+(isUni?3:0))%Math.max(1,selected.length);
+ selected=selected.slice(shift).concat(selected.slice(0,shift)).slice(0,20);
+
+ // Перемешиваем сами варианты и сохраняем правильный индекс. Поэтому правильный
+ // ответ не остаётся всегда под внутренним индексом 0.
+ selected=selected.map(q=>{
+  if(q.type!=='mcq'||!Array.isArray(q.a))return q;
+  const order=shuffleOrder(q.a.length),a=order.map(i=>q.a[i]);
+  return {...q,a,c:order.indexOf(q.c)};
+ });
+ return selected;
 }
 let cal=[];
 function calibrationStart(){cal=buildCalibration();calibration=0;calScore=0;wrongStreak=0;renderCalibration();cat('serious','Теперь проверю не память, а то, как ты рассуждаешь. Вопросы будут зависеть от твоего курса.')}
 function shuffleOrder(n){const a=Array.from({length:n},(_,i)=>i);for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function balanceCalibrationOptions(q){
+ if(!q||q.type!=='mcq'||!Array.isArray(q.a)||q.a.length!==4)return;
+ const target=Math.max(...q.a.map(x=>String(x).trim().split(/\\s+/).filter(Boolean).length));
+ const pads=['по делу','в этой ситуации','с учётом обстоятельств','по имеющимся данным','в рамках спора','с учётом фактов'];
+ q.a=q.a.map((raw,idx)=>{
+  let words=String(raw||'').trim().split(/\\s+/).filter(Boolean);
+  let p=0;
+  while(words.length<target){
+   words.push(pads[(idx+p)%pads.length]);
+   p++;
+  }
+  return words.join(' ');
+ });
+}
 function renderCalibration(){
- const q=cal[calibration];openModal();
+ const q=cal[calibration];balanceCalibrationOptions(q);openModal();
  $('modalStep').textContent='КАЛИБРОВКА · '+(calibration+1)+' ИЗ '+cal.length;
  $('modalTitle').textContent=q.q;
  $('modalDesc').textContent=q.type==='free'?'Письменный ответ. AI оценит содержание и ход рассуждения.':'Варианты перемешаны. Выбирай по юридической логике, а не по позиции ответа.';
@@ -452,14 +489,25 @@ function startLearning(){
  persistProgress();
 }
 function getAdaptiveDifficulty(){
+ const self=String(state.level||'').toLowerCase();
+ const selfBand=self==='zero'?'базовая':self==='low'?'средняя':self==='very'?'продвинутая':self==='medium'?'сложная':'';
  const p=state.aiProfile||{};
- const level=String(p.level||'').toLowerCase();
+ const aiLevel=String(p.level||'').toLowerCase();
  const ceiling=String(p.difficultyCeiling||'').toLowerCase();
- if(level.includes('началь'))return 'базовая';
- if(level.includes('продвин')||ceiling.includes('продвин'))return 'продвинутая';
- if(level.includes('сред')||ceiling.includes('слож'))return 'сложная';
  const course=Number(state.course)||1,uni=state.type==='Университет';
- return uni?(course>=5?'продвинутая':course>=3?'сложная':'средняя'):(course>=3?'средняя':course<=1?'базовая':'средняя');
+ const courseBand=uni?(course>=5?'продвинутая':course>=3?'сложная':'средняя'):(course>=3?'средняя':course<=1?'базовая':'средняя');
+ // Самооценка задаёт стартовую полосу. AI может уточнить её после диагностики,
+ // но не может полностью игнорировать выбранный уровень.
+ if(selfBand){
+  if(selfBand==='продвинутая')return aiLevel.includes('началь')?'сложная':'продвинутая';
+  if(selfBand==='сложная')return aiLevel.includes('началь')?'средняя':'сложная';
+  if(selfBand==='средняя')return aiLevel.includes('продвин')?'продвинутая':'средняя';
+  return 'базовая';
+ }
+ if(aiLevel.includes('началь'))return 'базовая';
+ if(aiLevel.includes('продвин')||ceiling.includes('продвин'))return 'продвинутая';
+ if(aiLevel.includes('сред')||ceiling.includes('слож'))return 'сложная';
+ return courseBand;
 }
 function getAdaptiveSkill(subject){
  const p=state.aiProfile||{};
@@ -631,7 +679,6 @@ function handleClick(e){
  else if(a==='subjects'){selected=new Set([...document.querySelectorAll('.subject input:checked')].map(x=>x.value));if(!selected.size){cat('surprised','Ой. Здесь нужен хотя бы один предмет.');return}state.subjects=[...selected];save();buildPlan()}
  else if(a==='start'){startLearning()}
  else if(a==='lessonChoice'){checkChoice(Number(el.dataset.i))}
- else if(a==='next'){if(answered){lessonNo++;save();loadLesson();}}
  else if(a==='next'){if(answered){lessonNo++;save();loadLesson();}}
  else if(a==='acceptClient'){document.getElementById('clientQuestion')?.classList.remove('hidden');el.remove();cat('explaining','Клиент передал документы. Теперь внимательно изучи вопрос и материалы дела.')}
  else if(a==='documents'){renderDocuments()}
