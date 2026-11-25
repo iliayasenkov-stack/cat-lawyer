@@ -253,6 +253,14 @@ async function restoreProgress(){
 }
 function progress(n){$('bar').style.width=n+'%';$('counter').textContent=n+'%'}
 function learningPercent(){return Math.min(100,Math.round((lessonNo/100)*100))}
+function recordLessonScore(score){
+ const n=Math.max(1,Number(lessonNo)+1);
+ if(!Array.isArray(state.lessonScores))state.lessonScores=[];
+ state.lessonScores.push({lesson:n,score:Math.max(0,Math.min(100,Math.round(Number(score)||0))),subject:currentSubject||current.subject||'',type:current.type||'mcq',at:new Date().toISOString()});
+ state.lessonScores=state.lessonScores.slice(-200);
+ const total=state.lessonScores.reduce((a,x)=>a+Number(x.score||0),0);
+ state.lessonAverage=Math.round(total/state.lessonScores.length);
+}
 async function persistProgress(){
  if(!serverReady)return;
  try{
@@ -553,17 +561,19 @@ function finish(ok,feedback,analysis){
  answered=true;
  const a=analysis||{};
  const score=Number.isFinite(Number(a.score))?Math.max(0,Math.min(100,Number(a.score))):(ok?100:0);
+ recordLessonScore(score);
  xp+=Math.max(4,Math.round(score/10));
  save();
  const strengths=Array.isArray(a.strengths)?a.strengths.slice(0,4):[];
  const weaknesses=Array.isArray(a.weaknesses)?a.weaknesses.slice(0,4):[];
  const reason=a.reasoning||current.explanation||'Правильное решение строится на юридически значимых фактах, применимом правиле и связи этих элементов с выводом.';
- let html='<div class="feedback"><b>'+score+'/100</b> · '+escapeHtml(feedback||'Ответ проверен.')+'</div>';
+ let html='<div class="feedback"><b>Оценка урока: '+score+'/100</b> · '+escapeHtml(feedback||'Ответ проверен.')+'</div>';
  if(strengths.length)html+='<div class="feedback"><b>Что получилось</b><ul>'+strengths.map(x=>'<li>'+escapeHtml(x)+'</li>').join('')+'</ul></div>';
  if(weaknesses.length)html+='<div class="feedback"><b>Что улучшить</b><ul>'+weaknesses.map(x=>'<li>'+escapeHtml(x)+'</li>').join('')+'</ul></div>';
  html+='<details class="reasoning-box" open><summary>Обоснование решения</summary><div><b>Как рассуждать</b><p>'+escapeHtml(reason)+'</p>';
  if(current.trap)html+='<p><b>Ловушка:</b> '+escapeHtml(current.trap)+'</p>';
  if(a.nextSkill)html+='<p><b>Следующий фокус:</b> '+escapeHtml(a.nextSkill)+'</p>';
+ if(state.lessonAverage!=null)html+='<div class="feedback"><b>Средняя оценка по пройденным урокам: '+state.lessonAverage+'/100</b></div>';
  html+='</div></details>';
  const fb=$('feedback');if(fb)fb.innerHTML=html;
  const n=$('next');if(n){n.disabled=false;n.dataset.action='next';n.textContent='Перейти дальше →';}
@@ -581,7 +591,14 @@ function checkChoice(n){
 async function checkText(){
  if(answered){lessonNo++;save();loadLesson();return}
  const el=$('answerText'),t=String(el?.value||'').trim();
- if(t.length<30){cat('strict','Раскрой мысль подробнее. Покажи, какие факты и правовые основания привели тебя к выводу.');return}
+ const letters=t.replace(/[^\p{L}\p{N}]+/gu,'').toLowerCase();
+ const uniq=new Set(letters.split('')).size;
+ const repeated=/(.)\1{5,}/u.test(letters)||/(.{1,3})\1{4,}/u.test(letters);
+ if(t.length<30){cat('strict','Раскрой мысль подробнее. Покажи факты, правовое основание и вывод.');return}
+ if(letters.length>=20&&(uniq/Math.max(1,letters.length)<0.12||repeated)){
+   const fake={score:0,correct:false,feedback:'Ответ не содержит распознаваемого юридического рассуждения.',strengths:[],weaknesses:['Нужно сформулировать собственную правовую позицию, а не набор повторяющихся символов.'],reasoning:'AI не должен засчитывать бессмысленный набор букв как частично правильный ответ. Для баллов нужно показать связь между фактами, правовым правилом и выводом.',missing:['Факты','Правовое основание','Юридический вывод'],nextSkill:'Сформулируй ответ своими словами.'};
+   finish(false,fake.feedback,fake);return;
+ }
  const n=$('next');n.disabled=true;n.textContent='AI анализирует ответ…';
  try{
   const r=await fetch('/api/learn/evaluate',{method:'POST',headers:{'content-type':'application/json'},credentials:'same-origin',body:JSON.stringify({lesson:current,answer:t,subject:currentSubject,lessonNo,diagnostics:calResults,aiProfile:state.aiProfile||null})});
@@ -614,6 +631,7 @@ function handleClick(e){
  else if(a==='subjects'){selected=new Set([...document.querySelectorAll('.subject input:checked')].map(x=>x.value));if(!selected.size){cat('surprised','Ой. Здесь нужен хотя бы один предмет.');return}state.subjects=[...selected];save();buildPlan()}
  else if(a==='start'){startLearning()}
  else if(a==='lessonChoice'){checkChoice(Number(el.dataset.i))}
+ else if(a==='next'){if(answered){lessonNo++;save();loadLesson();}}
  else if(a==='next'){if(answered){lessonNo++;save();loadLesson();}}
  else if(a==='acceptClient'){document.getElementById('clientQuestion')?.classList.remove('hidden');el.remove();cat('explaining','Клиент передал документы. Теперь внимательно изучи вопрос и материалы дела.')}
  else if(a==='documents'){renderDocuments()}
